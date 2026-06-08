@@ -156,7 +156,7 @@ export async function fetchStatusCounts(range: DateRange): Promise<StatusCounts>
     supabase
       .from("expenses")
       .select("id", { count: "exact", head: true })
-      .in("status", PENDING_STATUSES as unknown as string[]),
+      .in("status", [...PENDING_STATUSES]),
     supabase
       .from("expenses")
       .select("id", { count: "exact", head: true })
