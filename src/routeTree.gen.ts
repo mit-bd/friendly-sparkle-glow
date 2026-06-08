@@ -21,19 +21,24 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedMarketingIndexRouteImport } from './routes/_authenticated/marketing.index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
 import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_authenticated/settings.permissions'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
+import { Route as AuthenticatedSettingsMarketingRouteImport } from './routes/_authenticated/settings.marketing'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
 import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
 import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
+import { Route as AuthenticatedMarketingReportsRouteImport } from './routes/_authenticated/marketing.reports'
+import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
 import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
 import { Route as AuthenticatedExpensesAddRouteImport } from './routes/_authenticated/expenses.add'
 import { Route as AuthenticatedExpensesIdRouteImport } from './routes/_authenticated/expenses.$id'
+import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
 import { Route as AuthenticatedDashboardSubcategoryIdRouteImport } from './routes/_authenticated/dashboard.subcategory.$id'
 import { Route as AuthenticatedDashboardCategoryIdRouteImport } from './routes/_authenticated/dashboard.category.$id'
 
@@ -97,6 +102,12 @@ const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMarketingIndexRoute =
+  AuthenticatedMarketingIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedMarketingRoute,
+  } as any)
 const AuthenticatedExpensesIndexRoute =
   AuthenticatedExpensesIndexRouteImport.update({
     id: '/expenses/',
@@ -119,6 +130,12 @@ const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/settings/notifications',
     path: '/settings/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsMarketingRoute =
+  AuthenticatedSettingsMarketingRouteImport.update({
+    id: '/settings/marketing',
+    path: '/settings/marketing',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsCompanyRoute =
@@ -144,6 +161,18 @@ const AuthenticatedReportsDetailedRoute =
     id: '/reports/detailed',
     path: '/reports/detailed',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMarketingReportsRoute =
+  AuthenticatedMarketingReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedMarketingRoute,
+  } as any)
+const AuthenticatedMarketingAddRoute =
+  AuthenticatedMarketingAddRouteImport.update({
+    id: '/add',
+    path: '/add',
+    getParentRoute: () => AuthenticatedMarketingRoute,
   } as any)
 const AuthenticatedExpensesRecycleBinRoute =
   AuthenticatedExpensesRecycleBinRouteImport.update({
@@ -174,6 +203,12 @@ const AuthenticatedExpensesIdRoute = AuthenticatedExpensesIdRouteImport.update({
   path: '/expenses/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMarketingPlatformIdRoute =
+  AuthenticatedMarketingPlatformIdRouteImport.update({
+    id: '/platform/$id',
+    path: '/platform/$id',
+    getParentRoute: () => AuthenticatedMarketingRoute,
+  } as any)
 const AuthenticatedDashboardSubcategoryIdRoute =
   AuthenticatedDashboardSubcategoryIdRouteImport.update({
     id: '/dashboard/subcategory/$id',
@@ -194,7 +229,7 @@ export interface FileRoutesByFullPath {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/damages': typeof AuthenticatedDamagesRoute
-  '/marketing': typeof AuthenticatedMarketingRoute
+  '/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/returns': typeof AuthenticatedReturnsRoute
@@ -204,16 +239,21 @@ export interface FileRoutesByFullPath {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/marketing/add': typeof AuthenticatedMarketingAddRoute
+  '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
@@ -221,7 +261,6 @@ export interface FileRoutesByTo {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/damages': typeof AuthenticatedDamagesRoute
-  '/marketing': typeof AuthenticatedMarketingRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/returns': typeof AuthenticatedReturnsRoute
@@ -232,16 +271,21 @@ export interface FileRoutesByTo {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/marketing/add': typeof AuthenticatedMarketingAddRoute
+  '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
+  '/marketing': typeof AuthenticatedMarketingIndexRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,7 +295,7 @@ export interface FileRoutesById {
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRoute
-  '/_authenticated/marketing': typeof AuthenticatedMarketingRoute
+  '/_authenticated/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/returns': typeof AuthenticatedReturnsRoute
@@ -262,16 +306,21 @@ export interface FileRoutesById {
   '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
+  '/_authenticated/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/_authenticated/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/_authenticated/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -292,16 +341,21 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/marketing/add'
+    | '/marketing/reports'
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
     | '/settings/company'
+    | '/settings/marketing'
     | '/settings/notifications'
     | '/settings/permissions'
     | '/settings/signatories'
     | '/expenses/'
+    | '/marketing/'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
+    | '/marketing/platform/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
@@ -309,7 +363,6 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/audit'
     | '/damages'
-    | '/marketing'
     | '/notifications'
     | '/profile'
     | '/returns'
@@ -320,16 +373,21 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/marketing/add'
+    | '/marketing/reports'
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
     | '/settings/company'
+    | '/settings/marketing'
     | '/settings/notifications'
     | '/settings/permissions'
     | '/settings/signatories'
     | '/expenses'
+    | '/marketing'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
+    | '/marketing/platform/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -349,16 +407,21 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/categories'
     | '/_authenticated/expenses/pending'
     | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/marketing/add'
+    | '/_authenticated/marketing/reports'
     | '/_authenticated/reports/detailed'
     | '/_authenticated/reports/export-history'
     | '/_authenticated/reports/summary'
     | '/_authenticated/settings/company'
+    | '/_authenticated/settings/marketing'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/permissions'
     | '/_authenticated/settings/signatories'
     | '/_authenticated/expenses/'
+    | '/_authenticated/marketing/'
     | '/_authenticated/dashboard/category/$id'
     | '/_authenticated/dashboard/subcategory/$id'
+    | '/_authenticated/marketing/platform/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -454,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/marketing/': {
+      id: '/_authenticated/marketing/'
+      path: '/'
+      fullPath: '/marketing/'
+      preLoaderRoute: typeof AuthenticatedMarketingIndexRouteImport
+      parentRoute: typeof AuthenticatedMarketingRoute
+    }
     '/_authenticated/expenses/': {
       id: '/_authenticated/expenses/'
       path: '/expenses'
@@ -480,6 +550,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/notifications'
       fullPath: '/settings/notifications'
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/marketing': {
+      id: '/_authenticated/settings/marketing'
+      path: '/settings/marketing'
+      fullPath: '/settings/marketing'
+      preLoaderRoute: typeof AuthenticatedSettingsMarketingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/company': {
@@ -509,6 +586,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/reports/detailed'
       preLoaderRoute: typeof AuthenticatedReportsDetailedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/marketing/reports': {
+      id: '/_authenticated/marketing/reports'
+      path: '/reports'
+      fullPath: '/marketing/reports'
+      preLoaderRoute: typeof AuthenticatedMarketingReportsRouteImport
+      parentRoute: typeof AuthenticatedMarketingRoute
+    }
+    '/_authenticated/marketing/add': {
+      id: '/_authenticated/marketing/add'
+      path: '/add'
+      fullPath: '/marketing/add'
+      preLoaderRoute: typeof AuthenticatedMarketingAddRouteImport
+      parentRoute: typeof AuthenticatedMarketingRoute
     }
     '/_authenticated/expenses/recycle-bin': {
       id: '/_authenticated/expenses/recycle-bin'
@@ -545,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExpensesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/marketing/platform/$id': {
+      id: '/_authenticated/marketing/platform/$id'
+      path: '/platform/$id'
+      fullPath: '/marketing/platform/$id'
+      preLoaderRoute: typeof AuthenticatedMarketingPlatformIdRouteImport
+      parentRoute: typeof AuthenticatedMarketingRoute
+    }
     '/_authenticated/dashboard/subcategory/$id': {
       id: '/_authenticated/dashboard/subcategory/$id'
       path: '/dashboard/subcategory/$id'
@@ -562,10 +660,31 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedMarketingRouteChildren {
+  AuthenticatedMarketingAddRoute: typeof AuthenticatedMarketingAddRoute
+  AuthenticatedMarketingReportsRoute: typeof AuthenticatedMarketingReportsRoute
+  AuthenticatedMarketingIndexRoute: typeof AuthenticatedMarketingIndexRoute
+  AuthenticatedMarketingPlatformIdRoute: typeof AuthenticatedMarketingPlatformIdRoute
+}
+
+const AuthenticatedMarketingRouteChildren: AuthenticatedMarketingRouteChildren =
+  {
+    AuthenticatedMarketingAddRoute: AuthenticatedMarketingAddRoute,
+    AuthenticatedMarketingReportsRoute: AuthenticatedMarketingReportsRoute,
+    AuthenticatedMarketingIndexRoute: AuthenticatedMarketingIndexRoute,
+    AuthenticatedMarketingPlatformIdRoute:
+      AuthenticatedMarketingPlatformIdRoute,
+  }
+
+const AuthenticatedMarketingRouteWithChildren =
+  AuthenticatedMarketingRoute._addFileChildren(
+    AuthenticatedMarketingRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRoute
-  AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRoute
+  AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRoute
@@ -580,6 +699,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
   AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
   AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
+  AuthenticatedSettingsMarketingRoute: typeof AuthenticatedSettingsMarketingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsPermissionsRoute: typeof AuthenticatedSettingsPermissionsRoute
   AuthenticatedSettingsSignatoriesRoute: typeof AuthenticatedSettingsSignatoriesRoute
@@ -591,7 +711,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRoute,
-  AuthenticatedMarketingRoute: AuthenticatedMarketingRoute,
+  AuthenticatedMarketingRoute: AuthenticatedMarketingRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReturnsRoute: AuthenticatedReturnsRoute,
@@ -607,6 +727,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedReportsExportHistoryRoute,
   AuthenticatedReportsSummaryRoute: AuthenticatedReportsSummaryRoute,
   AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
+  AuthenticatedSettingsMarketingRoute: AuthenticatedSettingsMarketingRoute,
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
   AuthenticatedSettingsPermissionsRoute: AuthenticatedSettingsPermissionsRoute,

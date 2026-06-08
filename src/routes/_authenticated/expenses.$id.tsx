@@ -51,6 +51,7 @@ import {
   type ExpenseEvent,
 } from "@/lib/approvals";
 import { fetchFieldChanges, type FieldChange } from "@/lib/audit";
+import { fetchPlatforms } from "@/lib/marketing";
 import {
   ATTACHMENT_BUCKET,
   fetchCategories,
@@ -83,6 +84,7 @@ function ExpenseDetailsPage() {
   const [events, setEvents] = useState<ExpenseEvent[]>([]);
   const [changes, setChanges] = useState<FieldChange[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
+  const [platformName, setPlatformName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -113,6 +115,15 @@ function ExpenseDetailsPage() {
     setAttachments((atts.data ?? []) as ExpenseAttachment[]);
     setEvents(evts);
     setChanges(fch);
+    const platId = (exp as unknown as { platform_id?: string | null }).platform_id;
+    if (platId) {
+      try {
+        const plats = await fetchPlatforms(true);
+        setPlatformName(plats.find((p) => p.id === platId)?.name ?? null);
+      } catch {
+        /* non-critical */
+      }
+    }
     const ids = [
       exp.created_by,
       exp.updated_by,
@@ -186,6 +197,16 @@ function ExpenseDetailsPage() {
   );
   const catName = expense.category_id ? categories.find((c) => c.id === expense.category_id)?.name : null;
   const subName = expense.subcategory_id ? subs.find((s) => s.id === expense.subcategory_id)?.name : null;
+  // Marketing rows carry extra currency/campaign fields (not in the base type).
+  const mk = expense as unknown as {
+    is_marketing?: boolean;
+    currency?: string;
+    original_amount?: number | null;
+    exchange_rate?: number;
+    campaign_name?: string | null;
+    platform_id?: string | null;
+  };
+  const isMarketing = !!mk.is_marketing;
 
   async function setStatus(status: Expense["status"]) {
     setBusy(true);
@@ -325,9 +346,38 @@ function ExpenseDetailsPage() {
                 <p className="mt-0.5 text-2xl font-semibold tabular-nums text-brand-gradient">
                   {formatCurrency(expense.amount)}
                 </p>
+                {isMarketing && (mk.currency && mk.currency !== "BDT") && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Original {mk.currency} {formatCurrency(Number(mk.original_amount ?? 0))} × rate{" "}
+                    {mk.exchange_rate ?? 1} → BDT (converted)
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
+
+          {isMarketing && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Marketing details</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
+                <Field label="Platform" value={platformName ?? "—"} />
+                <Field label="Campaign" value={mk.campaign_name || "—"} />
+                <Field label="Currency" value={mk.currency || "BDT"} />
+                <Field
+                  label="Original amount"
+                  value={
+                    mk.original_amount != null
+                      ? `${mk.currency || "BDT"} ${formatCurrency(Number(mk.original_amount))}`
+                      : "—"
+                  }
+                />
+                <Field label="Exchange rate → BDT" value={String(mk.exchange_rate ?? 1)} />
+                <Field label="Converted BDT" value={formatCurrency(expense.amount)} />
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>

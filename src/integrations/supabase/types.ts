@@ -107,6 +107,45 @@ export type Database = {
         }
         Relationships: []
       }
+      currencies: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          symbol: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          symbol?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          symbol?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       expense_attachments: {
         Row: {
           created_at: string
@@ -342,16 +381,22 @@ export type Database = {
           amount: number
           approved_at: string | null
           approved_by: string | null
+          campaign_name: string | null
           category_id: string | null
           created_at: string
           created_by: string | null
+          currency: string
           deleted_at: string | null
           deleted_by: string | null
           description: string | null
+          exchange_rate: number
           expense_date: string
           expense_number: string
           id: string
+          is_marketing: boolean
           notes: string | null
+          original_amount: number | null
+          platform_id: string | null
           rejected_at: string | null
           rejected_by: string | null
           restored_at: string | null
@@ -367,16 +412,22 @@ export type Database = {
           amount?: number
           approved_at?: string | null
           approved_by?: string | null
+          campaign_name?: string | null
           category_id?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string
           deleted_at?: string | null
           deleted_by?: string | null
           description?: string | null
+          exchange_rate?: number
           expense_date?: string
           expense_number: string
           id?: string
+          is_marketing?: boolean
           notes?: string | null
+          original_amount?: number | null
+          platform_id?: string | null
           rejected_at?: string | null
           rejected_by?: string | null
           restored_at?: string | null
@@ -392,16 +443,22 @@ export type Database = {
           amount?: number
           approved_at?: string | null
           approved_by?: string | null
+          campaign_name?: string | null
           category_id?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string
           deleted_at?: string | null
           deleted_by?: string | null
           description?: string | null
+          exchange_rate?: number
           expense_date?: string
           expense_number?: string
           id?: string
+          is_marketing?: boolean
           notes?: string | null
+          original_amount?: number | null
+          platform_id?: string | null
           rejected_at?: string | null
           rejected_by?: string | null
           restored_at?: string | null
@@ -419,6 +476,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_platform_id_fkey"
+            columns: ["platform_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_platforms"
             referencedColumns: ["id"]
           },
           {
@@ -463,6 +527,45 @@ export type Database = {
           id?: string
           new_value?: string | null
           old_value?: string | null
+        }
+        Relationships: []
+      }
+      marketing_platforms: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }
