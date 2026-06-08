@@ -35,7 +35,6 @@ import {
   type DateRange,
   type RangePreset,
 } from "@/lib/analytics";
-import { formatDate } from "@/lib/expenses";
 import {
   fetchApprovedMarketing,
   fetchPlatforms,
