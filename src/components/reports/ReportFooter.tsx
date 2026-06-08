@@ -31,16 +31,42 @@ function SignatureBlock({ type, row }: { type: SignatoryType; row?: Signatory })
   );
 }
 
-/** Prepared / Reviewed / Approved signature footer pulled from Signatories. */
-export function ReportFooter() {
+interface ReportFooterProps {
+  /** Report number echoed at the bottom of every printed page. */
+  reportNumber?: string;
+  /** Date the document was generated / printed. Defaults to now. */
+  printDate?: string;
+}
+
+/**
+ * Prepared / Reviewed / Approved signature footer pulled from Signatories,
+ * plus a closing meta line carrying the Report Number and Print Date so every
+ * printed/exported document is fully traceable.
+ */
+export function ReportFooter({ reportNumber, printDate }: ReportFooterProps = {}) {
   const { data: signatories } = useSignatories();
   const byType = new Map((signatories ?? []).map((s) => [s.type, s]));
+  const printedOn =
+    printDate ||
+    new Date().toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   return (
-    <div className="report-footer mt-10 grid grid-cols-3 gap-8 pt-4">
-      {SIGNATORY_ORDER.map((type) => (
-        <SignatureBlock key={type} type={type} row={byType.get(type)} />
-      ))}
+    <div className="report-footer mt-10 pt-4">
+      <div className="grid grid-cols-3 gap-8">
+        {SIGNATORY_ORDER.map((type) => (
+          <SignatureBlock key={type} type={type} row={byType.get(type)} />
+        ))}
+      </div>
+      <div className="report-footer-meta mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 text-[10px] text-muted-foreground">
+        <span>{reportNumber ? `Report No: ${reportNumber}` : ""}</span>
+        <span>Print Date: {printedOn}</span>
+      </div>
     </div>
   );
 }
