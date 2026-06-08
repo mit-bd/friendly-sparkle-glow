@@ -14,6 +14,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
@@ -54,6 +55,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/returns': typeof AuthenticatedReturnsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/expenses/add': typeof AuthenticatedExpensesAddRoute
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/returns': typeof AuthenticatedReturnsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
   '/expenses/add': typeof AuthenticatedExpensesAddRoute
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/returns': typeof AuthenticatedReturnsRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/expenses/add': typeof AuthenticatedExpensesAddRoute
   '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
@@ -238,6 +247,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/returns'
+    | '/users'
     | '/expenses/add'
     | '/expenses/categories'
     | '/expenses/pending'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/returns'
+    | '/users'
     | '/'
     | '/expenses/add'
     | '/expenses/categories'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notifications'
     | '/_authenticated/profile'
     | '/_authenticated/returns'
+    | '/_authenticated/users'
     | '/_authenticated/'
     | '/_authenticated/expenses/add'
     | '/_authenticated/expenses/categories'
@@ -341,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/returns': {
@@ -471,6 +490,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedExpensesAddRoute: typeof AuthenticatedExpensesAddRoute
   AuthenticatedExpensesCategoriesRoute: typeof AuthenticatedExpensesCategoriesRoute
@@ -492,6 +512,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReturnsRoute: AuthenticatedReturnsRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedExpensesAddRoute: AuthenticatedExpensesAddRoute,
   AuthenticatedExpensesCategoriesRoute: AuthenticatedExpensesCategoriesRoute,
@@ -521,3 +542,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
