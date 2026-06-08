@@ -1,15 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Printer, FileBarChart } from "lucide-react";
+import { ArrowLeft, ArrowLeftRight, FileDown, FileSpreadsheet, Loader2, Printer, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
 import { NoAccess } from "@/components/NoAccess";
-import { EmptyState } from "@/components/analytics/EmptyState";
-import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,16 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
+import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
+import { ReportDocument } from "@/components/reports/ReportDocument";
+import { EmptyReportNote } from "@/components/reports/ReportBodies";
 import { useAuth } from "@/lib/auth-context";
 import {
   DEFAULT_PRESET,
@@ -35,6 +26,10 @@ import {
   type DateRange,
   type RangePreset,
 } from "@/lib/analytics";
+import { formatDateTime } from "@/lib/expenses";
+import { logActivity } from "@/lib/audit";
+import { logReportExport } from "@/lib/reports";
+import { downloadCsv } from "@/lib/report-csv";
 import {
   fetchApprovedMarketing,
   fetchPlatforms,
@@ -62,57 +57,31 @@ const REPORT_TYPES: { value: MkReportType; label: string; description: string }[
   { value: "currency", label: "Currency Conversion Report", description: "Original vs converted BDT per currency." },
 ];
 
+const th = "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground";
+const td = "px-3 py-2 text-sm text-foreground align-top";
+const num = "px-3 py-2 text-sm text-foreground text-right tabular-nums align-top";
+
+interface Generated {
+  type: MkReportType;
+  rows: MarketingExpense[];
+  platforms: MarketingPlatform[];
+  reportNumber: string;
+  generatedAt: string;
+  generatedBy: string;
+  rangeLabel: string;
+}
+
 function MarketingReports() {
-  const { canAccessModule, can, isAdmin } = useAuth();
+  const { canAccessModule, can, isAdmin, profile } = useAuth();
   const canExport = isAdmin || can("reports", "view") || can("reports", "export");
 
   const [type, setType] = useState<MkReportType>("summary");
   const [preset, setPreset] = useState<RangePreset>(DEFAULT_PRESET);
   const [range, setRange] = useState<DateRange>(resolveRange(DEFAULT_PRESET));
-  const [rows, setRows] = useState<MarketingExpense[]>([]);
-  const [platforms, setPlatforms] = useState<MarketingPlatform[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [generated, setGenerated] = useState<Generated | null>(null);
 
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    Promise.all([fetchApprovedMarketing(range), fetchPlatforms(true)])
-      .then(([r, p]) => {
-        if (!active) return;
-        setRows(r);
-        setPlatforms(p);
-      })
-      .catch((e) => toast.error(e instanceof Error ? e.message : "Failed to load report data."))
-      .finally(() => active && setLoading(false));
-    return () => {
-      active = false;
-    };
-  }, [range]);
-
-  const platformSummary = useMemo(() => buildPlatformSummary(rows, platforms), [rows, platforms]);
-  const campaigns = useMemo(() => buildCampaignSummary(rows, platforms), [rows, platforms]);
-  const currencies = useMemo(() => buildCurrencySummary(rows), [rows]);
-  const grand = sumBDT(rows);
-  const meta = REPORT_TYPES.find((t) => t.value === type)!;
-
-  async function handlePrint() {
-    if (canExport) {
-      try {
-        await supabase.rpc("log_report_export", {
-          _report_type: `marketing_${type}`,
-          _title: `${meta.label} (${formatRangeLabel(range)})`,
-          _range_from: range.from,
-          _range_to: range.to,
-          _filters: { module: "marketing", report: type },
-          _expense_count: rows.length,
-          _total_amount: grand,
-        } as never);
-      } catch {
-        /* archive is best-effort */
-      }
-    }
-    window.print();
-  }
+  useEffect(() => setGenerated(null), [type]);
 
   if (!canAccessModule("marketing")) {
     return (
@@ -123,195 +92,331 @@ function MarketingReports() {
     );
   }
 
+  const meta = REPORT_TYPES.find((t) => t.value === type)!;
+
+  async function handleGenerate() {
+    setGenerating(true);
+    try {
+      const [rows, platforms] = await Promise.all([
+        fetchApprovedMarketing(range),
+        fetchPlatforms(true),
+      ]);
+      const grand = sumBDT(rows);
+      let reportNumber = "—";
+      let createdAt = new Date().toISOString();
+      if (canExport) {
+        try {
+          const logged = await logReportExport({
+            reportType: `marketing_${type}`,
+            title: `${meta.label} (${formatRangeLabel(range)})`,
+            rangeFrom: range.from,
+            rangeTo: range.to,
+            filters: { module: "marketing", report: type, preset },
+            expenseCount: rows.length,
+            totalAmount: grand,
+          });
+          reportNumber = logged.report_number;
+          createdAt = logged.created_at;
+          void logActivity({
+            action: "export",
+            entityType: "report",
+            entityLabel: `${reportNumber} · ${meta.label}`,
+            metadata: { count: rows.length, total: grand },
+          });
+        } catch {
+          /* archive is best-effort */
+        }
+      }
+      setGenerated({
+        type,
+        rows,
+        platforms,
+        reportNumber,
+        generatedAt: formatDateTime(createdAt),
+        generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+        rangeLabel: formatRangeLabel(range),
+      });
+      toast.success(
+        reportNumber === "—" ? "Report generated." : `Report ${reportNumber} generated and archived.`,
+      );
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to generate report.");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  const print = () => {
+    if (generated)
+      void logActivity({ action: "print", entityType: "report", entityLabel: generated.reportNumber });
+    window.print();
+  };
+
+  function handleCsv() {
+    if (!generated) return;
+    const { rows, platforms } = generated;
+    const grand = sumBDT(rows);
+    let headers: string[] = [];
+    let body: (string | number)[][] = [];
+    if (type === "summary" || type === "platform") {
+      const ps = buildPlatformSummary(rows, platforms);
+      headers = ["Platform", "Currencies", "Costs", "Converted BDT", "% of total"];
+      body = ps.rows.map((p) => [
+        p.name,
+        p.currencies.join(" / "),
+        p.count,
+        p.total,
+        `${p.percentage.toFixed(1)}%`,
+      ]);
+    } else if (type === "campaign") {
+      const cs = buildCampaignSummary(rows, platforms);
+      headers = ["Campaign", "Platform", "Costs", "Converted BDT", "% of total"];
+      body = cs.map((c) => [c.name, c.platformName, c.count, c.total, `${c.percentage.toFixed(1)}%`]);
+    } else {
+      const cur = buildCurrencySummary(rows);
+      headers = ["Currency", "Costs", "Original total", "Avg rate", "Converted BDT", "% of total"];
+      body = cur.map((c) => [
+        c.currency,
+        c.count,
+        c.originalTotal,
+        c.avgRate.toFixed(4),
+        c.convertedTotal,
+        `${c.percentage.toFixed(1)}%`,
+      ]);
+    }
+    body.push(["Grand total", "", rows.length, grand, "100%"].slice(0, headers.length) as (string | number)[]);
+    downloadCsv(`motion-it-bd-${meta.label.toLowerCase().replace(/\s+/g, "-")}`, headers, body);
+    void logActivity({
+      action: "export",
+      entityType: "report",
+      entityLabel: `${generated.reportNumber} · ${meta.label}`,
+      metadata: { format: "csv" },
+    });
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="print:hidden">
-        <PageHeader
-          title="Marketing Reports"
-          description="Finance-grade marketing reports. Every total is approved spend in BDT."
-          actions={
-            <Button variant="outline" asChild>
-              <Link to="/marketing">
-                <ArrowLeft className="h-4 w-4" />
-                Marketing
-              </Link>
-            </Button>
-          }
-        />
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Marketing Reports"
+        description="Finance-grade marketing reports. Every total is approved spend in BDT."
+        actions={
+          <Button variant="outline" asChild>
+            <Link to="/marketing">
+              <ArrowLeft className="h-4 w-4" />
+              Marketing
+            </Link>
+          </Button>
+        }
+      />
 
-      <div className="flex flex-col gap-3 print:hidden sm:flex-row sm:items-center sm:justify-between">
-        <Select value={type} onValueChange={(v) => setType(v as MkReportType)}>
-          <SelectTrigger className="sm:w-[320px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {REPORT_TYPES.map((t) => (
-              <SelectItem key={t.value} value={t.value}>
-                {t.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <DateRangeFilter preset={preset} range={range} onChange={(p, r) => { setPreset(p); setRange(r); }} />
-      </div>
-
-      {loading ? (
-        <Skeleton className="h-96 w-full rounded-lg" />
-      ) : rows.length === 0 ? (
-        <EmptyState
-          icon={FileBarChart}
-          title="No approved marketing costs in this range"
-          description="Adjust the date range to generate a report."
-        />
-      ) : (
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle className="text-base">{meta.label}</CardTitle>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {meta.description} · {formatRangeLabel(range)}
-              </p>
+      <Card className="no-print">
+        <CardHeader>
+          <CardTitle className="text-base">Build a report</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Report type</Label>
+              <Select value={type} onValueChange={(v) => setType(v as MkReportType)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {REPORT_TYPES.map((t) => (
+                    <SelectItem key={t.value} value={t.value}>
+                      {t.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">{meta.description}</p>
             </div>
-            <Button size="sm" onClick={handlePrint} className="print:hidden">
-              <Printer className="h-4 w-4" />
-              Print / PDF
+            <div className="space-y-2">
+              <Label>Date range</Label>
+              <DateRangeFilter preset={preset} range={range} onChange={(p, r) => { setPreset(p); setRange(r); }} />
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button onClick={handleGenerate} disabled={generating} className="bg-brand-gradient text-primary-foreground">
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              Generate Report
             </Button>
-          </CardHeader>
-          <CardContent>
-            {type === "summary" && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Platform</TableHead>
-                    <TableHead className="text-right">Costs</TableHead>
-                    <TableHead className="text-right">Converted BDT</TableHead>
-                    <TableHead className="text-right">% of total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {platformSummary.rows.map((p) => (
-                    <TableRow key={p.id ?? "none"}>
-                      <TableCell className="font-medium">{p.name}</TableCell>
-                      <TableCell className="text-right tabular-nums">{p.count}</TableCell>
-                      <TableCell className="text-right tabular-nums">{formatBDT(p.total)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{p.percentage.toFixed(1)}%</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell className="font-semibold">Grand total</TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">{rows.length}</TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">{formatBDT(grand)}</TableCell>
-                    <TableCell className="text-right font-semibold">100%</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
+            {generated && (
+              <>
+                <Button variant="outline" onClick={print}>
+                  <Printer className="h-4 w-4" />
+                  Print
+                </Button>
+                <Button variant="outline" onClick={print}>
+                  <FileDown className="h-4 w-4" />
+                  Export PDF
+                </Button>
+                <Button variant="outline" onClick={handleCsv}>
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Export CSV
+                </Button>
+              </>
             )}
+          </div>
+        </CardContent>
+      </Card>
 
-            {type === "platform" && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Platform</TableHead>
-                    <TableHead>Currencies</TableHead>
-                    <TableHead className="text-right">Costs</TableHead>
-                    <TableHead className="text-right">Converted BDT</TableHead>
-                    <TableHead className="text-right">% of total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {platformSummary.rows.map((p) => (
-                    <TableRow key={p.id ?? "none"}>
-                      <TableCell className="font-medium">{p.name}</TableCell>
-                      <TableCell>{p.currencies.join(", ")}</TableCell>
-                      <TableCell className="text-right tabular-nums">{p.count}</TableCell>
-                      <TableCell className="text-right tabular-nums">{formatBDT(p.total)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{p.percentage.toFixed(1)}%</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3} className="font-semibold">Grand total</TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">{formatBDT(grand)}</TableCell>
-                    <TableCell className="text-right font-semibold">100%</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            )}
-
-            {type === "campaign" && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Campaign</TableHead>
-                    <TableHead>Platform</TableHead>
-                    <TableHead className="text-right">Costs</TableHead>
-                    <TableHead className="text-right">Converted BDT</TableHead>
-                    <TableHead className="text-right">% of total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {campaigns.map((c, i) => (
-                    <TableRow key={`${c.platformId}-${c.name}-${i}`}>
-                      <TableCell className="font-medium">{c.name}</TableCell>
-                      <TableCell>{c.platformName}</TableCell>
-                      <TableCell className="text-right tabular-nums">{c.count}</TableCell>
-                      <TableCell className="text-right tabular-nums">{formatBDT(c.total)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{c.percentage.toFixed(1)}%</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3} className="font-semibold">Grand total</TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">{formatBDT(grand)}</TableCell>
-                    <TableCell className="text-right font-semibold">100%</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            )}
-
-            {type === "currency" && (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Currency</TableHead>
-                    <TableHead className="text-right">Costs</TableHead>
-                    <TableHead className="text-right">Original total</TableHead>
-                    <TableHead className="text-right">Avg rate</TableHead>
-                    <TableHead className="text-right">Converted BDT</TableHead>
-                    <TableHead className="text-right">% of total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {currencies.map((c) => (
-                    <TableRow key={c.currency}>
-                      <TableCell className="font-medium">{c.currency}</TableCell>
-                      <TableCell className="text-right tabular-nums">{c.count}</TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {formatMoney(c.originalTotal, c.currency)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">{c.avgRate.toFixed(4)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{formatBDT(c.convertedTotal)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{c.percentage.toFixed(1)}%</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={4} className="font-semibold">Grand total (BDT)</TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">{formatBDT(grand)}</TableCell>
-                    <TableCell className="text-right font-semibold">100%</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+      {generated && (
+        <ReportDocument
+          reportName={REPORT_TYPES.find((t) => t.value === generated.type)!.label}
+          reportNumber={generated.reportNumber}
+          generatedAt={generated.generatedAt}
+          generatedBy={generated.generatedBy}
+          dateRangeLabel={generated.rangeLabel}
+        >
+          <MarketingReportSwitch report={generated} />
+        </ReportDocument>
       )}
     </div>
+  );
+}
+
+function MarketingReportSwitch({ report }: { report: Generated }) {
+  const { type, rows, platforms } = report;
+  const platformSummary = useMemo(() => buildPlatformSummary(rows, platforms), [rows, platforms]);
+  const campaigns = useMemo(() => buildCampaignSummary(rows, platforms), [rows, platforms]);
+  const currencies = useMemo(() => buildCurrencySummary(rows), [rows]);
+  const grand = sumBDT(rows);
+
+  if (rows.length === 0) return <EmptyReportNote />;
+
+  if (type === "summary") {
+    return (
+      <table className="report-table w-full border-collapse">
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className={th}>Platform</th>
+            <th className={th + " text-right"}>Costs</th>
+            <th className={th + " text-right"}>Converted BDT</th>
+            <th className={th + " text-right"}>% of total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {platformSummary.rows.map((p) => (
+            <tr key={p.id ?? "none"} className="border-b border-border">
+              <td className={td}>{p.name}</td>
+              <td className={num}>{p.count}</td>
+              <td className={num}>{formatBDT(p.total)}</td>
+              <td className={num}>{p.percentage.toFixed(1)}%</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-foreground/70 font-semibold">
+            <td className={td + " font-semibold"}>Grand Total</td>
+            <td className={num + " font-semibold"}>{rows.length}</td>
+            <td className={num + " font-semibold"}>{formatBDT(grand)}</td>
+            <td className={num + " font-semibold"}>100.0%</td>
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
+
+  if (type === "platform") {
+    return (
+      <table className="report-table w-full border-collapse">
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className={th}>Platform</th>
+            <th className={th}>Currencies</th>
+            <th className={th + " text-right"}>Costs</th>
+            <th className={th + " text-right"}>Converted BDT</th>
+            <th className={th + " text-right"}>% of total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {platformSummary.rows.map((p) => (
+            <tr key={p.id ?? "none"} className="border-b border-border">
+              <td className={td}>{p.name}</td>
+              <td className={td}>{p.currencies.join(", ")}</td>
+              <td className={num}>{p.count}</td>
+              <td className={num}>{formatBDT(p.total)}</td>
+              <td className={num}>{p.percentage.toFixed(1)}%</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-foreground/70 font-semibold">
+            <td className={td + " font-semibold"} colSpan={3}>Grand Total</td>
+            <td className={num + " font-semibold"}>{formatBDT(grand)}</td>
+            <td className={num + " font-semibold"}>100.0%</td>
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
+
+  if (type === "campaign") {
+    return (
+      <table className="report-table w-full border-collapse">
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className={th}>Campaign</th>
+            <th className={th}>Platform</th>
+            <th className={th + " text-right"}>Costs</th>
+            <th className={th + " text-right"}>Converted BDT</th>
+            <th className={th + " text-right"}>% of total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {campaigns.map((c, i) => (
+            <tr key={`${c.platformId}-${c.name}-${i}`} className="border-b border-border break-inside-avoid">
+              <td className={td}>{c.name}</td>
+              <td className={td}>{c.platformName}</td>
+              <td className={num}>{c.count}</td>
+              <td className={num}>{formatBDT(c.total)}</td>
+              <td className={num}>{c.percentage.toFixed(1)}%</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-foreground/70 font-semibold">
+            <td className={td + " font-semibold"} colSpan={3}>Grand Total</td>
+            <td className={num + " font-semibold"}>{formatBDT(grand)}</td>
+            <td className={num + " font-semibold"}>100.0%</td>
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
+
+  return (
+    <table className="report-table w-full border-collapse">
+      <thead>
+        <tr className="border-b-2 border-border">
+          <th className={th}>Currency</th>
+          <th className={th + " text-right"}>Costs</th>
+          <th className={th + " text-right"}>Original total</th>
+          <th className={th + " text-right"}>Avg rate</th>
+          <th className={th + " text-right"}>Converted BDT</th>
+          <th className={th + " text-right"}>% of total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {currencies.map((c) => (
+          <tr key={c.currency} className="border-b border-border">
+            <td className={td}>{c.currency}</td>
+            <td className={num}>{c.count}</td>
+            <td className={num}>{formatMoney(c.originalTotal, c.currency)}</td>
+            <td className={num}>{c.avgRate.toFixed(4)}</td>
+            <td className={num}>{formatBDT(c.convertedTotal)}</td>
+            <td className={num}>{c.percentage.toFixed(1)}%</td>
+          </tr>
+        ))}
+      </tbody>
+      <tfoot>
+        <tr className="border-t-2 border-foreground/70 font-semibold">
+          <td className={td + " font-semibold"} colSpan={4}>Grand Total (BDT)</td>
+          <td className={num + " font-semibold"}>{formatBDT(grand)}</td>
+          <td className={num + " font-semibold"}>100.0%</td>
+        </tr>
+      </tfoot>
+    </table>
   );
 }
