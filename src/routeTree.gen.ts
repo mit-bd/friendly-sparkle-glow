@@ -21,6 +21,7 @@ import { Route as AuthenticatedMarketingRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
+import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
 import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
@@ -92,6 +93,12 @@ const AuthenticatedSettingsSignatoriesRoute =
     path: '/settings/signatories',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSettingsNotificationsRoute =
+  AuthenticatedSettingsNotificationsRouteImport.update({
+    id: '/settings/notifications',
+    path: '/settings/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsCompanyRoute =
   AuthenticatedSettingsCompanyRouteImport.update({
     id: '/settings/company',
@@ -159,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
@@ -180,6 +188,7 @@ export interface FileRoutesByTo {
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
 }
@@ -203,6 +212,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/reports/export-history'
     | '/reports/summary'
     | '/settings/company'
+    | '/settings/notifications'
     | '/settings/signatories'
     | '/expenses/'
   fileRoutesByTo: FileRoutesByTo
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/reports/export-history'
     | '/reports/summary'
     | '/settings/company'
+    | '/settings/notifications'
     | '/settings/signatories'
     | '/expenses'
   id:
@@ -269,6 +281,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/export-history'
     | '/_authenticated/reports/summary'
     | '/_authenticated/settings/company'
+    | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/signatories'
     | '/_authenticated/expenses/'
   fileRoutesById: FileRoutesById
@@ -366,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsSignatoriesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/settings/notifications': {
+      id: '/_authenticated/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/company': {
       id: '/_authenticated/settings/company'
       path: '/settings/company'
@@ -440,6 +460,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
   AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
   AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
+  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsSignatoriesRoute: typeof AuthenticatedSettingsSignatoriesRoute
   AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
 }
@@ -460,6 +481,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedReportsExportHistoryRoute,
   AuthenticatedReportsSummaryRoute: AuthenticatedReportsSummaryRoute,
   AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
+  AuthenticatedSettingsNotificationsRoute:
+    AuthenticatedSettingsNotificationsRoute,
   AuthenticatedSettingsSignatoriesRoute: AuthenticatedSettingsSignatoriesRoute,
   AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
 }
