@@ -33,6 +33,7 @@ import { Route as AuthenticatedSettingsMarketingRouteImport } from './routes/_au
 import { Route as AuthenticatedSettingsLossRouteImport } from './routes/_authenticated/settings.loss'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedReturnsReportsRouteImport } from './routes/_authenticated/returns.reports'
+import { Route as AuthenticatedReturnsPendingRouteImport } from './routes/_authenticated/returns.pending'
 import { Route as AuthenticatedReturnsAddRouteImport } from './routes/_authenticated/returns.add'
 import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
 import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
@@ -45,6 +46,7 @@ import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_a
 import { Route as AuthenticatedExpensesAddRouteImport } from './routes/_authenticated/expenses.add'
 import { Route as AuthenticatedExpensesIdRouteImport } from './routes/_authenticated/expenses.$id'
 import { Route as AuthenticatedDamagesReportsRouteImport } from './routes/_authenticated/damages.reports'
+import { Route as AuthenticatedDamagesAddRouteImport } from './routes/_authenticated/damages.add'
 import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
 import { Route as AuthenticatedDashboardSubcategoryIdRouteImport } from './routes/_authenticated/dashboard.subcategory.$id'
 import { Route as AuthenticatedDashboardCategoryIdRouteImport } from './routes/_authenticated/dashboard.category.$id'
@@ -180,6 +182,12 @@ const AuthenticatedReturnsReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedReturnsRoute,
   } as any)
+const AuthenticatedReturnsPendingRoute =
+  AuthenticatedReturnsPendingRouteImport.update({
+    id: '/pending',
+    path: '/pending',
+    getParentRoute: () => AuthenticatedReturnsRoute,
+  } as any)
 const AuthenticatedReturnsAddRoute = AuthenticatedReturnsAddRouteImport.update({
   id: '/add',
   path: '/add',
@@ -250,6 +258,11 @@ const AuthenticatedDamagesReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedDamagesRoute,
   } as any)
+const AuthenticatedDamagesAddRoute = AuthenticatedDamagesAddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => AuthenticatedDamagesRoute,
+} as any)
 const AuthenticatedMarketingPlatformIdRoute =
   AuthenticatedMarketingPlatformIdRouteImport.update({
     id: '/platform/$id',
@@ -282,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/users': typeof AuthenticatedUsersRoute
+  '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/reports': typeof AuthenticatedDamagesReportsRoute
   '/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/expenses/add': typeof AuthenticatedExpensesAddRoute
@@ -294,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/returns/add': typeof AuthenticatedReturnsAddRoute
+  '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
@@ -319,6 +334,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
+  '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/reports': typeof AuthenticatedDamagesReportsRoute
   '/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/expenses/add': typeof AuthenticatedExpensesAddRoute
@@ -331,6 +347,7 @@ export interface FileRoutesByTo {
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/returns/add': typeof AuthenticatedReturnsAddRoute
+  '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
@@ -361,6 +378,7 @@ export interface FileRoutesById {
   '/_authenticated/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/damages/add': typeof AuthenticatedDamagesAddRoute
   '/_authenticated/damages/reports': typeof AuthenticatedDamagesReportsRoute
   '/_authenticated/expenses/$id': typeof AuthenticatedExpensesIdRoute
   '/_authenticated/expenses/add': typeof AuthenticatedExpensesAddRoute
@@ -373,6 +391,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/_authenticated/returns/add': typeof AuthenticatedReturnsAddRoute
+  '/_authenticated/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/_authenticated/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/_authenticated/settings/loss': typeof AuthenticatedSettingsLossRoute
@@ -403,6 +422,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/returns'
     | '/users'
+    | '/damages/add'
     | '/damages/reports'
     | '/expenses/$id'
     | '/expenses/add'
@@ -415,6 +435,7 @@ export interface FileRouteTypes {
     | '/reports/export-history'
     | '/reports/summary'
     | '/returns/add'
+    | '/returns/pending'
     | '/returns/reports'
     | '/settings/company'
     | '/settings/loss'
@@ -440,6 +461,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/users'
     | '/'
+    | '/damages/add'
     | '/damages/reports'
     | '/expenses/$id'
     | '/expenses/add'
@@ -452,6 +474,7 @@ export interface FileRouteTypes {
     | '/reports/export-history'
     | '/reports/summary'
     | '/returns/add'
+    | '/returns/pending'
     | '/returns/reports'
     | '/settings/company'
     | '/settings/loss'
@@ -481,6 +504,7 @@ export interface FileRouteTypes {
     | '/_authenticated/returns'
     | '/_authenticated/users'
     | '/_authenticated/'
+    | '/_authenticated/damages/add'
     | '/_authenticated/damages/reports'
     | '/_authenticated/expenses/$id'
     | '/_authenticated/expenses/add'
@@ -493,6 +517,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/export-history'
     | '/_authenticated/reports/summary'
     | '/_authenticated/returns/add'
+    | '/_authenticated/returns/pending'
     | '/_authenticated/returns/reports'
     | '/_authenticated/settings/company'
     | '/_authenticated/settings/loss'
@@ -686,6 +711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReturnsReportsRouteImport
       parentRoute: typeof AuthenticatedReturnsRoute
     }
+    '/_authenticated/returns/pending': {
+      id: '/_authenticated/returns/pending'
+      path: '/pending'
+      fullPath: '/returns/pending'
+      preLoaderRoute: typeof AuthenticatedReturnsPendingRouteImport
+      parentRoute: typeof AuthenticatedReturnsRoute
+    }
     '/_authenticated/returns/add': {
       id: '/_authenticated/returns/add'
       path: '/add'
@@ -770,6 +802,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDamagesReportsRouteImport
       parentRoute: typeof AuthenticatedDamagesRoute
     }
+    '/_authenticated/damages/add': {
+      id: '/_authenticated/damages/add'
+      path: '/add'
+      fullPath: '/damages/add'
+      preLoaderRoute: typeof AuthenticatedDamagesAddRouteImport
+      parentRoute: typeof AuthenticatedDamagesRoute
+    }
     '/_authenticated/marketing/platform/$id': {
       id: '/_authenticated/marketing/platform/$id'
       path: '/platform/$id'
@@ -795,11 +834,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedDamagesRouteChildren {
+  AuthenticatedDamagesAddRoute: typeof AuthenticatedDamagesAddRoute
   AuthenticatedDamagesReportsRoute: typeof AuthenticatedDamagesReportsRoute
   AuthenticatedDamagesIndexRoute: typeof AuthenticatedDamagesIndexRoute
 }
 
 const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
+  AuthenticatedDamagesAddRoute: AuthenticatedDamagesAddRoute,
   AuthenticatedDamagesReportsRoute: AuthenticatedDamagesReportsRoute,
   AuthenticatedDamagesIndexRoute: AuthenticatedDamagesIndexRoute,
 }
@@ -830,12 +871,14 @@ const AuthenticatedMarketingRouteWithChildren =
 
 interface AuthenticatedReturnsRouteChildren {
   AuthenticatedReturnsAddRoute: typeof AuthenticatedReturnsAddRoute
+  AuthenticatedReturnsPendingRoute: typeof AuthenticatedReturnsPendingRoute
   AuthenticatedReturnsReportsRoute: typeof AuthenticatedReturnsReportsRoute
   AuthenticatedReturnsIndexRoute: typeof AuthenticatedReturnsIndexRoute
 }
 
 const AuthenticatedReturnsRouteChildren: AuthenticatedReturnsRouteChildren = {
   AuthenticatedReturnsAddRoute: AuthenticatedReturnsAddRoute,
+  AuthenticatedReturnsPendingRoute: AuthenticatedReturnsPendingRoute,
   AuthenticatedReturnsReportsRoute: AuthenticatedReturnsReportsRoute,
   AuthenticatedReturnsIndexRoute: AuthenticatedReturnsIndexRoute,
 }
@@ -916,3 +959,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
