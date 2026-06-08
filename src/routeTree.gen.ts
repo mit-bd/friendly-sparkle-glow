@@ -33,6 +33,7 @@ import { Route as AuthenticatedSettingsMarketingRouteImport } from './routes/_au
 import { Route as AuthenticatedSettingsLossRouteImport } from './routes/_authenticated/settings.loss'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedReturnsReportsRouteImport } from './routes/_authenticated/returns.reports'
+import { Route as AuthenticatedReturnsAddRouteImport } from './routes/_authenticated/returns.add'
 import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
 import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
 import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
@@ -179,6 +180,11 @@ const AuthenticatedReturnsReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedReturnsRoute,
   } as any)
+const AuthenticatedReturnsAddRoute = AuthenticatedReturnsAddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => AuthenticatedReturnsRoute,
+} as any)
 const AuthenticatedReportsSummaryRoute =
   AuthenticatedReportsSummaryRouteImport.update({
     id: '/reports/summary',
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/returns/add': typeof AuthenticatedReturnsAddRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/returns/add': typeof AuthenticatedReturnsAddRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
@@ -364,6 +372,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/_authenticated/returns/add': typeof AuthenticatedReturnsAddRoute
   '/_authenticated/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/_authenticated/settings/loss': typeof AuthenticatedSettingsLossRoute
@@ -405,6 +414,7 @@ export interface FileRouteTypes {
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
+    | '/returns/add'
     | '/returns/reports'
     | '/settings/company'
     | '/settings/loss'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
+    | '/returns/add'
     | '/returns/reports'
     | '/settings/company'
     | '/settings/loss'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/detailed'
     | '/_authenticated/reports/export-history'
     | '/_authenticated/reports/summary'
+    | '/_authenticated/returns/add'
     | '/_authenticated/returns/reports'
     | '/_authenticated/settings/company'
     | '/_authenticated/settings/loss'
@@ -674,6 +686,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReturnsReportsRouteImport
       parentRoute: typeof AuthenticatedReturnsRoute
     }
+    '/_authenticated/returns/add': {
+      id: '/_authenticated/returns/add'
+      path: '/add'
+      fullPath: '/returns/add'
+      preLoaderRoute: typeof AuthenticatedReturnsAddRouteImport
+      parentRoute: typeof AuthenticatedReturnsRoute
+    }
     '/_authenticated/reports/summary': {
       id: '/_authenticated/reports/summary'
       path: '/reports/summary'
@@ -810,11 +829,13 @@ const AuthenticatedMarketingRouteWithChildren =
   )
 
 interface AuthenticatedReturnsRouteChildren {
+  AuthenticatedReturnsAddRoute: typeof AuthenticatedReturnsAddRoute
   AuthenticatedReturnsReportsRoute: typeof AuthenticatedReturnsReportsRoute
   AuthenticatedReturnsIndexRoute: typeof AuthenticatedReturnsIndexRoute
 }
 
 const AuthenticatedReturnsRouteChildren: AuthenticatedReturnsRouteChildren = {
+  AuthenticatedReturnsAddRoute: AuthenticatedReturnsAddRoute,
   AuthenticatedReturnsReportsRoute: AuthenticatedReturnsReportsRoute,
   AuthenticatedReturnsIndexRoute: AuthenticatedReturnsIndexRoute,
 }
