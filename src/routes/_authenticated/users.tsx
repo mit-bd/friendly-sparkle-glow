@@ -261,6 +261,12 @@ function CreateUserDialog({
     try {
       await createUserFn({ data: { full_name: fullName, email, phone, password, role } });
       toast.success("User created.");
+      void logActivity({
+        action: "user_create",
+        entityType: "user",
+        entityLabel: fullName?.trim() || email,
+        metadata: { role },
+      });
       reset();
       onOpenChange(false);
       onCreated();
