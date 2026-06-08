@@ -93,6 +93,7 @@ function ReportsCenterPage() {
   const [selectSearch, setSelectSearch] = useState("");
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState<GeneratedReport | null>(null);
+  const [autoRan, setAutoRan] = useState(false);
 
   // Approved rows for the Selected Expenses picker (only loaded in that mode).
   const picker = useApprovedExpenses(range);
@@ -101,6 +102,61 @@ function ReportsCenterPage() {
   useEffect(() => {
     setGenerated(null);
   }, [reportType]);
+
+  // "Print Again / Download Again" from Export History: rebuild a report from
+  // URL params, reusing the original report number (no new archive entry).
+  useEffect(() => {
+    if (autoRan || !search.rnum || !search.type || !taxonomy.data) return;
+    setAutoRan(true);
+    const type = search.type as ReportType;
+    setReportType(type);
+    const cats = taxonomy.data.categories;
+    const subs = taxonomy.data.subcategories;
+    (async () => {
+      setGenerating(true);
+      try {
+        let rows: ReportExpense[];
+        let usedRange: DateRange | null = null;
+        if (type === "selected") {
+          const ids = (search.ids ?? "").split(",").filter(Boolean);
+          setSelectedIds(new Set(ids));
+          rows = await fetchApprovedByIds(ids);
+        } else if (search.from && search.to) {
+          usedRange = { from: search.from, to: search.to };
+          setPreset("custom");
+          setRange(usedRange);
+          rows = await fetchApprovedForReport(usedRange);
+          if (type === "marketing")
+            rows = filterByKeywords(rows, cats, subs, MARKETING_KEYWORDS);
+          if (type === "return_damage")
+            rows = filterByKeywords(rows, cats, subs, RETURN_DAMAGE_KEYWORDS);
+        } else {
+          rows = [];
+        }
+        const total = rows.reduce((a, r) => a + Number(r.amount || 0), 0);
+        const userNames = await fetchUserNames(
+          rows.map((r) => r.approved_by).filter(Boolean) as string[],
+        );
+        setGenerated({
+          type,
+          rows,
+          categories: cats,
+          subcategories: subs,
+          userNames,
+          total,
+          count: rows.length,
+          reportNumber: search.rnum!,
+          generatedAt: formatDateTime(search.gen ?? new Date().toISOString()),
+          generatedBy: search.by || "—",
+          rangeLabel: usedRange ? formatRangeLabel(usedRange) : "Selected expenses",
+        });
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Failed to load report.");
+      } finally {
+        setGenerating(false);
+      }
+    })();
+  }, [autoRan, search, taxonomy.data]);
 
   if (!canAccessModule("reports")) {
     return (
