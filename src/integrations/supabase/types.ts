@@ -238,6 +238,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_company_branding: {
+        Args: never
+        Returns: {
+          address: string
+          description: string
+          email: string
+          facebook: string
+          id: string
+          logo_url: string
+          mobile: string
+          name: string
+          website: string
+          whatsapp: string
+        }[]
+      }
       has_permission: {
         Args: { _action: string; _module: string; _user_id: string }
         Returns: boolean
