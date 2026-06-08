@@ -52,6 +52,7 @@ import {
 } from "@/lib/reports";
 import type { ExpenseCategory, ExpenseSubcategory } from "@/lib/expenses";
 import { fetchUserNames, formatCurrency, formatDate, formatDateTime } from "@/lib/expenses";
+import { logActivity } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/reports/summary")({
   head: () => ({ meta: [{ title: "Reports Center — Motion IT BD" }] }),
