@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUploader } from "@/components/ImageUploader";
 import { RoleBadge } from "@/components/RoleBadge";
+import { ChangePasswordCard } from "@/components/ChangePasswordCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 
@@ -92,6 +93,8 @@ function ProfilePage() {
           </form>
         </CardContent>
       </Card>
+
+      <ChangePasswordCard />
     </div>
   );
 }
