@@ -279,7 +279,7 @@ function AuditPage() {
         actions={
           canExport && (
             <div className="flex gap-2 print:hidden">
-              <Button variant="outline" onClick={handlePrint}>
+              <Button variant="outline" onClick={handlePrint} disabled={busy}>
                 <Printer className="h-4 w-4" />
                 Print
               </Button>
