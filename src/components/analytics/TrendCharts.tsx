@@ -1,14 +1,5 @@
 import { TrendingUp } from "lucide-react";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,8 +39,7 @@ export function TrendCharts({ daily, monthly }: Props) {
             </TabsList>
             <TabsContent value="daily" className="mt-4">
               <ChartContainer config={{}} className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={daily} margin={{ left: 4, right: 8, top: 8 }}>
+                <AreaChart data={daily} margin={{ left: 4, right: 8, top: 8 }}>
                     <defs>
                       <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="var(--brand-from)" stopOpacity={0.4} />
@@ -83,14 +73,12 @@ export function TrendCharts({ daily, monthly }: Props) {
                       strokeWidth={2}
                       fill="url(#trendFill)"
                     />
-                  </AreaChart>
-                </ResponsiveContainer>
+                </AreaChart>
               </ChartContainer>
             </TabsContent>
             <TabsContent value="monthly" className="mt-4">
               <ChartContainer config={{}} className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthly} margin={{ left: 4, right: 8, top: 8 }}>
+                <BarChart data={monthly} margin={{ left: 4, right: 8, top: 8 }}>
                     <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.4} />
                     <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
                     <YAxis
@@ -106,8 +94,7 @@ export function TrendCharts({ daily, monthly }: Props) {
                       }
                     />
                     <Bar dataKey="total" radius={4} fill="var(--brand-from)" />
-                  </BarChart>
-                </ResponsiveContainer>
+                </BarChart>
               </ChartContainer>
             </TabsContent>
           </Tabs>
