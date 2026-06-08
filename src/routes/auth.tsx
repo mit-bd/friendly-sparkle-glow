@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { getPublicBranding } from "@/lib/branding.functions";
+import { logActivity } from "@/lib/audit";
 import { BrandMark } from "@/components/BrandMark";
 import { APP_NAME, APP_TAGLINE } from "@/lib/modules";
 import brandBg from "@/assets/brand/brand-bg.jpg";
