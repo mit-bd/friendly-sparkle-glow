@@ -30,6 +30,7 @@ import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_auth
 import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
 import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
 import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
+import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
 import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
@@ -152,6 +153,12 @@ const AuthenticatedReportsDetailedRoute =
     path: '/reports/detailed',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedMarketingAddRoute =
+  AuthenticatedMarketingAddRouteImport.update({
+    id: '/add',
+    path: '/add',
+    getParentRoute: () => AuthenticatedMarketingRoute,
+  } as any)
 const AuthenticatedExpensesRecycleBinRoute =
   AuthenticatedExpensesRecycleBinRouteImport.update({
     id: '/expenses/recycle-bin',
@@ -211,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
@@ -239,6 +247,7 @@ export interface FileRoutesByTo {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
@@ -270,6 +279,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/marketing/add'
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/marketing/add'
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
@@ -359,6 +371,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/categories'
     | '/_authenticated/expenses/pending'
     | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/marketing/add'
     | '/_authenticated/reports/detailed'
     | '/_authenticated/reports/export-history'
     | '/_authenticated/reports/summary'
@@ -528,6 +541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsDetailedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/marketing/add': {
+      id: '/_authenticated/marketing/add'
+      path: '/add'
+      fullPath: '/marketing/add'
+      preLoaderRoute: typeof AuthenticatedMarketingAddRouteImport
+      parentRoute: typeof AuthenticatedMarketingRoute
+    }
     '/_authenticated/expenses/recycle-bin': {
       id: '/_authenticated/expenses/recycle-bin'
       path: '/expenses/recycle-bin'
@@ -581,11 +601,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedMarketingRouteChildren {
+  AuthenticatedMarketingAddRoute: typeof AuthenticatedMarketingAddRoute
   AuthenticatedMarketingIndexRoute: typeof AuthenticatedMarketingIndexRoute
 }
 
 const AuthenticatedMarketingRouteChildren: AuthenticatedMarketingRouteChildren =
   {
+    AuthenticatedMarketingAddRoute: AuthenticatedMarketingAddRoute,
     AuthenticatedMarketingIndexRoute: AuthenticatedMarketingIndexRoute,
   }
 
@@ -661,3 +683,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
