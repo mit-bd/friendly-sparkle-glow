@@ -33,6 +33,8 @@ import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_auth
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
 import { Route as AuthenticatedExpensesAddRouteImport } from './routes/_authenticated/expenses.add'
 import { Route as AuthenticatedExpensesIdRouteImport } from './routes/_authenticated/expenses.$id'
+import { Route as AuthenticatedDashboardSubcategoryIdRouteImport } from './routes/_authenticated/dashboard.subcategory.$id'
+import { Route as AuthenticatedDashboardCategoryIdRouteImport } from './routes/_authenticated/dashboard.category.$id'
 
 const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
   id: '/update-password',
@@ -166,6 +168,18 @@ const AuthenticatedExpensesIdRoute = AuthenticatedExpensesIdRouteImport.update({
   path: '/expenses/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDashboardSubcategoryIdRoute =
+  AuthenticatedDashboardSubcategoryIdRouteImport.update({
+    id: '/dashboard/subcategory/$id',
+    path: '/dashboard/subcategory/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDashboardCategoryIdRoute =
+  AuthenticatedDashboardCategoryIdRouteImport.update({
+    id: '/dashboard/category/$id',
+    path: '/dashboard/category/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -191,6 +205,8 @@ export interface FileRoutesByFullPath {
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
+  '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
@@ -216,6 +232,8 @@ export interface FileRoutesByTo {
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
+  '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
+  '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -243,6 +261,8 @@ export interface FileRoutesById {
   '/_authenticated/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
+  '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -270,6 +290,8 @@ export interface FileRouteTypes {
     | '/settings/permissions'
     | '/settings/signatories'
     | '/expenses/'
+    | '/dashboard/category/$id'
+    | '/dashboard/subcategory/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
@@ -295,6 +317,8 @@ export interface FileRouteTypes {
     | '/settings/permissions'
     | '/settings/signatories'
     | '/expenses'
+    | '/dashboard/category/$id'
+    | '/dashboard/subcategory/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -321,6 +345,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/permissions'
     | '/_authenticated/settings/signatories'
     | '/_authenticated/expenses/'
+    | '/_authenticated/dashboard/category/$id'
+    | '/_authenticated/dashboard/subcategory/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -500,6 +526,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExpensesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/dashboard/subcategory/$id': {
+      id: '/_authenticated/dashboard/subcategory/$id'
+      path: '/dashboard/subcategory/$id'
+      fullPath: '/dashboard/subcategory/$id'
+      preLoaderRoute: typeof AuthenticatedDashboardSubcategoryIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/category/$id': {
+      id: '/_authenticated/dashboard/category/$id'
+      path: '/dashboard/category/$id'
+      fullPath: '/dashboard/category/$id'
+      preLoaderRoute: typeof AuthenticatedDashboardCategoryIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -524,6 +564,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsPermissionsRoute: typeof AuthenticatedSettingsPermissionsRoute
   AuthenticatedSettingsSignatoriesRoute: typeof AuthenticatedSettingsSignatoriesRoute
   AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
+  AuthenticatedDashboardCategoryIdRoute: typeof AuthenticatedDashboardCategoryIdRoute
+  AuthenticatedDashboardSubcategoryIdRoute: typeof AuthenticatedDashboardSubcategoryIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -549,6 +591,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsPermissionsRoute: AuthenticatedSettingsPermissionsRoute,
   AuthenticatedSettingsSignatoriesRoute: AuthenticatedSettingsSignatoriesRoute,
   AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
+  AuthenticatedDashboardCategoryIdRoute: AuthenticatedDashboardCategoryIdRoute,
+  AuthenticatedDashboardSubcategoryIdRoute:
+    AuthenticatedDashboardSubcategoryIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
