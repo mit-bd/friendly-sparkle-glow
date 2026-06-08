@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   Receipt,
   Clock,
@@ -12,20 +13,16 @@ import {
 
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { ROLE_LABELS } from "@/lib/modules";
+import { formatCurrency } from "@/lib/expenses";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({ meta: [{ title: "Dashboard — Motion IT BD" }] }),
   component: Dashboard,
 });
-
-const STATS = [
-  { label: "Total Expenses", value: "—", hint: "All recorded expenses", icon: Receipt },
-  { label: "Pending Approvals", value: "—", hint: "Awaiting review", icon: Clock },
-  { label: "Spend This Month", value: "—", hint: "Current period", icon: Wallet },
-  { label: "Active Users", value: "—", hint: "Across all roles", icon: Users },
-];
 
 const SETUP_STEPS = [
   { label: "Complete the company profile", to: "/settings/company", icon: Building2 },
@@ -34,9 +31,89 @@ const SETUP_STEPS = [
   { label: "Invite your team", to: "/users", icon: Users },
 ];
 
+interface Stats {
+  approvedTotal: number;
+  pendingCount: number;
+  monthSpend: number;
+  activeUsers: number;
+}
+
+const PENDING_STATUSES = ["submitted", "pending_approval", "revision_requested"];
+
 function Dashboard() {
   const { profile, primaryRole, isAdmin } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] || "there";
+  const [stats, setStats] = useState<Stats | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    async function loadStats() {
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+        .toISOString()
+        .slice(0, 10);
+
+      // Only APPROVED expenses count toward financial totals.
+      const [{ data: approved }, { count: pending }, { data: monthRows }, { count: users }] =
+        await Promise.all([
+          supabase.from("expenses").select("amount").eq("status", "approved"),
+          supabase
+            .from("expenses")
+            .select("id", { count: "exact", head: true })
+            .in("status", PENDING_STATUSES as never),
+          supabase
+            .from("expenses")
+            .select("amount")
+            .eq("status", "approved")
+            .gte("expense_date", monthStart),
+          supabase
+            .from("profiles")
+            .select("id", { count: "exact", head: true })
+            .eq("status", "active"),
+        ]);
+
+      if (!active) return;
+      const sum = (rows: { amount: number }[] | null) =>
+        (rows ?? []).reduce((acc, r) => acc + Number(r.amount || 0), 0);
+      setStats({
+        approvedTotal: sum(approved as { amount: number }[]),
+        pendingCount: pending ?? 0,
+        monthSpend: sum(monthRows as { amount: number }[]),
+        activeUsers: users ?? 0,
+      });
+    }
+    loadStats().catch(() => active && setStats({ approvedTotal: 0, pendingCount: 0, monthSpend: 0, activeUsers: 0 }));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const cards = [
+    {
+      label: "Approved Expenses",
+      value: stats ? formatCurrency(stats.approvedTotal) : null,
+      hint: "Official company expenses",
+      icon: Receipt,
+    },
+    {
+      label: "Pending Approvals",
+      value: stats ? String(stats.pendingCount) : null,
+      hint: "Awaiting review",
+      icon: Clock,
+    },
+    {
+      label: "Spend This Month",
+      value: stats ? formatCurrency(stats.monthSpend) : null,
+      hint: "Approved, current period",
+      icon: Wallet,
+    },
+    {
+      label: "Active Users",
+      value: stats ? String(stats.activeUsers) : null,
+      hint: "Across all roles",
+      icon: Users,
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -50,7 +127,7 @@ function Dashboard() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STATS.map((s) => (
+        {cards.map((s) => (
           <Card key={s.label} className="relative overflow-hidden">
             <span className="absolute inset-x-0 top-0 h-1 bg-brand-gradient" aria-hidden />
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -62,7 +139,11 @@ function Dashboard() {
               </span>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-semibold tracking-tight">{s.value}</div>
+              {s.value === null ? (
+                <Skeleton className="h-9 w-24" />
+              ) : (
+                <div className="text-3xl font-semibold tracking-tight tabular-nums">{s.value}</div>
+              )}
               <p className="mt-1 text-xs text-muted-foreground">{s.hint}</p>
             </CardContent>
           </Card>

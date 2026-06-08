@@ -4,8 +4,6 @@ import {
   ArrowLeft,
   Loader2,
   Pencil,
-  CheckCircle2,
-  XCircle,
   Trash2,
   FileText,
   Download,
@@ -19,6 +17,9 @@ import { NoAccess } from "@/components/NoAccess";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AttachmentUploader, type AttachmentValue } from "@/components/AttachmentUploader";
 import { ExpenseFields, type ExpenseFormValues } from "@/components/expenses/ExpenseFields";
+import { ApprovalPanel } from "@/components/expenses/ApprovalPanel";
+import { ExpenseTimeline } from "@/components/expenses/ExpenseTimeline";
+import { ExpenseDiscussion } from "@/components/expenses/ExpenseDiscussion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -43,6 +44,11 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { getDownloadUrl, getSignedUrl, removeFile } from "@/lib/storage";
+import {
+  fetchExpenseEvents,
+  logExpenseEvent,
+  type ExpenseEvent,
+} from "@/lib/approvals";
 import {
   ATTACHMENT_BUCKET,
   fetchCategories,
@@ -72,6 +78,7 @@ function ExpenseDetailsPage() {
   const [attachments, setAttachments] = useState<ExpenseAttachment[]>([]);
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [subs, setSubs] = useState<ExpenseSubcategory[]>([]);
+  const [events, setEvents] = useState<ExpenseEvent[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -87,7 +94,7 @@ function ExpenseDetailsPage() {
     }
     const exp = data as Expense;
     setExpense(exp);
-    const [cats, subcats, atts] = await Promise.all([
+    const [cats, subcats, atts, evts] = await Promise.all([
       fetchCategories(true),
       fetchSubcategories(true),
       supabase
@@ -95,11 +102,21 @@ function ExpenseDetailsPage() {
         .select("*")
         .eq("expense_id", id)
         .order("created_at"),
+      fetchExpenseEvents(id).catch(() => [] as ExpenseEvent[]),
     ]);
     setCategories(cats);
     setSubs(subcats);
     setAttachments((atts.data ?? []) as ExpenseAttachment[]);
-    setNames(await fetchUserNames([exp.created_by ?? "", exp.updated_by ?? ""]));
+    setEvents(evts);
+    const ids = [
+      exp.created_by,
+      exp.updated_by,
+      exp.submitted_by,
+      exp.approved_by,
+      exp.rejected_by,
+      ...evts.map((e) => e.actor_id),
+    ].filter(Boolean) as string[];
+    setNames(await fetchUserNames(ids));
     setLoading(false);
   }, [id]);
 
@@ -149,19 +166,42 @@ function ExpenseDetailsPage() {
   }
 
   const isOwner = expense.created_by === user?.id;
-  const canEdit = isAdmin || (isOwner && can("expenses", "edit"));
   const canApprove = isAdmin || can("expenses", "approve");
+  const isLocked = expense.status === "approved";
+  // Approved expenses are locked: only admins / approvers can modify them.
+  const canEdit = isLocked
+    ? canApprove
+    : isAdmin || (isOwner && can("expenses", "edit"));
+  const canComment = isAdmin || can("expenses", "view") || isOwner;
+  const isOpenForReview = ["submitted", "pending_approval", "revision_requested"].includes(
+    expense.status,
+  );
   const catName = expense.category_id ? categories.find((c) => c.id === expense.category_id)?.name : null;
   const subName = expense.subcategory_id ? subs.find((s) => s.id === expense.subcategory_id)?.name : null;
 
   async function setStatus(status: Expense["status"]) {
     setBusy(true);
+    const from = expense!.status;
     const { error } = await supabase.from("expenses").update({ status }).eq("id", expense!.id);
-    setBusy(false);
     if (error) {
+      setBusy(false);
       toast.error(error.message);
       return;
     }
+    if (user) {
+      try {
+        await logExpenseEvent({
+          expenseId: expense!.id,
+          actorId: user.id,
+          action: status === "deleted" ? "deleted" : "updated",
+          fromStatus: from,
+          toStatus: status,
+        });
+      } catch {
+        /* best-effort history */
+      }
+    }
+    setBusy(false);
     toast.success("Status updated.");
     load();
   }
@@ -224,25 +264,13 @@ function ExpenseDetailsPage() {
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">Current status</span>
             <StatusBadge status={expense.status} />
+            {isLocked && (
+              <span className="text-xs text-muted-foreground">· Locked after approval</span>
+            )}
           </div>
           <div className="flex flex-wrap gap-2">
-            {canApprove && !["approved", "rejected", "deleted"].includes(expense.status) && (
-              <>
-                <Button size="sm" disabled={busy} onClick={() => setStatus("approved")}>
-                  <CheckCircle2 className="h-4 w-4" />
-                  Approve
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={busy}
-                  onClick={() => setStatus("rejected")}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <XCircle className="h-4 w-4" />
-                  Reject
-                </Button>
-              </>
+            {canApprove && isOpenForReview && (
+              <ApprovalPanel expense={expense} onDone={load} />
             )}
             {canEdit && expense.status !== "deleted" && (
               <AlertDialog>
@@ -312,6 +340,24 @@ function ExpenseDetailsPage() {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Approval history</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ExpenseTimeline events={events} names={names} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Discussion</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ExpenseDiscussion expenseId={expense.id} names={names} canComment={canComment} />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6">
@@ -339,6 +385,29 @@ function ExpenseDetailsPage() {
             <CardContent className="space-y-4 text-sm">
               <Field label="Created by" value={expense.created_by ? names[expense.created_by] ?? "—" : "—"} />
               <Field label="Created date" value={formatDateTime(expense.created_at)} />
+              <Field
+                label="Submitted by"
+                value={expense.submitted_by ? names[expense.submitted_by] ?? "—" : "—"}
+              />
+              <Field label="Submitted at" value={formatDateTime(expense.submitted_at)} />
+              {expense.approved_at && (
+                <>
+                  <Field
+                    label="Approved by"
+                    value={expense.approved_by ? names[expense.approved_by] ?? "—" : "—"}
+                  />
+                  <Field label="Approved at" value={formatDateTime(expense.approved_at)} />
+                </>
+              )}
+              {expense.rejected_at && (
+                <>
+                  <Field
+                    label="Rejected by"
+                    value={expense.rejected_by ? names[expense.rejected_by] ?? "—" : "—"}
+                  />
+                  <Field label="Rejected at" value={formatDateTime(expense.rejected_at)} />
+                </>
+              )}
               <Field label="Last updated by" value={expense.updated_by ? names[expense.updated_by] ?? "—" : "—"} />
               <Field label="Last updated date" value={formatDateTime(expense.updated_at)} />
             </CardContent>
@@ -450,6 +519,7 @@ function EditExpenseDialog({
   subcategories: ExpenseSubcategory[];
   onSaved: () => void;
 }) {
+  const { user } = useAuth();
   const [form, setForm] = useState<ExpenseFormValues>({
     expense_date: expense.expense_date,
     category_id: expense.category_id ?? "",
@@ -499,11 +569,26 @@ function EditExpenseDialog({
         status: form.status,
       })
       .eq("id", expense.id);
-    setSaving(false);
     if (error) {
+      setSaving(false);
       toast.error(error.message);
       return;
     }
+    if (user) {
+      try {
+        await logExpenseEvent({
+          expenseId: expense.id,
+          actorId: user.id,
+          action: "updated",
+          fromStatus: expense.status,
+          toStatus: form.status,
+          notes: form.status !== expense.status ? `Status changed to ${form.status.replace("_", " ")}.` : null,
+        });
+      } catch {
+        /* best-effort history */
+      }
+    }
+    setSaving(false);
     toast.success("Expense updated.");
     onSaved();
   }

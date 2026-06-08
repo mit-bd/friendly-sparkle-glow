@@ -148,6 +148,38 @@ export type Database = {
         }
         Relationships: []
       }
+      expense_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          expense_id: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          expense_id: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          expense_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_comments_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expense_counters: {
         Row: {
           last_seq: number
@@ -162,6 +194,47 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      expense_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          expense_id: string
+          from_status: Database["public"]["Enums"]["expense_status"] | null
+          id: string
+          notes: string | null
+          to_status: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          expense_id: string
+          from_status?: Database["public"]["Enums"]["expense_status"] | null
+          id?: string
+          notes?: string | null
+          to_status?: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          expense_id?: string
+          from_status?: Database["public"]["Enums"]["expense_status"] | null
+          id?: string
+          notes?: string | null
+          to_status?: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_events_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       expense_subcategories: {
         Row: {
@@ -210,6 +283,8 @@ export type Database = {
       expenses: {
         Row: {
           amount: number
+          approved_at: string | null
+          approved_by: string | null
           category_id: string | null
           created_at: string
           created_by: string | null
@@ -218,13 +293,19 @@ export type Database = {
           expense_number: string
           id: string
           notes: string | null
+          rejected_at: string | null
+          rejected_by: string | null
           status: Database["public"]["Enums"]["expense_status"]
           subcategory_id: string | null
+          submitted_at: string | null
+          submitted_by: string | null
           updated_at: string
           updated_by: string | null
         }
         Insert: {
           amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
           category_id?: string | null
           created_at?: string
           created_by?: string | null
@@ -233,13 +314,19 @@ export type Database = {
           expense_number: string
           id?: string
           notes?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
           status?: Database["public"]["Enums"]["expense_status"]
           subcategory_id?: string | null
+          submitted_at?: string | null
+          submitted_by?: string | null
           updated_at?: string
           updated_by?: string | null
         }
         Update: {
           amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
           category_id?: string | null
           created_at?: string
           created_by?: string | null
@@ -248,8 +335,12 @@ export type Database = {
           expense_number?: string
           id?: string
           notes?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
           status?: Database["public"]["Enums"]["expense_status"]
           subcategory_id?: string | null
+          submitted_at?: string | null
+          submitted_by?: string | null
           updated_at?: string
           updated_by?: string | null
         }
@@ -293,6 +384,47 @@ export type Database = {
           updated_by?: string | null
         }
         Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          expense_id: string | null
+          id: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          expense_id?: string | null
+          id?: string
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          expense_id?: string | null
+          id?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -472,6 +604,7 @@ export type Database = {
         | "approved"
         | "rejected"
         | "deleted"
+        | "revision_requested"
       signatory_type: "accountant" | "manager" | "ceo"
       user_status: "active" | "inactive"
     }
@@ -609,6 +742,7 @@ export const Constants = {
         "approved",
         "rejected",
         "deleted",
+        "revision_requested",
       ],
       signatory_type: ["accountant", "manager", "ceo"],
       user_status: ["active", "inactive"],

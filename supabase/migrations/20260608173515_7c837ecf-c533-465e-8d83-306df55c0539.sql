@@ -1,0 +1,1 @@
+ALTER TYPE public.expense_status ADD VALUE IF NOT EXISTS 'revision_requested';
