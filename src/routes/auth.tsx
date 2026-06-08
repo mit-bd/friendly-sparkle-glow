@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getPublicBranding } from "@/lib/branding.functions";
 import { BrandMark } from "@/components/BrandMark";
 import { APP_NAME, APP_TAGLINE } from "@/lib/modules";
+import brandBg from "@/assets/brand/brand-bg.jpg";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -46,23 +47,29 @@ function AuthPage() {
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm space-y-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg shadow-brand">
-              {branding.logoUrl ? (
+          {branding.logoUrl ? (
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-muted shadow-sm">
                 <img
                   src={branding.logoUrl}
                   alt={companyName}
-                  className="max-h-full max-w-full object-contain bg-muted p-1"
+                  className="max-h-full max-w-full object-contain p-1"
                 />
-              ) : (
-                <BrandMark className="h-full w-full" title={companyName} />
-              )}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-base font-semibold tracking-tight">{companyName}</p>
+                <p className="text-xs text-muted-foreground">{APP_TAGLINE}</p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-base font-semibold tracking-tight">{companyName}</p>
-              <p className="text-xs text-muted-foreground">{APP_TAGLINE}</p>
+          ) : (
+            <div className="flex items-center gap-3">
+              <BrandMark title={companyName} className="h-14 w-14" />
+              <div className="min-w-0">
+                <p className="truncate text-lg font-semibold tracking-tight">{companyName}</p>
+                <p className="text-xs text-muted-foreground">{APP_TAGLINE}</p>
+              </div>
             </div>
-          </div>
+          )}
 
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -79,8 +86,11 @@ function AuthPage() {
         </div>
       </div>
 
-      <div className="relative hidden bg-brand-gradient lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
+      <div
+        className="relative hidden bg-cover bg-center lg:block"
+        style={{ backgroundImage: `url(${brandBg})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
         <div className="relative flex h-full flex-col justify-end p-12 text-white">
           <h2 className="text-3xl font-semibold leading-tight tracking-tight">
             Accurate expense tracking, built for finance teams.

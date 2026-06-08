@@ -14,6 +14,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "./ThemeToggle";
+import { CompanyLogo } from "./CompanyLogo";
 import { RoleBadge } from "@/components/RoleBadge";
 import { useAuth } from "@/lib/auth-context";
 import { getSignedUrl } from "@/lib/storage";
@@ -49,11 +50,15 @@ export function AppTopbar() {
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-1 h-6" />
+      <div className="md:hidden">
+        <CompanyLogo size="sm" />
+      </div>
       <div className="flex-1" />
 
-      <Button variant="ghost" size="icon" asChild aria-label="Notifications">
+      <Button variant="ghost" size="icon" asChild aria-label="Notifications" className="relative">
         <Link to="/notifications">
           <Bell className="h-5 w-5" />
+          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-brand-gradient ring-2 ring-background" />
         </Link>
       </Button>
       <ThemeToggle />
