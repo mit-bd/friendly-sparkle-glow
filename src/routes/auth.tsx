@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -135,7 +136,6 @@ function SignInForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
         <Input
           id="signin-password"
-          type="password"
           autoComplete="current-password"
           required
           value={password}
