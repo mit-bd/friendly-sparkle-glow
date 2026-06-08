@@ -30,7 +30,7 @@ export function CompanyLogo({
       <div
         className={cn(
           "flex shrink-0 items-center justify-center overflow-hidden rounded-lg",
-          logoUrl ? "bg-muted shadow-sm" : "shadow-brand",
+          logoUrl ? "bg-muted shadow-sm" : "",
           SIZES[size],
         )}
       >
