@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { logActivity } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/settings/notifications")({
   head: () => ({ meta: [{ title: "Notification Settings — Motion IT BD" }] }),
@@ -80,6 +81,13 @@ function NotificationSettingsPage() {
       setRows((rs) => rs.map((r) => (r.id === row.id ? { ...r, enabled: !enabled } : r)));
       return;
     }
+    void logActivity({
+      action: "update",
+      entityType: "notification",
+      entityId: row.id,
+      entityLabel: `${CHANNEL_META[row.channel]?.label ?? row.channel} ${enabled ? "enabled" : "disabled"}`,
+      metadata: { event: "notification_settings_change", channel: row.channel, enabled },
+    });
     toast.success(`${CHANNEL_META[row.channel]?.label ?? row.channel} ${enabled ? "enabled" : "disabled"}.`);
   }
 
