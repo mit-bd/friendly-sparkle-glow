@@ -70,7 +70,7 @@ export function ReportDocument({
 
       <div className="report-body space-y-6">{children}</div>
 
-      <ReportFooter />
+      <ReportFooter reportNumber={reportNumber} printDate={generatedAt} />
     </div>
   );
 }

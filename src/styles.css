@@ -234,6 +234,11 @@
   margin: 14mm;
 }
 
+/* Hidden on screen; revealed inside the print stylesheet below. */
+.print-only {
+  display: none;
+}
+
 @media print {
   .brand-rule,
   .bg-brand-gradient,
@@ -244,6 +249,12 @@
 
   .no-print {
     display: none !important;
+  }
+
+  /* Content that should appear ONLY when printing (e.g. a dedicated print
+     sheet rendered alongside an on-screen interactive view). */
+  .print-only {
+    display: block !important;
   }
 
   /* Isolate the report sheet: hide everything else (app shell, controls). */

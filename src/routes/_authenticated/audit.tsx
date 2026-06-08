@@ -41,6 +41,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime } from "@/lib/expenses";
+import { ReportDocument } from "@/components/reports/ReportDocument";
+import { logReportExport } from "@/lib/reports";
 import {
   ACTIVITY_ACTION_LABELS,
   ACTIVITY_ENTITY_LABELS,
@@ -89,7 +91,7 @@ function toQuery(f: UiFilters, search: string): ActivityFilters {
 }
 
 function AuditPage() {
-  const { canAccessModule, can, isAdmin } = useAuth();
+  const { canAccessModule, can, isAdmin, profile } = useAuth();
   const canView = canAccessModule("audit");
   const canExport = isAdmin || can("audit", "export");
 
@@ -98,6 +100,13 @@ function AuditPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [printDoc, setPrintDoc] = useState<{
+    rows: ActivityLog[];
+    reportNumber: string;
+    generatedAt: string;
+    generatedBy: string;
+    rangeLabel: string;
+  } | null>(null);
 
   const [actors, setActors] = useState<{ id: string; name: string }[]>([]);
   const [searchInput, setSearchInput] = useState("");
@@ -207,13 +216,57 @@ function AuditPage() {
   }
 
   async function handlePrint() {
-    await logActivity({
-      action: "print",
-      entityType: "report",
-      entityLabel: "Audit logs",
-    });
-    window.print();
+    setBusy(true);
+    try {
+      const all = await fetchAllActivityLogs(toQuery(filters, search));
+      let reportNumber = "—";
+      let createdAt = new Date().toISOString();
+      if (canExport) {
+        try {
+          const logged = await logReportExport({
+            reportType: "audit_activity",
+            title: "Activity Log Report",
+            rangeFrom: filters.dateFrom || null,
+            rangeTo: filters.dateTo || null,
+            filters: { module: "audit", search: search || undefined },
+            expenseCount: all.length,
+            totalAmount: 0,
+          });
+          reportNumber = logged.report_number;
+          createdAt = logged.created_at;
+        } catch {
+          /* archive is best-effort */
+        }
+      }
+      await logActivity({
+        action: "print",
+        entityType: "report",
+        entityLabel: `${reportNumber} · Activity Logs`,
+        metadata: { count: all.length },
+      });
+      const rangeLabel =
+        filters.dateFrom || filters.dateTo
+          ? `${filters.dateFrom || "…"} → ${filters.dateTo || "…"}`
+          : "All time";
+      setPrintDoc({
+        rows: all,
+        reportNumber,
+        generatedAt: formatDateTime(createdAt),
+        generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+        rangeLabel,
+      });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to prepare print.");
+    } finally {
+      setBusy(false);
+    }
   }
+
+  useEffect(() => {
+    if (!printDoc) return;
+    const t = setTimeout(() => window.print(), 120);
+    return () => clearTimeout(t);
+  }, [printDoc]);
 
   const activeFilterCount = Object.entries(filters).filter(([, v]) => v && v !== ALL).length;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -226,7 +279,7 @@ function AuditPage() {
         actions={
           canExport && (
             <div className="flex gap-2 print:hidden">
-              <Button variant="outline" onClick={handlePrint}>
+              <Button variant="outline" onClick={handlePrint} disabled={busy}>
                 <Printer className="h-4 w-4" />
                 Print
               </Button>
@@ -422,6 +475,69 @@ function AuditPage() {
           </div>
         </div>
       )}
+
+      {printDoc && (
+        <div className="print-only">
+          <ReportDocument
+            reportName="Activity Log Report"
+            reportNumber={printDoc.reportNumber}
+            generatedAt={printDoc.generatedAt}
+            generatedBy={printDoc.generatedBy}
+            dateRangeLabel={printDoc.rangeLabel}
+          >
+            <ActivityLogPrintTable rows={printDoc.rows} actorName={actorName} />
+          </ReportDocument>
+        </div>
+      )}
     </div>
+  );
+}
+
+function ActivityLogPrintTable({
+  rows,
+  actorName,
+}: {
+  rows: ActivityLog[];
+  actorName: (id: string | null) => string;
+}) {
+  const th = "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground";
+  const td = "px-3 py-2 text-sm text-foreground align-top";
+  if (rows.length === 0) {
+    return (
+      <p className="rounded-md border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+        No activity found for the selected criteria.
+      </p>
+    );
+  }
+  return (
+    <table className="report-table w-full border-collapse">
+      <thead>
+        <tr className="border-b-2 border-border">
+          <th className={th}>Date &amp; Time</th>
+          <th className={th}>User</th>
+          <th className={th}>Action</th>
+          <th className={th}>Type</th>
+          <th className={th}>Record</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((l) => (
+          <tr key={l.id} className="border-b border-border break-inside-avoid">
+            <td className={td + " whitespace-nowrap"}>{formatDateTime(l.created_at)}</td>
+            <td className={td}>{actorName(l.actor_id)}</td>
+            <td className={td}>{ACTIVITY_ACTION_LABELS[l.action] ?? l.action}</td>
+            <td className={td}>{ACTIVITY_ENTITY_LABELS[l.entity_type] ?? l.entity_type}</td>
+            <td className={td}>{l.entity_label ?? "—"}</td>
+          </tr>
+        ))}
+      </tbody>
+      <tfoot>
+        <tr className="border-t-2 border-foreground/70 font-semibold">
+          <td className={td + " font-semibold"} colSpan={5}>
+            Total: {rows.length} log entr{rows.length === 1 ? "y" : "ies"}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
   );
 }

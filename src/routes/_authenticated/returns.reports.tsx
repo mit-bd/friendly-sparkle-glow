@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, FileDown, Loader2, Printer, Sparkles } from "lucide-react";
+import { ArrowLeft, FileDown, FileSpreadsheet, Loader2, Printer, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -34,6 +34,7 @@ import {
 import { formatDateTime } from "@/lib/expenses";
 import { logActivity } from "@/lib/audit";
 import { logReportExport } from "@/lib/reports";
+import { downloadCsv } from "@/lib/report-csv";
 import {
   fetchApprovedReturns,
   fetchReturnReasons,
@@ -135,6 +136,57 @@ function ReturnReportsPage() {
     window.print();
   };
 
+  function handleCsv() {
+    if (!generated) return;
+    const { type, rows, reasons: rReasons } = generated;
+    let headers: string[] = [];
+    let body: (string | number)[][] = [];
+    if (type === "return_reason") {
+      const { rows: rs, grandNetLoss } = buildReasonSummary(rows, rReasons);
+      headers = ["Reason", "Count", "Loss", "Recoverable", "Net Loss", "% of total"];
+      body = rs.map((r) => [r.name, r.count, r.loss, r.recoverable, r.netLoss, `${r.percentage.toFixed(1)}%`]);
+      body.push(["Grand Total", rows.length, "", "", grandNetLoss, "100.0%"]);
+    } else if (type === "return_monthly") {
+      const points = buildMonthly(rows, (r) => r.return_date, (r) => r.net_loss_amount);
+      headers = ["Month", "Net Return Loss"];
+      body = points.map((p) => [p.label, p.total]);
+    } else if (type === "return_loss") {
+      const t = returnTotals(rows);
+      headers = ["Metric", "Amount"];
+      body = [
+        ["Total loss", t.loss],
+        ["Recoverable", t.recoverable],
+        ["Net loss", t.netLoss],
+      ];
+    } else {
+      const reasonName = new Map(rReasons.map((r) => [r.id, r.name]));
+      headers = ["Return No.", "Date", "Reason", "Product", "Quantity", "Loss", "Recoverable", "Net Loss"];
+      body = rows.map((r) => [
+        r.return_number,
+        r.return_date,
+        r.reason_id ? reasonName.get(r.reason_id) ?? "" : "",
+        r.product_name,
+        r.quantity,
+        r.loss_amount,
+        r.recoverable_amount,
+        r.net_loss_amount,
+      ]);
+      const t = returnTotals(rows);
+      body.push(["Grand Total", "", "", "", "", t.loss, t.recoverable, t.netLoss]);
+    }
+    downloadCsv(
+      `motion-it-bd-${TYPES.find((t) => t.value === type)!.label.toLowerCase().replace(/\s+/g, "-")}`,
+      headers,
+      body,
+    );
+    void logActivity({
+      action: "export",
+      entityType: "report",
+      entityLabel: `${generated.reportNumber} · ${TYPES.find((t) => t.value === type)!.label}`,
+      metadata: { format: "csv" },
+    });
+  }
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -193,6 +245,10 @@ function ReturnReportsPage() {
                 <Button variant="outline" onClick={print}>
                   <FileDown className="h-4 w-4" />
                   Export PDF
+                </Button>
+                <Button variant="outline" onClick={handleCsv}>
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Export CSV
                 </Button>
               </>
             )}
