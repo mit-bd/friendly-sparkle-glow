@@ -291,6 +291,32 @@ function CategoriesPage() {
         onSaved={load}
         nextOrder={subs.filter((s) => s.category_id === subDialog.categoryId).length + 1}
       />
+
+      <AlertDialog open={!!delTarget} onOpenChange={(o) => !o && setDelTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Move to recycle bin?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="font-medium text-foreground">{delTarget?.name}</span>{" "}
+              ({delTarget?.kind === "category" ? "Category" : "Subcategory"}) will be moved to the
+              recycle bin. It will be hidden from expense forms but can be restored later by an admin.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={confirmDelete}
+            >
+              Move to recycle bin
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
