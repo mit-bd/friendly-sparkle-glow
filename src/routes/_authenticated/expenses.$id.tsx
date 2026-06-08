@@ -337,6 +337,24 @@ function ExpenseDetailsPage() {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Approval history</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ExpenseTimeline events={events} names={names} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Discussion</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ExpenseDiscussion expenseId={expense.id} names={names} canComment={canComment} />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6">
