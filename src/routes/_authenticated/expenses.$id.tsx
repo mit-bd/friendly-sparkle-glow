@@ -264,6 +264,9 @@ function ExpenseDetailsPage() {
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">Current status</span>
             <StatusBadge status={expense.status} />
+            {isLocked && (
+              <span className="text-xs text-muted-foreground">· Locked after approval</span>
+            )}
           </div>
           <div className="flex flex-wrap gap-2">
             {canApprove && isOpenForReview && (
