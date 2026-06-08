@@ -90,6 +90,13 @@ function PermissionsPage() {
     if (error) {
       toast.error(error.message);
       setRows((rs) => rs.map((r) => (r.id === row.id ? { ...r, [action]: !value } : r)));
+    } else {
+      void logActivity({
+        action: "permission_change",
+        entityType: "permission",
+        entityLabel: `${row.role} · ${row.module}`,
+        metadata: { action, value },
+      });
     }
   }
 
