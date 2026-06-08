@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { FileDown, Loader2, Printer, Search, Sparkles } from "lucide-react";
+import { FileDown, FileSpreadsheet, Loader2, Printer, Search, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -53,6 +53,7 @@ import {
 import type { ExpenseCategory, ExpenseSubcategory } from "@/lib/expenses";
 import { fetchUserNames, formatCurrency, formatDate, formatDateTime } from "@/lib/expenses";
 import { logActivity } from "@/lib/audit";
+import { downloadCsv } from "@/lib/report-csv";
 
 export const Route = createFileRoute("/_authenticated/reports/summary")({
   head: () => ({ meta: [{ title: "Reports Center — Motion IT BD" }] }),
