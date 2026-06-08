@@ -41,6 +41,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime } from "@/lib/expenses";
+import { ReportDocument } from "@/components/reports/ReportDocument";
+import { logReportExport } from "@/lib/reports";
 import {
   ACTIVITY_ACTION_LABELS,
   ACTIVITY_ENTITY_LABELS,
@@ -89,7 +91,7 @@ function toQuery(f: UiFilters, search: string): ActivityFilters {
 }
 
 function AuditPage() {
-  const { canAccessModule, can, isAdmin } = useAuth();
+  const { canAccessModule, can, isAdmin, profile } = useAuth();
   const canView = canAccessModule("audit");
   const canExport = isAdmin || can("audit", "export");
 
@@ -98,6 +100,13 @@ function AuditPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [printDoc, setPrintDoc] = useState<{
+    rows: ActivityLog[];
+    reportNumber: string;
+    generatedAt: string;
+    generatedBy: string;
+    rangeLabel: string;
+  } | null>(null);
 
   const [actors, setActors] = useState<{ id: string; name: string }[]>([]);
   const [searchInput, setSearchInput] = useState("");
@@ -207,13 +216,57 @@ function AuditPage() {
   }
 
   async function handlePrint() {
-    await logActivity({
-      action: "print",
-      entityType: "report",
-      entityLabel: "Audit logs",
-    });
-    window.print();
+    setBusy(true);
+    try {
+      const all = await fetchAllActivityLogs(toQuery(filters, search));
+      let reportNumber = "—";
+      let createdAt = new Date().toISOString();
+      if (canExport) {
+        try {
+          const logged = await logReportExport({
+            reportType: "audit_activity",
+            title: "Activity Log Report",
+            rangeFrom: filters.dateFrom || null,
+            rangeTo: filters.dateTo || null,
+            filters: { module: "audit", search: search || undefined },
+            expenseCount: all.length,
+            totalAmount: 0,
+          });
+          reportNumber = logged.report_number;
+          createdAt = logged.created_at;
+        } catch {
+          /* archive is best-effort */
+        }
+      }
+      await logActivity({
+        action: "print",
+        entityType: "report",
+        entityLabel: `${reportNumber} · Activity Logs`,
+        metadata: { count: all.length },
+      });
+      const rangeLabel =
+        filters.dateFrom || filters.dateTo
+          ? `${filters.dateFrom || "…"} → ${filters.dateTo || "…"}`
+          : "All time";
+      setPrintDoc({
+        rows: all,
+        reportNumber,
+        generatedAt: formatDateTime(createdAt),
+        generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+        rangeLabel,
+      });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to prepare print.");
+    } finally {
+      setBusy(false);
+    }
   }
+
+  useEffect(() => {
+    if (!printDoc) return;
+    const t = setTimeout(() => window.print(), 120);
+    return () => clearTimeout(t);
+  }, [printDoc]);
 
   const activeFilterCount = Object.entries(filters).filter(([, v]) => v && v !== ALL).length;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
