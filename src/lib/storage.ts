@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type BucketName = "logos" | "avatars" | "signatures";
+export type BucketName = "logos" | "avatars" | "signatures" | "expense-attachments";
 
 /** Upload a file to a private bucket, returns the stored object path. */
 export async function uploadFile(
@@ -29,6 +29,21 @@ export async function getSignedUrl(
   const { data, error } = await supabase.storage
     .from(bucket)
     .createSignedUrl(path, expiresIn);
+  if (error) return null;
+  return data.signedUrl;
+}
+
+/** Create a signed URL that forces a download with the given filename. */
+export async function getDownloadUrl(
+  bucket: BucketName,
+  path: string | null | undefined,
+  fileName?: string,
+  expiresIn = 3600,
+): Promise<string | null> {
+  if (!path) return null;
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(path, expiresIn, { download: fileName || true });
   if (error) return null;
   return data.signedUrl;
 }

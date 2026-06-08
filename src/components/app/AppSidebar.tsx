@@ -26,13 +26,13 @@ import { useAuth } from "@/lib/auth-context";
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { can } = useAuth();
+  const { canAccessModule } = useAuth();
   const { setOpenMobile } = useSidebar();
 
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
 
-  const visible = NAV_ITEMS.filter((item) => can(item.module, "view"));
+  const visible = NAV_ITEMS.filter((item) => canAccessModule(item.module));
 
   return (
     <Sidebar collapsible="offcanvas">

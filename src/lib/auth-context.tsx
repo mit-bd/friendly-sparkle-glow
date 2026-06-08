@@ -40,6 +40,7 @@ interface AuthContextValue {
   isAdmin: boolean;
   primaryRole: AppRole | null;
   can: (module: ModuleKey, action: PermissionAction) => boolean;
+  canAccessModule: (module: ModuleKey) => boolean;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -148,6 +149,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [roles],
   );
 
+  // A user can reach a module if they hold ANY capability on it (view, edit,
+  // approve, or export). This lets roles such as "accountant" — who can create
+  // but not view-all — still open the module while RLS scopes their data.
+  const canAccessModule = useCallback(
+    (module: ModuleKey) =>
+      isAdmin ||
+      (["view", "edit", "approve", "export"] as PermissionAction[]).some((a) =>
+        can(module, a),
+      ),
+    [can, isAdmin],
+  );
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -164,6 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin,
     primaryRole,
     can,
+    canAccessModule,
     refresh,
     signOut,
   };
