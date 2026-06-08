@@ -82,9 +82,10 @@ function PermissionsPage() {
 
   async function toggle(row: PermRow, action: Action, value: boolean) {
     setRows((rs) => rs.map((r) => (r.id === row.id ? { ...r, [action]: value } : r)));
+    const patch: Partial<PermRow> = { [action]: value };
     const { error } = await supabase
       .from("role_permissions")
-      .update({ [action]: value })
+      .update(patch)
       .eq("id", row.id);
     if (error) {
       toast.error(error.message);
