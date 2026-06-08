@@ -1,13 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight, PieChart as PieIcon } from "lucide-react";
-import {
-  Bar,
-  BarChart,
-  Cell,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -100,32 +93,27 @@ export function CategoryAnalytics({ summary, range }: Props) {
             <EmptyState icon={PieIcon} title="No approved expenses yet." />
           ) : (
             <ChartContainer config={{}} className="h-[320px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={top10} layout="vertical" margin={{ left: 8, right: 16 }}>
-                  <XAxis type="number" hide />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={110}
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fontSize: 11 }}
-                  />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        formatter={(v) => formatCurrency(Number(v))}
-                        hideLabel
-                      />
-                    }
-                  />
-                  <Bar dataKey="total" radius={4}>
-                    {top10.map((_, i) => (
-                      <Cell key={i} fill={BAR_COLORS[i % BAR_COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              <BarChart data={top10} layout="vertical" margin={{ left: 8, right: 16 }}>
+                <XAxis type="number" hide />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  width={110}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fontSize: 11 }}
+                />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent formatter={(v) => formatCurrency(Number(v))} hideLabel />
+                  }
+                />
+                <Bar dataKey="total" radius={4}>
+                  {top10.map((_, i) => (
+                    <Cell key={i} fill={BAR_COLORS[i % BAR_COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
             </ChartContainer>
           )}
         </CardContent>
