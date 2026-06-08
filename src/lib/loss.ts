@@ -151,3 +151,76 @@ export function buildCombinedMonthly(returns: ReturnRecord[], damages: DamageRec
 export function formatTk(amount: number): string {
   return `\u09F3 ${new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount || 0)}`;
 }
+
+/* ---------------- Mutations (reuse approval / audit / numbering) ---------------- */
+
+export interface ReturnInput {
+  return_date: string; category_id: string | null; reason_id: string | null; product_name: string;
+  quantity: number; customer_notes: string | null; loss_amount: number; recoverable_amount: number; notes: string | null; status: ExpenseStatus;
+}
+export async function createReturn(input: ReturnInput, userId: string): Promise<{ id: string; return_number: string }> {
+  const finalStatus = input.status === "submitted" ? "pending_approval" : input.status;
+  const { data, error } = await db.from("returns").insert({
+    return_number: "", return_date: input.return_date, category_id: input.category_id, reason_id: input.reason_id,
+    product_name: input.product_name, quantity: input.quantity, customer_notes: input.customer_notes,
+    loss_amount: input.loss_amount, recoverable_amount: input.recoverable_amount, notes: input.notes,
+    status: finalStatus, created_by: userId,
+  }).select("id, return_number").single();
+  if (error || !data) throw error ?? new Error("Failed to create return.");
+  try {
+    await logReturnEvent({ returnId: data.id, actorId: userId, action: "created", toStatus: finalStatus });
+    if (finalStatus !== "draft") await logReturnEvent({ returnId: data.id, actorId: userId, action: "submitted", fromStatus: "draft", toStatus: finalStatus });
+  } catch { /* best-effort history */ }
+  return data as { id: string; return_number: string };
+}
+export async function updateReturn(id: string, patch: Partial<ReturnInput>): Promise<void> {
+  const { error } = await db.from("returns").update(patch).eq("id", id);
+  if (error) throw error;
+}
+export interface DamageInput {
+  damage_date: string; type_id: string | null; product_name: string; quantity: number; damage_value: number; notes: string | null; status: ExpenseStatus;
+}
+export async function createDamage(input: DamageInput, userId: string): Promise<{ id: string; damage_number: string }> {
+  const finalStatus = input.status === "submitted" ? "pending_approval" : input.status;
+  const { data, error } = await db.from("damages").insert({
+    damage_number: "", damage_date: input.damage_date, type_id: input.type_id, product_name: input.product_name,
+    quantity: input.quantity, damage_value: input.damage_value, notes: input.notes, status: finalStatus, created_by: userId,
+  }).select("id, damage_number").single();
+  if (error || !data) throw error ?? new Error("Failed to create damage.");
+  try {
+    await logDamageEvent({ damageId: data.id, actorId: userId, action: "created", toStatus: finalStatus });
+    if (finalStatus !== "draft") await logDamageEvent({ damageId: data.id, actorId: userId, action: "submitted", fromStatus: "draft", toStatus: finalStatus });
+  } catch { /* best-effort history */ }
+  return data as { id: string; damage_number: string };
+}
+export async function updateDamage(id: string, patch: Partial<DamageInput>): Promise<void> {
+  const { error } = await db.from("damages").update(patch).eq("id", id);
+  if (error) throw error;
+}
+export async function setLossStatus(kind: LossKind, id: string, status: ExpenseStatus, userId: string, fromStatus: ExpenseStatus): Promise<void> {
+  const table = kind === "return" ? "returns" : "damages";
+  const { error } = await db.from(table).update({ status }).eq("id", id);
+  if (error) throw error;
+  try {
+    const payload = { actorId: userId, action: status === "deleted" ? "deleted" : "updated", fromStatus, toStatus: status };
+    if (kind === "return") await logReturnEvent({ returnId: id, ...payload });
+    else await logDamageEvent({ damageId: id, ...payload });
+  } catch { /* best-effort history */ }
+}
+export async function addReturnAttachment(returnId: string, v: { path: string; name: string; mime: string; size: number }, userId: string): Promise<void> {
+  const { error } = await db.from("return_attachments").insert({ return_id: returnId, file_path: v.path, file_name: v.name, mime_type: v.mime, size_bytes: v.size, created_by: userId });
+  if (error) throw error;
+}
+export async function addDamageAttachment(damageId: string, v: { path: string; name: string; mime: string; size: number }, userId: string): Promise<void> {
+  const { error } = await db.from("damage_attachments").insert({ damage_id: damageId, file_path: v.path, file_name: v.name, mime_type: v.mime, size_bytes: v.size, created_by: userId });
+  if (error) throw error;
+}
+export async function deleteLossAttachment(kind: LossKind, id: string): Promise<void> {
+  const table = kind === "return" ? "return_attachments" : "damage_attachments";
+  const { error } = await db.from(table).delete().eq("id", id);
+  if (error) throw error;
+}
+export async function postLossComment(kind: LossKind, id: string, userId: string, body: string): Promise<void> {
+  if (kind === "return") await logReturnEvent({ returnId: id, actorId: userId, action: "comment", notes: body });
+  else await logDamageEvent({ damageId: id, actorId: userId, action: "comment", notes: body });
+}
