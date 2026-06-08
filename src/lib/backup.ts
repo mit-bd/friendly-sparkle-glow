@@ -136,6 +136,9 @@ export const BACKUP_TABLES: BackupTableSpec[] = [
   { key: "field_changes", table: "field_changes", label: "Field Changes", dateField: "changed_at" },
 ];
 
+/** Number of tables included in a backup (for progress reporting). */
+export const BACKUP_TABLES_TOTAL = BACKUP_TABLES.length;
+
 export interface BackupMeta {
   format: string;
   version: number;
