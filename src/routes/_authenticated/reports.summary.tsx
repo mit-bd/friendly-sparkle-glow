@@ -295,6 +295,61 @@ function ReportsCenterPage() {
     window.print();
   };
 
+  const handleExportCsv = () => {
+    if (!generated) return;
+    const { type, rows, categories: cats, subcategories: subs, userNames } = generated;
+    let headers: string[] = [];
+    let body: (string | number)[][] = [];
+    if (type === "summary") {
+      const { rows: srows, grandTotal } = buildSummary(rows, cats);
+      headers = ["Category", "Count", "Total", "Percentage"];
+      body = srows.map((r) => [r.name, r.count, r.total, `${r.percentage.toFixed(1)}%`]);
+      body.push(["Grand Total", rows.length, grandTotal, "100.0%"]);
+    } else if (type === "category") {
+      const { rows: crows } = buildCategoryReport(rows, cats, subs);
+      headers = ["Category", "Subcategory", "Count", "Total"];
+      crows.forEach((c) =>
+        c.subcategories.forEach((s) => body.push([c.name, s.name, s.count, s.total])),
+      );
+    } else if (type === "subcategory") {
+      const { rows: scrows } = buildSubcategoryReport(rows, subs, cats);
+      headers = ["Subcategory", "Category", "Expense No.", "Date", "Description", "Amount"];
+      scrows.forEach((sc) =>
+        sc.expenses.forEach((e) =>
+          body.push([sc.name, sc.categoryName, e.expense_number, e.expense_date, e.description ?? "", e.amount]),
+        ),
+      );
+    } else {
+      const catName = new Map(cats.map((c) => [c.id, c.name]));
+      const subName = new Map(subs.map((s) => [s.id, s.name]));
+      headers = [
+        "Expense No.", "Date", "Category", "Subcategory", "Description",
+        "Amount", "Approved By", "Approval Date",
+      ];
+      body = rows.map((e) => [
+        e.expense_number,
+        e.expense_date,
+        e.category_id ? catName.get(e.category_id) ?? "" : "",
+        e.subcategory_id ? subName.get(e.subcategory_id) ?? "" : "",
+        e.description ?? "",
+        e.amount,
+        e.approved_by ? userNames[e.approved_by] ?? "" : "",
+        e.approved_at ?? "",
+      ]);
+    }
+    downloadCsv(
+      `motion-it-bd-${REPORT_TYPE_LABELS[type].toLowerCase().replace(/\s+/g, "-")}`,
+      headers,
+      body,
+    );
+    void logActivity({
+      action: "export",
+      entityType: "report",
+      entityLabel: `${generated.reportNumber} · ${REPORT_TYPE_LABELS[type]}`,
+      metadata: { format: "csv" },
+    });
+  };
+
   return (
     <div className="space-y-8">
       <PageHeader
