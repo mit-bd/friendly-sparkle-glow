@@ -37,7 +37,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader className="border-b border-sidebar-border px-4 py-3.5">
-        <CompanyLogo size="sm" />
+        <CompanyLogo size="sm" showTagline />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
