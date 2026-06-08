@@ -17,6 +17,8 @@ export type ExpenseAction =
   | "updated"
   | "deleted"
   | "restored"
+  | "attachment_added"
+  | "attachment_removed"
   | "comment";
 
 export interface ExpenseEvent {
@@ -47,6 +49,8 @@ export const ACTION_LABELS: Record<ExpenseAction, string> = {
   updated: "Updated",
   deleted: "Moved to Deleted",
   restored: "Restored",
+  attachment_added: "Attachment Uploaded",
+  attachment_removed: "Attachment Removed",
   comment: "Commented",
 };
 
