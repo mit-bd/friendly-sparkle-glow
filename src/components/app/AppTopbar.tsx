@@ -64,7 +64,7 @@ export function AppTopbar() {
         <Link to="/notifications">
           <Bell className="h-5 w-5" />
           {unread > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-gradient px-1 text-[10px] font-semibold leading-none text-white ring-2 ring-background">
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-gradient px-1 text-[10px] font-semibold leading-none text-brand-foreground ring-2 ring-background">
               {unread > 99 ? "99+" : unread}
             </span>
           )}

@@ -277,7 +277,7 @@ function ExpensesListPage() {
           <Filter className="h-4 w-4" />
           Filters
           {activeFilterCount > 0 && (
-            <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-gradient px-1.5 text-xs font-medium text-white">
+            <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-gradient px-1.5 text-xs font-medium text-brand-foreground">
               {activeFilterCount}
             </span>
           )}

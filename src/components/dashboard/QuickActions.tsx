@@ -49,7 +49,7 @@ export function QuickActions() {
               to={a.to}
               className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-3 text-center transition-colors hover:border-brand/40 hover:bg-accent"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-md bg-brand-gradient text-white shadow-sm transition-transform group-hover:scale-105">
+              <span className="flex h-10 w-10 items-center justify-center rounded-md bg-brand-gradient text-brand-foreground shadow-sm transition-transform group-hover:scale-105">
                 <a.icon className="h-5 w-5" />
               </span>
               <span className="text-xs font-medium leading-tight text-foreground">{a.label}</span>
