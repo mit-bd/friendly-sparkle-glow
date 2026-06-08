@@ -332,7 +332,7 @@ function ReportsCenterPage() {
           )}
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button onClick={handleGenerate} disabled={generating} className="bg-brand-gradient text-primary-foreground">
+            <Button onClick={() => handleGenerate()} disabled={generating} className="bg-brand-gradient text-primary-foreground">
               {generating ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
