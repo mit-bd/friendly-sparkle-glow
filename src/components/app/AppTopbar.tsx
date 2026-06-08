@@ -15,6 +15,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "./ThemeToggle";
 import { CompanyLogo } from "./CompanyLogo";
+import { GlobalSearch } from "./GlobalSearch";
 import { RoleBadge } from "@/components/RoleBadge";
 import { useAuth } from "@/lib/auth-context";
 import { getSignedUrl } from "@/lib/storage";
@@ -56,6 +57,8 @@ export function AppTopbar() {
         <CompanyLogo size="sm" />
       </div>
       <div className="flex-1" />
+
+      <GlobalSearch />
 
       <Button variant="ghost" size="icon" asChild aria-label="Notifications" className="relative">
         <Link to="/notifications">
