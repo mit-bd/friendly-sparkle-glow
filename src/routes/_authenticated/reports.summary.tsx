@@ -55,6 +55,15 @@ import { fetchUserNames, formatCurrency, formatDate, formatDateTime } from "@/li
 
 export const Route = createFileRoute("/_authenticated/reports/summary")({
   head: () => ({ meta: [{ title: "Reports Center — Motion IT BD" }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    type: typeof search.type === "string" ? (search.type as ReportType) : undefined,
+    from: typeof search.from === "string" ? search.from : undefined,
+    to: typeof search.to === "string" ? search.to : undefined,
+    ids: typeof search.ids === "string" ? search.ids : undefined,
+    rnum: typeof search.rnum === "string" ? search.rnum : undefined,
+    gen: typeof search.gen === "string" ? search.gen : undefined,
+    by: typeof search.by === "string" ? search.by : undefined,
+  }),
   component: ReportsCenterPage,
 });
 
@@ -75,6 +84,7 @@ interface GeneratedReport {
 function ReportsCenterPage() {
   const { canAccessModule, profile } = useAuth();
   const taxonomy = useTaxonomy();
+  const search = Route.useSearch();
 
   const [reportType, setReportType] = useState<ReportType>("summary");
   const [preset, setPreset] = useState<RangePreset>(DEFAULT_PRESET);
@@ -138,7 +148,7 @@ function ReportsCenterPage() {
       return next;
     });
 
-  async function handleGenerate() {
+  async function handleGenerate(reuse?: { number: string; createdAt: string; by: string }) {
     if (isSelected && selectedIds.size === 0) {
       toast.error("Select at least one approved expense.");
       return;
@@ -163,15 +173,21 @@ function ReportsCenterPage() {
         rows.map((r) => r.approved_by).filter(Boolean) as string[],
       );
 
-      const logged = await logReportExport({
-        reportType,
-        title: REPORT_TYPE_LABELS[reportType],
-        rangeFrom: usedRange?.from ?? null,
-        rangeTo: usedRange?.to ?? null,
-        filters: isSelected ? { ids: [...selectedIds] } : { preset },
-        expenseCount: rows.length,
-        totalAmount: total,
-      });
+      let reportNumber = reuse?.number ?? "";
+      let createdAt = reuse?.createdAt ?? new Date().toISOString();
+      if (!reuse) {
+        const logged = await logReportExport({
+          reportType,
+          title: REPORT_TYPE_LABELS[reportType],
+          rangeFrom: usedRange?.from ?? null,
+          rangeTo: usedRange?.to ?? null,
+          filters: isSelected ? { ids: [...selectedIds] } : { preset },
+          expenseCount: rows.length,
+          totalAmount: total,
+        });
+        reportNumber = logged.report_number;
+        createdAt = logged.created_at;
+      }
 
       setGenerated({
         type: reportType,
@@ -181,12 +197,12 @@ function ReportsCenterPage() {
         userNames,
         total,
         count: rows.length,
-        reportNumber: logged.report_number,
-        generatedAt: formatDateTime(logged.created_at),
-        generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+        reportNumber,
+        generatedAt: formatDateTime(createdAt),
+        generatedBy: reuse?.by || profile?.full_name?.trim() || profile?.email || "—",
         rangeLabel: usedRange ? formatRangeLabel(usedRange) : "Selected expenses",
       });
-      toast.success(`Report ${logged.report_number} generated and archived.`);
+      if (!reuse) toast.success(`Report ${reportNumber} generated and archived.`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to generate report.");
     } finally {
