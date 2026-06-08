@@ -8,6 +8,9 @@ import {
   TrendingDown,
   SlidersHorizontal,
   ChevronRight,
+  Rocket,
+  DatabaseBackup,
+  Activity,
   type LucideIcon,
 } from "lucide-react";
 
@@ -49,6 +52,14 @@ const GROUPS: { heading: string; items: SettingLink[] }[] = [
       { label: "Notification Settings", description: "Control in-app notification delivery.", to: "/settings/notifications", icon: Bell },
       { label: "Permissions", description: "Role-based access for every module.", to: "/settings/permissions", icon: ShieldCheck, adminOnly: true },
       { label: "User Preferences", description: "Theme, date range and table page size.", to: "/settings/preferences", icon: SlidersHorizontal },
+    ],
+  },
+  {
+    heading: "Production",
+    items: [
+      { label: "System Readiness", description: "Setup checklist and go-live status.", to: "/readiness", icon: Rocket, adminOnly: true },
+      { label: "System Health", description: "Live status of core platform services.", to: "/system", icon: Activity, adminOnly: true },
+      { label: "Backup & Recovery", description: "Operational guidance for data protection.", to: "/backup", icon: DatabaseBackup, adminOnly: true },
     ],
   },
 ];

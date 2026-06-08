@@ -17,11 +17,13 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedSystemRouteImport } from './routes/_authenticated/system'
 import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
+import { Route as AuthenticatedReadinessRouteImport } from './routes/_authenticated/readiness'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
+import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings.index'
 import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns.index'
@@ -98,6 +100,11 @@ const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
   path: '/returns',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReadinessRoute = AuthenticatedReadinessRouteImport.update({
+  id: '/readiness',
+  path: '/readiness',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -122,6 +129,11 @@ const AuthenticatedLossRoute = AuthenticatedLossRouteImport.update({
 const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
   id: '/damages',
   path: '/damages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBackupRoute = AuthenticatedBackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
@@ -341,11 +353,13 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/backup': typeof AuthenticatedBackupRoute
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/loss': typeof AuthenticatedLossRoute
   '/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/readiness': typeof AuthenticatedReadinessRoute
   '/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
@@ -390,9 +404,11 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/backup': typeof AuthenticatedBackupRoute
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/readiness': typeof AuthenticatedReadinessRoute
   '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
@@ -439,11 +455,13 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
+  '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/_authenticated/loss': typeof AuthenticatedLossRoute
   '/_authenticated/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/readiness': typeof AuthenticatedReadinessRoute
   '/_authenticated/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/_authenticated/system': typeof AuthenticatedSystemRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
@@ -492,11 +510,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/audit'
+    | '/backup'
     | '/damages'
     | '/loss'
     | '/marketing'
     | '/notifications'
     | '/profile'
+    | '/readiness'
     | '/returns'
     | '/system'
     | '/users'
@@ -541,9 +561,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/audit'
+    | '/backup'
     | '/loss'
     | '/notifications'
     | '/profile'
+    | '/readiness'
     | '/system'
     | '/users'
     | '/'
@@ -589,11 +611,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/_authenticated/audit'
+    | '/_authenticated/backup'
     | '/_authenticated/damages'
     | '/_authenticated/loss'
     | '/_authenticated/marketing'
     | '/_authenticated/notifications'
     | '/_authenticated/profile'
+    | '/_authenticated/readiness'
     | '/_authenticated/returns'
     | '/_authenticated/system'
     | '/_authenticated/users'
@@ -700,6 +724,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReturnsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/readiness': {
+      id: '/_authenticated/readiness'
+      path: '/readiness'
+      fullPath: '/readiness'
+      preLoaderRoute: typeof AuthenticatedReadinessRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -733,6 +764,13 @@ declare module '@tanstack/react-router' {
       path: '/damages'
       fullPath: '/damages'
       preLoaderRoute: typeof AuthenticatedDamagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/backup': {
+      id: '/_authenticated/backup'
+      path: '/backup'
+      fullPath: '/backup'
+      preLoaderRoute: typeof AuthenticatedBackupRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/audit': {
@@ -1055,11 +1093,13 @@ const AuthenticatedReturnsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
+  AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
   AuthenticatedLossRoute: typeof AuthenticatedLossRoute
   AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedReadinessRoute: typeof AuthenticatedReadinessRoute
   AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRouteWithChildren
   AuthenticatedSystemRoute: typeof AuthenticatedSystemRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
@@ -1087,11 +1127,13 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
+  AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
   AuthenticatedLossRoute: AuthenticatedLossRoute,
   AuthenticatedMarketingRoute: AuthenticatedMarketingRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedReadinessRoute: AuthenticatedReadinessRoute,
   AuthenticatedReturnsRoute: AuthenticatedReturnsRouteWithChildren,
   AuthenticatedSystemRoute: AuthenticatedSystemRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
