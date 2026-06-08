@@ -4,7 +4,7 @@ import { PackageX } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/damages")({
-  head: () => ({ meta: [{ title: "Damages — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Damages — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="Damages"

@@ -4,7 +4,7 @@ import { Receipt } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/expenses/")({
-  head: () => ({ meta: [{ title: "All Expenses — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "All Expenses — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="All Expenses"

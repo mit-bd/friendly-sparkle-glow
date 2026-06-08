@@ -4,7 +4,7 @@ import { Tags } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/expenses/categories")({
-  head: () => ({ meta: [{ title: "Categories — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Categories — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="Expense Categories"

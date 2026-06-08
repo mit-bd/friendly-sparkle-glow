@@ -4,7 +4,7 @@ import { Clock } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/expenses/pending")({
-  head: () => ({ meta: [{ title: "Pending Approvals — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Pending Approvals — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="Pending Approvals"

@@ -16,7 +16,7 @@ import { useAuth } from "@/lib/auth-context";
 import { ROLE_LABELS } from "@/lib/modules";
 
 export const Route = createFileRoute("/_authenticated/")({
-  head: () => ({ meta: [{ title: "Dashboard — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Motion IT BD" }] }),
   component: Dashboard,
 });
 

@@ -4,7 +4,7 @@ import { Undo2 } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/returns")({
-  head: () => ({ meta: [{ title: "Returns — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Returns — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="Returns"

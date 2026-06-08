@@ -16,7 +16,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useBranding } from "@/lib/branding-context";
 
 export const Route = createFileRoute("/_authenticated/settings/company")({
-  head: () => ({ meta: [{ title: "Company Profile — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Company Profile — Motion IT BD" }] }),
   component: CompanyProfilePage,
 });
 

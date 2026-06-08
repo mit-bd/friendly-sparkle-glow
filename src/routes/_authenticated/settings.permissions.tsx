@@ -21,7 +21,7 @@ import { useAuth } from "@/lib/auth-context";
 import { MODULE_LABELS, ROLE_LABELS, type ModuleKey } from "@/lib/modules";
 
 export const Route = createFileRoute("/_authenticated/settings/permissions")({
-  head: () => ({ meta: [{ title: "Permissions — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Permissions — Motion IT BD" }] }),
   component: PermissionsPage,
 });
 

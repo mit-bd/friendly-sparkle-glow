@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/settings/notifications")({
-  head: () => ({ meta: [{ title: "Notification Settings — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Notification Settings — Motion IT BD" }] }),
   component: NotificationSettingsPage,
 });
 

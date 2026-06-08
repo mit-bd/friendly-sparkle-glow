@@ -4,7 +4,7 @@ import { Megaphone } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/marketing")({
-  head: () => ({ meta: [{ title: "Marketing — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Marketing — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="Marketing"
