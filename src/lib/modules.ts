@@ -54,7 +54,6 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Add Expense", to: "/expenses/add" },
       { label: "Pending Approvals", to: "/expenses/pending" },
       { label: "Categories", to: "/expenses/categories" },
-      { label: "Recycle Bin", to: "/expenses/recycle-bin" },
     ],
   },
   { label: "Marketing", to: "/marketing", icon: Megaphone, module: "marketing" },
@@ -77,7 +76,7 @@ export const NAV_ITEMS: NavItem[] = [
     module: "audit",
     children: [
       { label: "Activity Logs", to: "/audit" },
-      { label: "Recycle Bin", to: "/audit/recycle-bin" },
+      { label: "Recycle Bin", to: "/expenses/recycle-bin" },
     ],
   },
   { label: "Notifications", to: "/notifications", icon: Bell, module: "dashboard" },
