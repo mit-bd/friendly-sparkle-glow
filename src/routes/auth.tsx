@@ -134,7 +134,7 @@ function SignInForm({ onSuccess }: { onSuccess: () => void }) {
             Forgot password?
           </Link>
         </div>
-        <Input
+        <PasswordInput
           id="signin-password"
           autoComplete="current-password"
           required
@@ -215,9 +215,8 @@ function SignUpForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
       <div className="space-y-2">
         <Label htmlFor="signup-password">Password</Label>
-        <Input
+        <PasswordInput
           id="signup-password"
-          type="password"
           autoComplete="new-password"
           required
           value={password}
