@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, FileDown, Loader2, Printer, Sparkles } from "lucide-react";
+import { ArrowLeft, FileDown, FileSpreadsheet, Loader2, Printer, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -29,12 +29,14 @@ import {
 import { formatDateTime } from "@/lib/expenses";
 import { logActivity } from "@/lib/audit";
 import { logReportExport } from "@/lib/reports";
+import { downloadCsv } from "@/lib/report-csv";
 import {
   fetchApprovedDamages,
   fetchDamageTypes,
   buildTypeSummary,
   buildMonthly,
   sumBy,
+  formatTk,
   type DamageRecord,
   type DamageType,
 } from "@/lib/loss";
@@ -128,6 +130,46 @@ function DamageReportsPage() {
     window.print();
   };
 
+  function handleCsv() {
+    if (!generated) return;
+    const { type, rows, types: dtypes } = generated;
+    let headers: string[] = [];
+    let body: (string | number)[][] = [];
+    if (type === "damage_type") {
+      const { rows: ts, grandValue } = buildTypeSummary(rows, dtypes);
+      headers = ["Damage Type", "Count", "Value", "% of total"];
+      body = ts.map((r) => [r.name, r.count, r.value, `${r.percentage.toFixed(1)}%`]);
+      body.push(["Grand Total", rows.length, grandValue, "100.0%"]);
+    } else if (type === "damage_monthly") {
+      const points = buildMonthly(rows, (r) => r.damage_date, (r) => r.damage_value);
+      headers = ["Month", "Damage Value"];
+      body = points.map((p) => [p.label, p.total]);
+    } else {
+      const typeName = new Map(dtypes.map((t) => [t.id, t.name]));
+      headers = ["Damage No.", "Date", "Type", "Product", "Quantity", "Damage Value"];
+      body = rows.map((r) => [
+        r.damage_number,
+        r.damage_date,
+        r.type_id ? typeName.get(r.type_id) ?? "" : "",
+        r.product_name,
+        r.quantity,
+        r.damage_value,
+      ]);
+      body.push(["Grand Total", "", "", "", "", sumBy(rows, (r) => r.damage_value)]);
+    }
+    downloadCsv(
+      `motion-it-bd-${TYPES.find((t) => t.value === type)!.label.toLowerCase().replace(/\s+/g, "-")}`,
+      headers,
+      body,
+    );
+    void logActivity({
+      action: "export",
+      entityType: "report",
+      entityLabel: `${generated.reportNumber} · ${TYPES.find((t) => t.value === type)!.label}`,
+      metadata: { format: "csv" },
+    });
+  }
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -186,6 +228,10 @@ function DamageReportsPage() {
                 <Button variant="outline" onClick={print}>
                   <FileDown className="h-4 w-4" />
                   Export PDF
+                </Button>
+                <Button variant="outline" onClick={handleCsv}>
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Export CSV
                 </Button>
               </>
             )}
