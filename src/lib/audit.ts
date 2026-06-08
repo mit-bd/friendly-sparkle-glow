@@ -22,7 +22,8 @@ export type ActivityAction =
   | "user_create"
   | "user_deactivate"
   | "user_activate"
-  | "comment";
+  | "comment"
+  | "password_change";
 
 export type AuditEntityType =
   | "expense"
@@ -79,6 +80,7 @@ export const ACTIVITY_ACTION_LABELS: Record<string, string> = {
   user_deactivate: "User Deactivated",
   user_activate: "User Activated",
   comment: "Commented",
+  password_change: "Password Changed",
 };
 
 export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
@@ -115,6 +117,7 @@ export const ACTIVITY_TONE: Record<string, string> = {
   user_deactivate: "bg-destructive/15 text-destructive",
   user_activate: "bg-chart-2/15 text-chart-2",
   comment: "bg-muted text-muted-foreground",
+  password_change: "bg-warning/15 text-warning",
 };
 
 /** Best-effort client logger for actions that don't hit a tracked table. */
