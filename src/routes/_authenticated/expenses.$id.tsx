@@ -566,11 +566,26 @@ function EditExpenseDialog({
         status: form.status,
       })
       .eq("id", expense.id);
-    setSaving(false);
     if (error) {
+      setSaving(false);
       toast.error(error.message);
       return;
     }
+    if (user) {
+      try {
+        await logExpenseEvent({
+          expenseId: expense.id,
+          actorId: user.id,
+          action: form.status !== expense.status ? "updated" : "updated",
+          fromStatus: expense.status,
+          toStatus: form.status,
+          notes: form.status !== expense.status ? `Status changed to ${form.status.replace("_", " ")}.` : null,
+        });
+      } catch {
+        /* best-effort history */
+      }
+    }
+    setSaving(false);
     toast.success("Expense updated.");
     onSaved();
   }
