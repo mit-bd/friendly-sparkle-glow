@@ -14,6 +14,11 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
+import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
+import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
+import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
+import { Route as AuthenticatedExpensesAddRouteImport } from './routes/_authenticated/expenses.add'
 
 const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
   id: '/update-password',
@@ -39,18 +44,58 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedExpensesIndexRoute =
+  AuthenticatedExpensesIndexRouteImport.update({
+    id: '/expenses/',
+    path: '/expenses/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesRecycleBinRoute =
+  AuthenticatedExpensesRecycleBinRouteImport.update({
+    id: '/expenses/recycle-bin',
+    path: '/expenses/recycle-bin',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesPendingRoute =
+  AuthenticatedExpensesPendingRouteImport.update({
+    id: '/expenses/pending',
+    path: '/expenses/pending',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesCategoriesRoute =
+  AuthenticatedExpensesCategoriesRouteImport.update({
+    id: '/expenses/categories',
+    path: '/expenses/categories',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesAddRoute =
+  AuthenticatedExpensesAddRouteImport.update({
+    id: '/expenses/add',
+    path: '/expenses/add',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/expenses/add': typeof AuthenticatedExpensesAddRoute
+  '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
+  '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
+  '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/': typeof AuthenticatedIndexRoute
+  '/expenses/add': typeof AuthenticatedExpensesAddRoute
+  '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
+  '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
+  '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/expenses': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +104,35 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/expenses/add': typeof AuthenticatedExpensesAddRoute
+  '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
+  '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
+  '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/reset-password' | '/update-password'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/update-password'
+    | '/expenses/add'
+    | '/expenses/categories'
+    | '/expenses/pending'
+    | '/expenses/recycle-bin'
+    | '/expenses/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/reset-password' | '/update-password' | '/'
+  to:
+    | '/auth'
+    | '/reset-password'
+    | '/update-password'
+    | '/'
+    | '/expenses/add'
+    | '/expenses/categories'
+    | '/expenses/pending'
+    | '/expenses/recycle-bin'
+    | '/expenses'
   id:
     | '__root__'
     | '/_authenticated'
@@ -72,6 +140,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/_authenticated/'
+    | '/_authenticated/expenses/add'
+    | '/_authenticated/expenses/categories'
+    | '/_authenticated/expenses/pending'
+    | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/expenses/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,15 +191,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/expenses/': {
+      id: '/_authenticated/expenses/'
+      path: '/expenses'
+      fullPath: '/expenses/'
+      preLoaderRoute: typeof AuthenticatedExpensesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/recycle-bin': {
+      id: '/_authenticated/expenses/recycle-bin'
+      path: '/expenses/recycle-bin'
+      fullPath: '/expenses/recycle-bin'
+      preLoaderRoute: typeof AuthenticatedExpensesRecycleBinRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/pending': {
+      id: '/_authenticated/expenses/pending'
+      path: '/expenses/pending'
+      fullPath: '/expenses/pending'
+      preLoaderRoute: typeof AuthenticatedExpensesPendingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/categories': {
+      id: '/_authenticated/expenses/categories'
+      path: '/expenses/categories'
+      fullPath: '/expenses/categories'
+      preLoaderRoute: typeof AuthenticatedExpensesCategoriesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/add': {
+      id: '/_authenticated/expenses/add'
+      path: '/expenses/add'
+      fullPath: '/expenses/add'
+      preLoaderRoute: typeof AuthenticatedExpensesAddRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedExpensesAddRoute: typeof AuthenticatedExpensesAddRoute
+  AuthenticatedExpensesCategoriesRoute: typeof AuthenticatedExpensesCategoriesRoute
+  AuthenticatedExpensesPendingRoute: typeof AuthenticatedExpensesPendingRoute
+  AuthenticatedExpensesRecycleBinRoute: typeof AuthenticatedExpensesRecycleBinRoute
+  AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedExpensesAddRoute: AuthenticatedExpensesAddRoute,
+  AuthenticatedExpensesCategoriesRoute: AuthenticatedExpensesCategoriesRoute,
+  AuthenticatedExpensesPendingRoute: AuthenticatedExpensesPendingRoute,
+  AuthenticatedExpensesRecycleBinRoute: AuthenticatedExpensesRecycleBinRoute,
+  AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
