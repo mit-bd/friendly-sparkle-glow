@@ -7,6 +7,7 @@ import {
   endOfYear,
   subDays,
   subMonths,
+  addDays,
   format,
   parseISO,
 } from "date-fns";
@@ -270,7 +271,7 @@ export function buildDailyTrend(rows: AnalyticsExpense[], range: DateRange): Tre
   for (let i = 0; i < 366 && cursor <= end; i++) {
     const key = fmt(cursor);
     out.push({ key, label: format(cursor, "dd MMM"), total: totals.get(key) ?? 0 });
-    cursor = subDays(cursor, -1);
+    cursor = addDays(cursor, 1);
   }
   return out;
 }
