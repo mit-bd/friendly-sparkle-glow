@@ -423,6 +423,24 @@ function ExpenseDetailsPage() {
                   <Field label="Rejected at" value={formatDateTime(expense.rejected_at)} />
                 </>
               )}
+              {expense.deleted_at && (
+                <>
+                  <Field
+                    label="Deleted by"
+                    value={expense.deleted_by ? names[expense.deleted_by] ?? "—" : "—"}
+                  />
+                  <Field label="Deleted at" value={formatDateTime(expense.deleted_at)} />
+                </>
+              )}
+              {expense.restored_at && (
+                <>
+                  <Field
+                    label="Restored by"
+                    value={expense.restored_by ? names[expense.restored_by] ?? "—" : "—"}
+                  />
+                  <Field label="Restored at" value={formatDateTime(expense.restored_at)} />
+                </>
+              )}
               <Field label="Last updated by" value={expense.updated_by ? names[expense.updated_by] ?? "—" : "—"} />
               <Field label="Last updated date" value={formatDateTime(expense.updated_at)} />
             </CardContent>
