@@ -49,6 +49,8 @@ import { Route as AuthenticatedExpensesIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDamagesReportsRouteImport } from './routes/_authenticated/damages.reports'
 import { Route as AuthenticatedDamagesPendingRouteImport } from './routes/_authenticated/damages.pending'
 import { Route as AuthenticatedDamagesAddRouteImport } from './routes/_authenticated/damages.add'
+import { Route as AuthenticatedDamagesIdRouteImport } from './routes/_authenticated/damages.$id'
+import { Route as AuthenticatedReturnsReasonIdRouteImport } from './routes/_authenticated/returns.reason.$id'
 import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
 import { Route as AuthenticatedDashboardSubcategoryIdRouteImport } from './routes/_authenticated/dashboard.subcategory.$id'
 import { Route as AuthenticatedDashboardCategoryIdRouteImport } from './routes/_authenticated/dashboard.category.$id'
@@ -276,6 +278,17 @@ const AuthenticatedDamagesAddRoute = AuthenticatedDamagesAddRouteImport.update({
   path: '/add',
   getParentRoute: () => AuthenticatedDamagesRoute,
 } as any)
+const AuthenticatedDamagesIdRoute = AuthenticatedDamagesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedDamagesRoute,
+} as any)
+const AuthenticatedReturnsReasonIdRoute =
+  AuthenticatedReturnsReasonIdRouteImport.update({
+    id: '/reason/$id',
+    path: '/reason/$id',
+    getParentRoute: () => AuthenticatedReturnsRoute,
+  } as any)
 const AuthenticatedMarketingPlatformIdRoute =
   AuthenticatedMarketingPlatformIdRouteImport.update({
     id: '/platform/$id',
@@ -308,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/users': typeof AuthenticatedUsersRoute
+  '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/pending': typeof AuthenticatedDamagesPendingRoute
   '/damages/reports': typeof AuthenticatedDamagesReportsRoute
@@ -338,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
+  '/returns/reason/$id': typeof AuthenticatedReturnsReasonIdRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
@@ -349,6 +364,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
+  '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/pending': typeof AuthenticatedDamagesPendingRoute
   '/damages/reports': typeof AuthenticatedDamagesReportsRoute
@@ -379,6 +395,7 @@ export interface FileRoutesByTo {
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
+  '/returns/reason/$id': typeof AuthenticatedReturnsReasonIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -395,6 +412,7 @@ export interface FileRoutesById {
   '/_authenticated/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/_authenticated/damages/add': typeof AuthenticatedDamagesAddRoute
   '/_authenticated/damages/pending': typeof AuthenticatedDamagesPendingRoute
   '/_authenticated/damages/reports': typeof AuthenticatedDamagesReportsRoute
@@ -425,6 +443,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/_authenticated/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
+  '/_authenticated/returns/reason/$id': typeof AuthenticatedReturnsReasonIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -441,6 +460,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/returns'
     | '/users'
+    | '/damages/$id'
     | '/damages/add'
     | '/damages/pending'
     | '/damages/reports'
@@ -471,6 +491,7 @@ export interface FileRouteTypes {
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
     | '/marketing/platform/$id'
+    | '/returns/reason/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
@@ -482,6 +503,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/users'
     | '/'
+    | '/damages/$id'
     | '/damages/add'
     | '/damages/pending'
     | '/damages/reports'
@@ -512,6 +534,7 @@ export interface FileRouteTypes {
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
     | '/marketing/platform/$id'
+    | '/returns/reason/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -527,6 +550,7 @@ export interface FileRouteTypes {
     | '/_authenticated/returns'
     | '/_authenticated/users'
     | '/_authenticated/'
+    | '/_authenticated/damages/$id'
     | '/_authenticated/damages/add'
     | '/_authenticated/damages/pending'
     | '/_authenticated/damages/reports'
@@ -557,6 +581,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/category/$id'
     | '/_authenticated/dashboard/subcategory/$id'
     | '/_authenticated/marketing/platform/$id'
+    | '/_authenticated/returns/reason/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -848,6 +873,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDamagesAddRouteImport
       parentRoute: typeof AuthenticatedDamagesRoute
     }
+    '/_authenticated/damages/$id': {
+      id: '/_authenticated/damages/$id'
+      path: '/$id'
+      fullPath: '/damages/$id'
+      preLoaderRoute: typeof AuthenticatedDamagesIdRouteImport
+      parentRoute: typeof AuthenticatedDamagesRoute
+    }
+    '/_authenticated/returns/reason/$id': {
+      id: '/_authenticated/returns/reason/$id'
+      path: '/reason/$id'
+      fullPath: '/returns/reason/$id'
+      preLoaderRoute: typeof AuthenticatedReturnsReasonIdRouteImport
+      parentRoute: typeof AuthenticatedReturnsRoute
+    }
     '/_authenticated/marketing/platform/$id': {
       id: '/_authenticated/marketing/platform/$id'
       path: '/platform/$id'
@@ -873,6 +912,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedDamagesRouteChildren {
+  AuthenticatedDamagesIdRoute: typeof AuthenticatedDamagesIdRoute
   AuthenticatedDamagesAddRoute: typeof AuthenticatedDamagesAddRoute
   AuthenticatedDamagesPendingRoute: typeof AuthenticatedDamagesPendingRoute
   AuthenticatedDamagesReportsRoute: typeof AuthenticatedDamagesReportsRoute
@@ -880,6 +920,7 @@ interface AuthenticatedDamagesRouteChildren {
 }
 
 const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
+  AuthenticatedDamagesIdRoute: AuthenticatedDamagesIdRoute,
   AuthenticatedDamagesAddRoute: AuthenticatedDamagesAddRoute,
   AuthenticatedDamagesPendingRoute: AuthenticatedDamagesPendingRoute,
   AuthenticatedDamagesReportsRoute: AuthenticatedDamagesReportsRoute,
@@ -916,6 +957,7 @@ interface AuthenticatedReturnsRouteChildren {
   AuthenticatedReturnsPendingRoute: typeof AuthenticatedReturnsPendingRoute
   AuthenticatedReturnsReportsRoute: typeof AuthenticatedReturnsReportsRoute
   AuthenticatedReturnsIndexRoute: typeof AuthenticatedReturnsIndexRoute
+  AuthenticatedReturnsReasonIdRoute: typeof AuthenticatedReturnsReasonIdRoute
 }
 
 const AuthenticatedReturnsRouteChildren: AuthenticatedReturnsRouteChildren = {
@@ -924,6 +966,7 @@ const AuthenticatedReturnsRouteChildren: AuthenticatedReturnsRouteChildren = {
   AuthenticatedReturnsPendingRoute: AuthenticatedReturnsPendingRoute,
   AuthenticatedReturnsReportsRoute: AuthenticatedReturnsReportsRoute,
   AuthenticatedReturnsIndexRoute: AuthenticatedReturnsIndexRoute,
+  AuthenticatedReturnsReasonIdRoute: AuthenticatedReturnsReasonIdRoute,
 }
 
 const AuthenticatedReturnsRouteWithChildren =
@@ -1002,3 +1045,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
