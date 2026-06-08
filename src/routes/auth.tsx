@@ -62,7 +62,13 @@ function AuthPage() {
               </div>
             </div>
           ) : (
-            <BrandMark variant="full" title={companyName} className="h-20 w-auto" />
+            <div className="flex items-center gap-3">
+              <BrandMark title={companyName} className="h-14 w-14" />
+              <div className="min-w-0">
+                <p className="truncate text-lg font-semibold tracking-tight">{companyName}</p>
+                <p className="text-xs text-muted-foreground">{APP_TAGLINE}</p>
+              </div>
+            </div>
           )}
 
           <Tabs defaultValue="signin" className="w-full">
