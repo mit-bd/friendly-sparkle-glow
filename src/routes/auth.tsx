@@ -120,6 +120,7 @@ function SignInForm({ onSuccess }: { onSuccess: () => void }) {
       toast.error(error.message);
       return;
     }
+    void logActivity({ action: "login", entityType: "session", entityLabel: email });
     onSuccess();
   }
 
