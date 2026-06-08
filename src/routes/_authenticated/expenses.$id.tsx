@@ -51,6 +51,7 @@ import {
   type ExpenseEvent,
 } from "@/lib/approvals";
 import { fetchFieldChanges, type FieldChange } from "@/lib/audit";
+import { fetchPlatforms } from "@/lib/marketing";
 import {
   ATTACHMENT_BUCKET,
   fetchCategories,
@@ -83,6 +84,7 @@ function ExpenseDetailsPage() {
   const [events, setEvents] = useState<ExpenseEvent[]>([]);
   const [changes, setChanges] = useState<FieldChange[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
+  const [platformName, setPlatformName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -113,6 +115,15 @@ function ExpenseDetailsPage() {
     setAttachments((atts.data ?? []) as ExpenseAttachment[]);
     setEvents(evts);
     setChanges(fch);
+    const platId = (exp as unknown as { platform_id?: string | null }).platform_id;
+    if (platId) {
+      try {
+        const plats = await fetchPlatforms(true);
+        setPlatformName(plats.find((p) => p.id === platId)?.name ?? null);
+      } catch {
+        /* non-critical */
+      }
+    }
     const ids = [
       exp.created_by,
       exp.updated_by,
