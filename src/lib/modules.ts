@@ -130,6 +130,8 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Permissions", to: "/settings/permissions" },
       { label: "User Preferences", to: "/settings/preferences" },
       { label: "System Health", to: "/system" },
+      { label: "System Readiness", to: "/readiness" },
+      { label: "Backup & Recovery", to: "/backup" },
     ],
   },
 ];
