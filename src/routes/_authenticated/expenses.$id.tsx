@@ -20,6 +20,7 @@ import { ExpenseFields, type ExpenseFormValues } from "@/components/expenses/Exp
 import { ApprovalPanel } from "@/components/expenses/ApprovalPanel";
 import { ExpenseTimeline } from "@/components/expenses/ExpenseTimeline";
 import { ExpenseDiscussion } from "@/components/expenses/ExpenseDiscussion";
+import { ChangeHistory } from "@/components/audit/ChangeHistory";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -49,6 +50,7 @@ import {
   logExpenseEvent,
   type ExpenseEvent,
 } from "@/lib/approvals";
+import { fetchFieldChanges, type FieldChange } from "@/lib/audit";
 import {
   ATTACHMENT_BUCKET,
   fetchCategories,
@@ -79,6 +81,7 @@ function ExpenseDetailsPage() {
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [subs, setSubs] = useState<ExpenseSubcategory[]>([]);
   const [events, setEvents] = useState<ExpenseEvent[]>([]);
+  const [changes, setChanges] = useState<FieldChange[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -94,7 +97,7 @@ function ExpenseDetailsPage() {
     }
     const exp = data as Expense;
     setExpense(exp);
-    const [cats, subcats, atts, evts] = await Promise.all([
+    const [cats, subcats, atts, evts, fch] = await Promise.all([
       fetchCategories(true),
       fetchSubcategories(true),
       supabase
@@ -103,11 +106,13 @@ function ExpenseDetailsPage() {
         .eq("expense_id", id)
         .order("created_at"),
       fetchExpenseEvents(id).catch(() => [] as ExpenseEvent[]),
+      fetchFieldChanges("expense", id).catch(() => [] as FieldChange[]),
     ]);
     setCategories(cats);
     setSubs(subcats);
     setAttachments((atts.data ?? []) as ExpenseAttachment[]);
     setEvents(evts);
+    setChanges(fch);
     const ids = [
       exp.created_by,
       exp.updated_by,
@@ -115,6 +120,7 @@ function ExpenseDetailsPage() {
       exp.approved_by,
       exp.rejected_by,
       ...evts.map((e) => e.actor_id),
+      ...fch.map((c) => c.changed_by),
     ].filter(Boolean) as string[];
     setNames(await fetchUserNames(ids));
     setLoading(false);
@@ -347,6 +353,15 @@ function ExpenseDetailsPage() {
             </CardHeader>
             <CardContent>
               <ExpenseTimeline events={events} names={names} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Change history</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChangeHistory changes={changes} names={names} />
             </CardContent>
           </Card>
 
