@@ -1,0 +1,71 @@
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+
+import { supabase } from "@/integrations/supabase/client";
+import { getSignedUrl } from "./storage";
+
+export interface CompanyProfile {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  address: string | null;
+  mobile: string | null;
+  email: string | null;
+  website: string | null;
+  facebook: string | null;
+  whatsapp: string | null;
+  trade_license: string | null;
+  bin_number: string | null;
+  tin_number: string | null;
+  description: string | null;
+}
+
+interface BrandingContextValue {
+  company: CompanyProfile | null;
+  logoUrl: string | null;
+  loading: boolean;
+  refresh: () => Promise<void>;
+}
+
+const BrandingContext = createContext<BrandingContextValue | undefined>(undefined);
+
+export function BrandingProvider({ children }: { children: ReactNode }) {
+  const [company, setCompany] = useState<CompanyProfile | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    const { data } = await supabase
+      .from("company_profile")
+      .select("*")
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    const comp = (data as CompanyProfile) ?? null;
+    setCompany(comp);
+    setLogoUrl(await getSignedUrl("logos", comp?.logo_url));
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  return (
+    <BrandingContext.Provider value={{ company, logoUrl, loading, refresh }}>
+      {children}
+    </BrandingContext.Provider>
+  );
+}
+
+export function useBranding() {
+  const ctx = useContext(BrandingContext);
+  if (!ctx) throw new Error("useBranding must be used within BrandingProvider");
+  return ctx;
+}
