@@ -168,10 +168,12 @@ function MarketingReports() {
         p.total,
         `${p.percentage.toFixed(1)}%`,
       ]);
+      body.push(["Grand Total", "", rows.length, grand, "100.0%"]);
     } else if (type === "campaign") {
       const cs = buildCampaignSummary(rows, platforms);
       headers = ["Campaign", "Platform", "Costs", "Converted BDT", "% of total"];
       body = cs.map((c) => [c.name, c.platformName, c.count, c.total, `${c.percentage.toFixed(1)}%`]);
+      body.push(["Grand Total", "", rows.length, grand, "100.0%"]);
     } else {
       const cur = buildCurrencySummary(rows);
       headers = ["Currency", "Costs", "Original total", "Avg rate", "Converted BDT", "% of total"];
@@ -183,8 +185,8 @@ function MarketingReports() {
         c.convertedTotal,
         `${c.percentage.toFixed(1)}%`,
       ]);
+      body.push(["Grand Total (BDT)", rows.length, "", "", grand, "100.0%"]);
     }
-    body.push(["Grand total", "", rows.length, grand, "100%"].slice(0, headers.length) as (string | number)[]);
     downloadCsv(`motion-it-bd-${meta.label.toLowerCase().replace(/\s+/g, "-")}`, headers, body);
     void logActivity({
       action: "export",
