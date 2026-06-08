@@ -146,6 +146,228 @@ export type Database = {
         }
         Relationships: []
       }
+      damage_attachments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          damage_id: string
+          file_name: string | null
+          file_path: string
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          damage_id: string
+          file_name?: string | null
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          damage_id?: string
+          file_name?: string | null
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "damage_attachments_damage_id_fkey"
+            columns: ["damage_id"]
+            isOneToOne: false
+            referencedRelation: "damages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      damage_counters: {
+        Row: {
+          last_seq: number
+          year: number
+        }
+        Insert: {
+          last_seq?: number
+          year: number
+        }
+        Update: {
+          last_seq?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      damage_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          damage_id: string
+          from_status: Database["public"]["Enums"]["expense_status"] | null
+          id: string
+          notes: string | null
+          to_status: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          damage_id: string
+          from_status?: Database["public"]["Enums"]["expense_status"] | null
+          id?: string
+          notes?: string | null
+          to_status?: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          damage_id?: string
+          from_status?: Database["public"]["Enums"]["expense_status"] | null
+          id?: string
+          notes?: string | null
+          to_status?: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "damage_events_damage_id_fkey"
+            columns: ["damage_id"]
+            isOneToOne: false
+            referencedRelation: "damages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      damage_types: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      damages: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          created_by: string | null
+          damage_date: string
+          damage_number: string
+          damage_value: number
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          notes: string | null
+          product_name: string
+          quantity: number
+          rejected_at: string | null
+          rejected_by: string | null
+          restored_at: string | null
+          restored_by: string | null
+          status: Database["public"]["Enums"]["expense_status"]
+          submitted_at: string | null
+          submitted_by: string | null
+          type_id: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          damage_date?: string
+          damage_number: string
+          damage_value?: number
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          notes?: string | null
+          product_name?: string
+          quantity?: number
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_at?: string | null
+          submitted_by?: string | null
+          type_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          damage_date?: string
+          damage_number?: string
+          damage_value?: number
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          notes?: string | null
+          product_name?: string
+          quantity?: number
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_at?: string | null
+          submitted_by?: string | null
+          type_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "damages_type_id_fkey"
+            columns: ["type_id"]
+            isOneToOne: false
+            referencedRelation: "damage_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expense_attachments: {
         Row: {
           created_at: string
@@ -597,9 +819,11 @@ export type Database = {
         Row: {
           body: string | null
           created_at: string
+          damage_id: string | null
           expense_id: string | null
           id: string
           read_at: string | null
+          return_id: string | null
           title: string
           type: string
           user_id: string
@@ -607,9 +831,11 @@ export type Database = {
         Insert: {
           body?: string | null
           created_at?: string
+          damage_id?: string | null
           expense_id?: string | null
           id?: string
           read_at?: string | null
+          return_id?: string | null
           title: string
           type: string
           user_id: string
@@ -617,19 +843,35 @@ export type Database = {
         Update: {
           body?: string | null
           created_at?: string
+          damage_id?: string | null
           expense_id?: string | null
           id?: string
           read_at?: string | null
+          return_id?: string | null
           title?: string
           type?: string
           user_id?: string
         }
         Relationships: [
           {
+            foreignKeyName: "notifications_damage_id_fkey"
+            columns: ["damage_id"]
+            isOneToOne: false
+            referencedRelation: "damages"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "notifications_expense_id_fkey"
             columns: ["expense_id"]
             isOneToOne: false
             referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "returns"
             referencedColumns: ["id"]
           },
         ]
@@ -729,6 +971,247 @@ export type Database = {
           total_amount?: number
         }
         Relationships: []
+      }
+      return_attachments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_name: string | null
+          file_path: string
+          id: string
+          mime_type: string | null
+          return_id: string
+          size_bytes: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          return_id: string
+          size_bytes?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          return_id?: string
+          size_bytes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "return_attachments_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      return_counters: {
+        Row: {
+          last_seq: number
+          year: number
+        }
+        Insert: {
+          last_seq?: number
+          year: number
+        }
+        Update: {
+          last_seq?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      return_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          from_status: Database["public"]["Enums"]["expense_status"] | null
+          id: string
+          notes: string | null
+          return_id: string
+          to_status: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["expense_status"] | null
+          id?: string
+          notes?: string | null
+          return_id: string
+          to_status?: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["expense_status"] | null
+          id?: string
+          notes?: string | null
+          return_id?: string
+          to_status?: Database["public"]["Enums"]["expense_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "return_events_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      return_reasons: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      returns: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          category_id: string | null
+          created_at: string
+          created_by: string | null
+          customer_notes: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          loss_amount: number
+          net_loss_amount: number | null
+          notes: string | null
+          product_name: string
+          quantity: number
+          reason_id: string | null
+          recoverable_amount: number
+          rejected_at: string | null
+          rejected_by: string | null
+          restored_at: string | null
+          restored_by: string | null
+          return_date: string
+          return_number: string
+          status: Database["public"]["Enums"]["expense_status"]
+          submitted_at: string | null
+          submitted_by: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_notes?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          loss_amount?: number
+          net_loss_amount?: number | null
+          notes?: string | null
+          product_name?: string
+          quantity?: number
+          reason_id?: string | null
+          recoverable_amount?: number
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          return_date?: string
+          return_number: string
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_notes?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          loss_amount?: number
+          net_loss_amount?: number | null
+          notes?: string | null
+          product_name?: string
+          quantity?: number
+          reason_id?: string | null
+          recoverable_amount?: number
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          return_date?: string
+          return_number?: string
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "returns_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "returns_reason_id_fkey"
+            columns: ["reason_id"]
+            isOneToOne: false
+            referencedRelation: "return_reasons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       role_permissions: {
         Row: {
@@ -898,8 +1381,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      next_damage_number: { Args: never; Returns: string }
       next_expense_number: { Args: never; Returns: string }
       next_report_number: { Args: never; Returns: string }
+      next_return_number: { Args: never; Returns: string }
     }
     Enums: {
       app_role: "admin" | "manager" | "accountant" | "viewer"

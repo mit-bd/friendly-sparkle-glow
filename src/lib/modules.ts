@@ -9,6 +9,7 @@ import {
   Users,
   Settings,
   History,
+  TrendingDown,
   type LucideIcon,
 } from "lucide-react";
 
@@ -67,8 +68,31 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Marketing Reports", to: "/marketing/reports" },
     ],
   },
-  { label: "Returns", to: "/returns", icon: Undo2, module: "returns" },
-  { label: "Damages", to: "/damages", icon: PackageX, module: "damages" },
+  {
+    label: "Returns",
+    to: "/returns",
+    icon: Undo2,
+    module: "returns",
+    children: [
+      { label: "Overview", to: "/returns" },
+      { label: "Add Return", to: "/returns/add" },
+      { label: "Pending Approvals", to: "/returns/pending" },
+      { label: "Return Reports", to: "/returns/reports" },
+    ],
+  },
+  {
+    label: "Damages",
+    to: "/damages",
+    icon: PackageX,
+    module: "damages",
+    children: [
+      { label: "Overview", to: "/damages" },
+      { label: "Add Damage", to: "/damages/add" },
+      { label: "Pending Approvals", to: "/damages/pending" },
+      { label: "Damage Reports", to: "/damages/reports" },
+    ],
+  },
+  { label: "Loss Management", to: "/loss", icon: TrendingDown, module: "returns" },
   {
     label: "Reports",
     to: "/reports/summary",
@@ -100,6 +124,7 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Company Profile", to: "/settings/company" },
       { label: "Signatories", to: "/settings/signatories" },
       { label: "Marketing Setup", to: "/settings/marketing" },
+      { label: "Loss Setup", to: "/settings/loss" },
       { label: "Notification Settings", to: "/settings/notifications" },
       { label: "Permissions", to: "/settings/permissions" },
     ],
