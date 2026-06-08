@@ -28,6 +28,7 @@ import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_
 import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_authenticated/settings.permissions'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsMarketingRouteImport } from './routes/_authenticated/settings.marketing'
+import { Route as AuthenticatedSettingsLossRouteImport } from './routes/_authenticated/settings.loss'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedReturnsReportsRouteImport } from './routes/_authenticated/returns.reports'
 import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
@@ -144,6 +145,12 @@ const AuthenticatedSettingsMarketingRoute =
   AuthenticatedSettingsMarketingRouteImport.update({
     id: '/settings/marketing',
     path: '/settings/marketing',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsLossRoute =
+  AuthenticatedSettingsLossRouteImport.update({
+    id: '/settings/loss',
+    path: '/settings/loss',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsCompanyRoute =
@@ -268,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
@@ -303,6 +311,7 @@ export interface FileRoutesByTo {
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
@@ -341,6 +350,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/_authenticated/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/_authenticated/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/_authenticated/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
@@ -379,6 +389,7 @@ export interface FileRouteTypes {
     | '/reports/summary'
     | '/returns/reports'
     | '/settings/company'
+    | '/settings/loss'
     | '/settings/marketing'
     | '/settings/notifications'
     | '/settings/permissions'
@@ -414,6 +425,7 @@ export interface FileRouteTypes {
     | '/reports/summary'
     | '/returns/reports'
     | '/settings/company'
+    | '/settings/loss'
     | '/settings/marketing'
     | '/settings/notifications'
     | '/settings/permissions'
@@ -451,6 +463,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/summary'
     | '/_authenticated/returns/reports'
     | '/_authenticated/settings/company'
+    | '/_authenticated/settings/loss'
     | '/_authenticated/settings/marketing'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/permissions'
@@ -602,6 +615,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/marketing'
       fullPath: '/settings/marketing'
       preLoaderRoute: typeof AuthenticatedSettingsMarketingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/loss': {
+      id: '/_authenticated/settings/loss'
+      path: '/settings/loss'
+      fullPath: '/settings/loss'
+      preLoaderRoute: typeof AuthenticatedSettingsLossRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/company': {
@@ -781,6 +801,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
   AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
   AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
+  AuthenticatedSettingsLossRoute: typeof AuthenticatedSettingsLossRoute
   AuthenticatedSettingsMarketingRoute: typeof AuthenticatedSettingsMarketingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsPermissionsRoute: typeof AuthenticatedSettingsPermissionsRoute
@@ -810,6 +831,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedReportsExportHistoryRoute,
   AuthenticatedReportsSummaryRoute: AuthenticatedReportsSummaryRoute,
   AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
+  AuthenticatedSettingsLossRoute: AuthenticatedSettingsLossRoute,
   AuthenticatedSettingsMarketingRoute: AuthenticatedSettingsMarketingRoute,
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
