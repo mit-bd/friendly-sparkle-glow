@@ -290,7 +290,7 @@ export interface ReportExportRow {
 }
 
 export interface LogReportInput {
-  reportType: ReportType;
+  reportType: ReportType | string;
   title: string;
   rangeFrom: string | null;
   rangeTo: string | null;
