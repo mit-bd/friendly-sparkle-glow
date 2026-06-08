@@ -234,6 +234,11 @@
   margin: 14mm;
 }
 
+/* Hidden on screen; revealed inside the print stylesheet below. */
+.print-only {
+  display: none;
+}
+
 @media print {
   .brand-rule,
   .bg-brand-gradient,
