@@ -202,6 +202,15 @@ function CategoriesPage() {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Delete category"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDelTarget({ kind: "category", id: cat.id, name: cat.name })}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </CardHeader>
                   <AccordionContent>
@@ -236,6 +245,17 @@ function CategoriesPage() {
                                 }
                               >
                                 <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Delete subcategory"
+                                className="text-destructive hover:text-destructive"
+                                onClick={() =>
+                                  setDelTarget({ kind: "subcategory", id: sub.id, name: sub.name })
+                                }
+                              >
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
                           </div>
