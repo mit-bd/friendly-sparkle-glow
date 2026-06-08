@@ -14,7 +14,13 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
+import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
+import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
+import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
+import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
+import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
 import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
@@ -44,10 +50,43 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMarketingRoute = AuthenticatedMarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
+  id: '/damages',
+  path: '/damages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedExpensesIndexRoute =
   AuthenticatedExpensesIndexRouteImport.update({
     id: '/expenses/',
     path: '/expenses/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportsSummaryRoute =
+  AuthenticatedReportsSummaryRouteImport.update({
+    id: '/reports/summary',
+    path: '/reports/summary',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportsExportHistoryRoute =
+  AuthenticatedReportsExportHistoryRouteImport.update({
+    id: '/reports/export-history',
+    path: '/reports/export-history',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportsDetailedRoute =
+  AuthenticatedReportsDetailedRouteImport.update({
+    id: '/reports/detailed',
+    path: '/reports/detailed',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedExpensesRecycleBinRoute =
@@ -80,21 +119,33 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/damages': typeof AuthenticatedDamagesRoute
+  '/marketing': typeof AuthenticatedMarketingRoute
+  '/returns': typeof AuthenticatedReturnsRoute
   '/expenses/add': typeof AuthenticatedExpensesAddRoute
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
+  '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
+  '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/damages': typeof AuthenticatedDamagesRoute
+  '/marketing': typeof AuthenticatedMarketingRoute
+  '/returns': typeof AuthenticatedReturnsRoute
   '/': typeof AuthenticatedIndexRoute
   '/expenses/add': typeof AuthenticatedExpensesAddRoute
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
+  '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
+  '/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRoutesById {
@@ -103,11 +154,17 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/_authenticated/damages': typeof AuthenticatedDamagesRoute
+  '/_authenticated/marketing': typeof AuthenticatedMarketingRoute
+  '/_authenticated/returns': typeof AuthenticatedReturnsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/expenses/add': typeof AuthenticatedExpensesAddRoute
   '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
+  '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
+  '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRouteTypes {
@@ -117,21 +174,33 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/update-password'
+    | '/damages'
+    | '/marketing'
+    | '/returns'
     | '/expenses/add'
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/reports/detailed'
+    | '/reports/export-history'
+    | '/reports/summary'
     | '/expenses/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
     | '/reset-password'
     | '/update-password'
+    | '/damages'
+    | '/marketing'
+    | '/returns'
     | '/'
     | '/expenses/add'
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/reports/detailed'
+    | '/reports/export-history'
+    | '/reports/summary'
     | '/expenses'
   id:
     | '__root__'
@@ -139,11 +208,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/update-password'
+    | '/_authenticated/damages'
+    | '/_authenticated/marketing'
+    | '/_authenticated/returns'
     | '/_authenticated/'
     | '/_authenticated/expenses/add'
     | '/_authenticated/expenses/categories'
     | '/_authenticated/expenses/pending'
     | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/reports/detailed'
+    | '/_authenticated/reports/export-history'
+    | '/_authenticated/reports/summary'
     | '/_authenticated/expenses/'
   fileRoutesById: FileRoutesById
 }
@@ -191,11 +266,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/returns': {
+      id: '/_authenticated/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof AuthenticatedReturnsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/marketing': {
+      id: '/_authenticated/marketing'
+      path: '/marketing'
+      fullPath: '/marketing'
+      preLoaderRoute: typeof AuthenticatedMarketingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/damages': {
+      id: '/_authenticated/damages'
+      path: '/damages'
+      fullPath: '/damages'
+      preLoaderRoute: typeof AuthenticatedDamagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/expenses/': {
       id: '/_authenticated/expenses/'
       path: '/expenses'
       fullPath: '/expenses/'
       preLoaderRoute: typeof AuthenticatedExpensesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports/summary': {
+      id: '/_authenticated/reports/summary'
+      path: '/reports/summary'
+      fullPath: '/reports/summary'
+      preLoaderRoute: typeof AuthenticatedReportsSummaryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports/export-history': {
+      id: '/_authenticated/reports/export-history'
+      path: '/reports/export-history'
+      fullPath: '/reports/export-history'
+      preLoaderRoute: typeof AuthenticatedReportsExportHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports/detailed': {
+      id: '/_authenticated/reports/detailed'
+      path: '/reports/detailed'
+      fullPath: '/reports/detailed'
+      preLoaderRoute: typeof AuthenticatedReportsDetailedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/expenses/recycle-bin': {
@@ -230,20 +347,33 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRoute
+  AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRoute
+  AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedExpensesAddRoute: typeof AuthenticatedExpensesAddRoute
   AuthenticatedExpensesCategoriesRoute: typeof AuthenticatedExpensesCategoriesRoute
   AuthenticatedExpensesPendingRoute: typeof AuthenticatedExpensesPendingRoute
   AuthenticatedExpensesRecycleBinRoute: typeof AuthenticatedExpensesRecycleBinRoute
+  AuthenticatedReportsDetailedRoute: typeof AuthenticatedReportsDetailedRoute
+  AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
+  AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
   AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDamagesRoute: AuthenticatedDamagesRoute,
+  AuthenticatedMarketingRoute: AuthenticatedMarketingRoute,
+  AuthenticatedReturnsRoute: AuthenticatedReturnsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedExpensesAddRoute: AuthenticatedExpensesAddRoute,
   AuthenticatedExpensesCategoriesRoute: AuthenticatedExpensesCategoriesRoute,
   AuthenticatedExpensesPendingRoute: AuthenticatedExpensesPendingRoute,
   AuthenticatedExpensesRecycleBinRoute: AuthenticatedExpensesRecycleBinRoute,
+  AuthenticatedReportsDetailedRoute: AuthenticatedReportsDetailedRoute,
+  AuthenticatedReportsExportHistoryRoute:
+    AuthenticatedReportsExportHistoryRoute,
+  AuthenticatedReportsSummaryRoute: AuthenticatedReportsSummaryRoute,
   AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
 }
 
