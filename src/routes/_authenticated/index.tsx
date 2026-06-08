@@ -28,6 +28,9 @@ import { TrendCharts } from "@/components/analytics/TrendCharts";
 import { MarketingPanel, LossPanel } from "@/components/analytics/MarketingLossPanels";
 import { ExpenseMiniTable } from "@/components/analytics/ExpenseMiniTable";
 import { EmptyState } from "@/components/analytics/EmptyState";
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { RecentPanels } from "@/components/dashboard/RecentPanels";
+import { readPreferences } from "@/lib/preferences";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({ meta: [{ title: "Dashboard — Motion IT BD" }] }),
@@ -38,8 +41,9 @@ function Dashboard() {
   const { profile, primaryRole } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] || "there";
 
-  const [preset, setPreset] = useState<RangePreset>(DEFAULT_PRESET);
-  const [range, setRange] = useState<DateRange>(() => resolveRange(DEFAULT_PRESET));
+  const initialPreset = (readPreferences().defaultRange as RangePreset) ?? DEFAULT_PRESET;
+  const [preset, setPreset] = useState<RangePreset>(initialPreset);
+  const [range, setRange] = useState<DateRange>(() => resolveRange(initialPreset));
   const [term, setTerm] = useState("");
 
   const taxonomy = useTaxonomy();
@@ -92,6 +96,8 @@ function Dashboard() {
             : "Financial overview of approved expenses."
         }
       />
+
+      <QuickActions />
 
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <DateRangeFilter preset={preset} range={range} onChange={onRangeChange} />
@@ -178,6 +184,8 @@ function Dashboard() {
               </div>
             </div>
           )}
+
+          <RecentPanels />
         </>
       )}
     </div>
