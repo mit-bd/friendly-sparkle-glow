@@ -35,6 +35,7 @@ import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_auth
 import { Route as AuthenticatedReturnsReportsRouteImport } from './routes/_authenticated/returns.reports'
 import { Route as AuthenticatedReturnsPendingRouteImport } from './routes/_authenticated/returns.pending'
 import { Route as AuthenticatedReturnsAddRouteImport } from './routes/_authenticated/returns.add'
+import { Route as AuthenticatedReturnsIdRouteImport } from './routes/_authenticated/returns.$id'
 import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
 import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
 import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
@@ -194,6 +195,11 @@ const AuthenticatedReturnsAddRoute = AuthenticatedReturnsAddRouteImport.update({
   path: '/add',
   getParentRoute: () => AuthenticatedReturnsRoute,
 } as any)
+const AuthenticatedReturnsIdRoute = AuthenticatedReturnsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedReturnsRoute,
+} as any)
 const AuthenticatedReportsSummaryRoute =
   AuthenticatedReportsSummaryRouteImport.update({
     id: '/reports/summary',
@@ -315,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/returns/$id': typeof AuthenticatedReturnsIdRoute
   '/returns/add': typeof AuthenticatedReturnsAddRoute
   '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
@@ -355,6 +362,7 @@ export interface FileRoutesByTo {
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/returns/$id': typeof AuthenticatedReturnsIdRoute
   '/returns/add': typeof AuthenticatedReturnsAddRoute
   '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
@@ -400,6 +408,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
   '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
   '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/_authenticated/returns/$id': typeof AuthenticatedReturnsIdRoute
   '/_authenticated/returns/add': typeof AuthenticatedReturnsAddRoute
   '/_authenticated/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/_authenticated/returns/reports': typeof AuthenticatedReturnsReportsRoute
@@ -445,6 +454,7 @@ export interface FileRouteTypes {
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
+    | '/returns/$id'
     | '/returns/add'
     | '/returns/pending'
     | '/returns/reports'
@@ -485,6 +495,7 @@ export interface FileRouteTypes {
     | '/reports/detailed'
     | '/reports/export-history'
     | '/reports/summary'
+    | '/returns/$id'
     | '/returns/add'
     | '/returns/pending'
     | '/returns/reports'
@@ -529,6 +540,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/detailed'
     | '/_authenticated/reports/export-history'
     | '/_authenticated/reports/summary'
+    | '/_authenticated/returns/$id'
     | '/_authenticated/returns/add'
     | '/_authenticated/returns/pending'
     | '/_authenticated/returns/reports'
@@ -738,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReturnsAddRouteImport
       parentRoute: typeof AuthenticatedReturnsRoute
     }
+    '/_authenticated/returns/$id': {
+      id: '/_authenticated/returns/$id'
+      path: '/$id'
+      fullPath: '/returns/$id'
+      preLoaderRoute: typeof AuthenticatedReturnsIdRouteImport
+      parentRoute: typeof AuthenticatedReturnsRoute
+    }
     '/_authenticated/reports/summary': {
       id: '/_authenticated/reports/summary'
       path: '/reports/summary'
@@ -892,6 +911,7 @@ const AuthenticatedMarketingRouteWithChildren =
   )
 
 interface AuthenticatedReturnsRouteChildren {
+  AuthenticatedReturnsIdRoute: typeof AuthenticatedReturnsIdRoute
   AuthenticatedReturnsAddRoute: typeof AuthenticatedReturnsAddRoute
   AuthenticatedReturnsPendingRoute: typeof AuthenticatedReturnsPendingRoute
   AuthenticatedReturnsReportsRoute: typeof AuthenticatedReturnsReportsRoute
@@ -899,6 +919,7 @@ interface AuthenticatedReturnsRouteChildren {
 }
 
 const AuthenticatedReturnsRouteChildren: AuthenticatedReturnsRouteChildren = {
+  AuthenticatedReturnsIdRoute: AuthenticatedReturnsIdRoute,
   AuthenticatedReturnsAddRoute: AuthenticatedReturnsAddRoute,
   AuthenticatedReturnsPendingRoute: AuthenticatedReturnsPendingRoute,
   AuthenticatedReturnsReportsRoute: AuthenticatedReturnsReportsRoute,
@@ -981,3 +1002,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
