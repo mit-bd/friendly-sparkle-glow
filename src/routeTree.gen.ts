@@ -36,6 +36,7 @@ import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_auth
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
 import { Route as AuthenticatedExpensesAddRouteImport } from './routes/_authenticated/expenses.add'
 import { Route as AuthenticatedExpensesIdRouteImport } from './routes/_authenticated/expenses.$id'
+import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
 import { Route as AuthenticatedDashboardSubcategoryIdRouteImport } from './routes/_authenticated/dashboard.subcategory.$id'
 import { Route as AuthenticatedDashboardCategoryIdRouteImport } from './routes/_authenticated/dashboard.category.$id'
 
@@ -188,6 +189,12 @@ const AuthenticatedExpensesIdRoute = AuthenticatedExpensesIdRouteImport.update({
   path: '/expenses/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMarketingPlatformIdRoute =
+  AuthenticatedMarketingPlatformIdRouteImport.update({
+    id: '/platform/$id',
+    path: '/platform/$id',
+    getParentRoute: () => AuthenticatedMarketingRoute,
+  } as any)
 const AuthenticatedDashboardSubcategoryIdRoute =
   AuthenticatedDashboardSubcategoryIdRouteImport.update({
     id: '/dashboard/subcategory/$id',
@@ -230,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
@@ -259,6 +267,7 @@ export interface FileRoutesByTo {
   '/marketing': typeof AuthenticatedMarketingIndexRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -291,6 +300,7 @@ export interface FileRoutesById {
   '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/_authenticated/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/marketing/'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
+    | '/marketing/platform/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
@@ -352,6 +363,7 @@ export interface FileRouteTypes {
     | '/marketing'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
+    | '/marketing/platform/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -383,6 +395,7 @@ export interface FileRouteTypes {
     | '/_authenticated/marketing/'
     | '/_authenticated/dashboard/category/$id'
     | '/_authenticated/dashboard/subcategory/$id'
+    | '/_authenticated/marketing/platform/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -583,6 +596,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExpensesIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/marketing/platform/$id': {
+      id: '/_authenticated/marketing/platform/$id'
+      path: '/platform/$id'
+      fullPath: '/marketing/platform/$id'
+      preLoaderRoute: typeof AuthenticatedMarketingPlatformIdRouteImport
+      parentRoute: typeof AuthenticatedMarketingRoute
+    }
     '/_authenticated/dashboard/subcategory/$id': {
       id: '/_authenticated/dashboard/subcategory/$id'
       path: '/dashboard/subcategory/$id'
@@ -603,12 +623,15 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedMarketingRouteChildren {
   AuthenticatedMarketingAddRoute: typeof AuthenticatedMarketingAddRoute
   AuthenticatedMarketingIndexRoute: typeof AuthenticatedMarketingIndexRoute
+  AuthenticatedMarketingPlatformIdRoute: typeof AuthenticatedMarketingPlatformIdRoute
 }
 
 const AuthenticatedMarketingRouteChildren: AuthenticatedMarketingRouteChildren =
   {
     AuthenticatedMarketingAddRoute: AuthenticatedMarketingAddRoute,
     AuthenticatedMarketingIndexRoute: AuthenticatedMarketingIndexRoute,
+    AuthenticatedMarketingPlatformIdRoute:
+      AuthenticatedMarketingPlatformIdRoute,
   }
 
 const AuthenticatedMarketingRouteWithChildren =
