@@ -117,16 +117,19 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Users & Roles", to: "/users", icon: Users, module: "users" },
   {
     label: "Settings",
-    to: "/settings/company",
+    to: "/settings",
     icon: Settings,
     module: "settings",
     children: [
+      { label: "Settings Hub", to: "/settings" },
       { label: "Company Profile", to: "/settings/company" },
       { label: "Signatories", to: "/settings/signatories" },
       { label: "Marketing Setup", to: "/settings/marketing" },
       { label: "Loss Setup", to: "/settings/loss" },
       { label: "Notification Settings", to: "/settings/notifications" },
       { label: "Permissions", to: "/settings/permissions" },
+      { label: "User Preferences", to: "/settings/preferences" },
+      { label: "System Health", to: "/system" },
     ],
   },
 ];

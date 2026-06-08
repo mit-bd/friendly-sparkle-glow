@@ -23,6 +23,7 @@ import { Route as AuthenticatedMarketingRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings.index'
 import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns.index'
 import { Route as AuthenticatedMarketingIndexRouteImport } from './routes/_authenticated/marketing.index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
@@ -128,6 +129,12 @@ const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReturnsIndexRoute =
   AuthenticatedReturnsIndexRouteImport.update({
     id: '/',
@@ -371,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/returns/': typeof AuthenticatedReturnsIndexRoute
+  '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
@@ -417,6 +425,7 @@ export interface FileRoutesByTo {
   '/expenses': typeof AuthenticatedExpensesIndexRoute
   '/marketing': typeof AuthenticatedMarketingIndexRoute
   '/returns': typeof AuthenticatedReturnsIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
   '/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
@@ -468,6 +477,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/_authenticated/returns/': typeof AuthenticatedReturnsIndexRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
@@ -519,6 +529,7 @@ export interface FileRouteTypes {
     | '/expenses/'
     | '/marketing/'
     | '/returns/'
+    | '/settings/'
     | '/damages/type/$id'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
@@ -565,6 +576,7 @@ export interface FileRouteTypes {
     | '/expenses'
     | '/marketing'
     | '/returns'
+    | '/settings'
     | '/damages/type/$id'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
@@ -615,6 +627,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/'
     | '/_authenticated/marketing/'
     | '/_authenticated/returns/'
+    | '/_authenticated/settings/'
     | '/_authenticated/damages/type/$id'
     | '/_authenticated/dashboard/category/$id'
     | '/_authenticated/dashboard/subcategory/$id'
@@ -727,6 +740,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/audit'
       preLoaderRoute: typeof AuthenticatedAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/returns/': {
@@ -1060,6 +1080,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsPreferencesRoute: typeof AuthenticatedSettingsPreferencesRoute
   AuthenticatedSettingsSignatoriesRoute: typeof AuthenticatedSettingsSignatoriesRoute
   AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedDashboardCategoryIdRoute: typeof AuthenticatedDashboardCategoryIdRoute
   AuthenticatedDashboardSubcategoryIdRoute: typeof AuthenticatedDashboardSubcategoryIdRoute
 }
@@ -1093,6 +1114,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsPreferencesRoute: AuthenticatedSettingsPreferencesRoute,
   AuthenticatedSettingsSignatoriesRoute: AuthenticatedSettingsSignatoriesRoute,
   AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
+  AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedDashboardCategoryIdRoute: AuthenticatedDashboardCategoryIdRoute,
   AuthenticatedDashboardSubcategoryIdRoute:
     AuthenticatedDashboardSubcategoryIdRoute,
