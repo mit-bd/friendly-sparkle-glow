@@ -22,8 +22,10 @@ import { Route as AuthenticatedMarketingRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns.index'
 import { Route as AuthenticatedMarketingIndexRouteImport } from './routes/_authenticated/marketing.index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
+import { Route as AuthenticatedDamagesIndexRouteImport } from './routes/_authenticated/damages.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
 import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_authenticated/settings.permissions'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
@@ -111,6 +113,12 @@ const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReturnsIndexRoute =
+  AuthenticatedReturnsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedReturnsRoute,
+  } as any)
 const AuthenticatedMarketingIndexRoute =
   AuthenticatedMarketingIndexRouteImport.update({
     id: '/',
@@ -122,6 +130,12 @@ const AuthenticatedExpensesIndexRoute =
     id: '/expenses/',
     path: '/expenses/',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDamagesIndexRoute =
+  AuthenticatedDamagesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDamagesRoute,
   } as any)
 const AuthenticatedSettingsSignatoriesRoute =
   AuthenticatedSettingsSignatoriesRouteImport.update({
@@ -280,8 +294,10 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/damages/': typeof AuthenticatedDamagesIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/marketing/': typeof AuthenticatedMarketingIndexRoute
+  '/returns/': typeof AuthenticatedReturnsIndexRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
@@ -291,11 +307,9 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
-  '/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
-  '/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
   '/damages/reports': typeof AuthenticatedDamagesReportsRoute
@@ -316,8 +330,10 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/damages': typeof AuthenticatedDamagesIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
   '/marketing': typeof AuthenticatedMarketingIndexRoute
+  '/returns': typeof AuthenticatedReturnsIndexRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
@@ -355,8 +371,10 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/_authenticated/damages/': typeof AuthenticatedDamagesIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
+  '/_authenticated/returns/': typeof AuthenticatedReturnsIndexRoute
   '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/_authenticated/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
@@ -394,8 +412,10 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/permissions'
     | '/settings/signatories'
+    | '/damages/'
     | '/expenses/'
     | '/marketing/'
+    | '/returns/'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
     | '/marketing/platform/$id'
@@ -405,11 +425,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/audit'
-    | '/damages'
     | '/loss'
     | '/notifications'
     | '/profile'
-    | '/returns'
     | '/users'
     | '/'
     | '/damages/reports'
@@ -430,8 +448,10 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/permissions'
     | '/settings/signatories'
+    | '/damages'
     | '/expenses'
     | '/marketing'
+    | '/returns'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
     | '/marketing/platform/$id'
@@ -468,8 +488,10 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/permissions'
     | '/_authenticated/settings/signatories'
+    | '/_authenticated/damages/'
     | '/_authenticated/expenses/'
     | '/_authenticated/marketing/'
+    | '/_authenticated/returns/'
     | '/_authenticated/dashboard/category/$id'
     | '/_authenticated/dashboard/subcategory/$id'
     | '/_authenticated/marketing/platform/$id'
@@ -575,6 +597,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/returns/': {
+      id: '/_authenticated/returns/'
+      path: '/'
+      fullPath: '/returns/'
+      preLoaderRoute: typeof AuthenticatedReturnsIndexRouteImport
+      parentRoute: typeof AuthenticatedReturnsRoute
+    }
     '/_authenticated/marketing/': {
       id: '/_authenticated/marketing/'
       path: '/'
@@ -588,6 +617,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/expenses/'
       preLoaderRoute: typeof AuthenticatedExpensesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/damages/': {
+      id: '/_authenticated/damages/'
+      path: '/'
+      fullPath: '/damages/'
+      preLoaderRoute: typeof AuthenticatedDamagesIndexRouteImport
+      parentRoute: typeof AuthenticatedDamagesRoute
     }
     '/_authenticated/settings/signatories': {
       id: '/_authenticated/settings/signatories'
@@ -741,10 +777,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedDamagesRouteChildren {
   AuthenticatedDamagesReportsRoute: typeof AuthenticatedDamagesReportsRoute
+  AuthenticatedDamagesIndexRoute: typeof AuthenticatedDamagesIndexRoute
 }
 
 const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
   AuthenticatedDamagesReportsRoute: AuthenticatedDamagesReportsRoute,
+  AuthenticatedDamagesIndexRoute: AuthenticatedDamagesIndexRoute,
 }
 
 const AuthenticatedDamagesRouteWithChildren =
@@ -773,10 +811,12 @@ const AuthenticatedMarketingRouteWithChildren =
 
 interface AuthenticatedReturnsRouteChildren {
   AuthenticatedReturnsReportsRoute: typeof AuthenticatedReturnsReportsRoute
+  AuthenticatedReturnsIndexRoute: typeof AuthenticatedReturnsIndexRoute
 }
 
 const AuthenticatedReturnsRouteChildren: AuthenticatedReturnsRouteChildren = {
   AuthenticatedReturnsReportsRoute: AuthenticatedReturnsReportsRoute,
+  AuthenticatedReturnsIndexRoute: AuthenticatedReturnsIndexRoute,
 }
 
 const AuthenticatedReturnsRouteWithChildren =
@@ -855,3 +895,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
