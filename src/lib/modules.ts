@@ -56,7 +56,17 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Categories", to: "/expenses/categories" },
     ],
   },
-  { label: "Marketing", to: "/marketing", icon: Megaphone, module: "marketing" },
+  {
+    label: "Marketing",
+    to: "/marketing",
+    icon: Megaphone,
+    module: "marketing",
+    children: [
+      { label: "Overview", to: "/marketing" },
+      { label: "Add Marketing Cost", to: "/marketing/add" },
+      { label: "Marketing Reports", to: "/marketing/reports" },
+    ],
+  },
   { label: "Returns", to: "/returns", icon: Undo2, module: "returns" },
   { label: "Damages", to: "/damages", icon: PackageX, module: "damages" },
   {
@@ -89,6 +99,7 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Company Profile", to: "/settings/company" },
       { label: "Signatories", to: "/settings/signatories" },
+      { label: "Marketing Setup", to: "/settings/marketing" },
       { label: "Notification Settings", to: "/settings/notifications" },
       { label: "Permissions", to: "/settings/permissions" },
     ],
