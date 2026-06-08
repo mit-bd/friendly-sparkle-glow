@@ -579,7 +579,7 @@ function EditExpenseDialog({
         await logExpenseEvent({
           expenseId: expense.id,
           actorId: user.id,
-          action: form.status !== expense.status ? "updated" : "updated",
+          action: "updated",
           fromStatus: expense.status,
           toStatus: form.status,
           notes: form.status !== expense.status ? `Status changed to ${form.status.replace("_", " ")}.` : null,
