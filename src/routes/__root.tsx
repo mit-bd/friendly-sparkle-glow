@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Expense Management System" },
+      { title: "Motion IT BD" },
       {
         name: "description",
         content:
           "Professional internal expense management with approvals, role-based access, and auditability.",
       },
-      { property: "og:title", content: "Expense Management System" },
+      { property: "og:title", content: "Motion IT BD" },
       {
         property: "og:description",
         content:

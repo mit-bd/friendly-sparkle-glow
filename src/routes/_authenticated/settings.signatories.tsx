@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/settings/signatories")({
-  head: () => ({ meta: [{ title: "Signatories — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Signatories — Motion IT BD" }] }),
   component: SignatoriesPage,
 });
 

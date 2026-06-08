@@ -4,7 +4,7 @@ import { Bell } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
-  head: () => ({ meta: [{ title: "Notifications — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Notifications — Motion IT BD" }] }),
   component: NotificationsInbox,
 });
 

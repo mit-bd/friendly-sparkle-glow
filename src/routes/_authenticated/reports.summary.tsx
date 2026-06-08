@@ -4,7 +4,7 @@ import { FileBarChart } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/reports/summary")({
-  head: () => ({ meta: [{ title: "Summary Reports — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Summary Reports — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="Summary Reports"

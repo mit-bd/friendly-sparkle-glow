@@ -21,6 +21,10 @@ export type ModuleKey =
   | "users"
   | "settings";
 
+/** Default product/company name used before a custom company profile is set. */
+export const APP_NAME = "Motion IT BD";
+export const APP_TAGLINE = "Business Expense Management";
+
 export type PermissionAction = "view" | "edit" | "approve" | "export";
 
 export interface NavChild {

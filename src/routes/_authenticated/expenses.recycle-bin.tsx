@@ -4,7 +4,7 @@ import { Trash2 } from "lucide-react";
 import { ModulePlaceholder } from "@/components/ModulePlaceholder";
 
 export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
-  head: () => ({ meta: [{ title: "Recycle Bin — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Recycle Bin — Motion IT BD" }] }),
   component: () => (
     <ModulePlaceholder
       title="Recycle Bin"

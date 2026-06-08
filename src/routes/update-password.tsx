@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/update-password")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Set new password — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Set new password — Motion IT BD" }] }),
   component: UpdatePasswordPage,
 });
 

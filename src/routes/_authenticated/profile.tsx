@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  head: () => ({ meta: [{ title: "My Profile — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "My Profile — Motion IT BD" }] }),
   component: ProfilePage,
 });
 

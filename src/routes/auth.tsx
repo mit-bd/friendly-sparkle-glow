@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Building2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { getPublicBranding } from "@/lib/branding.functions";
+import { BrandMark } from "@/components/BrandMark";
+import { APP_NAME, APP_TAGLINE } from "@/lib/modules";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -19,7 +21,7 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Sign in — Expense Management System" },
+      { title: "Sign in — Motion IT BD" },
       { name: "description", content: "Secure access to your expense management workspace." },
     ],
   }),
@@ -37,23 +39,27 @@ function AuthPage() {
     getPublicBranding().then(setBranding).catch(() => {});
   }, []);
 
-  const companyName = branding.name.trim() || "Expense Management System";
+  const companyName = branding.name.trim() || APP_NAME;
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm space-y-8">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-md bg-primary/10 text-primary">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg shadow-brand">
               {branding.logoUrl ? (
-                <img src={branding.logoUrl} alt={companyName} className="h-full w-full object-contain p-1" />
+                <img
+                  src={branding.logoUrl}
+                  alt={companyName}
+                  className="max-h-full max-w-full object-contain bg-muted p-1"
+                />
               ) : (
-                <Building2 className="h-6 w-6" />
+                <BrandMark className="h-full w-full" title={companyName} />
               )}
             </div>
             <div className="min-w-0">
               <p className="truncate text-base font-semibold tracking-tight">{companyName}</p>
-              <p className="text-xs text-muted-foreground">Expense Management</p>
+              <p className="text-xs text-muted-foreground">{APP_TAGLINE}</p>
             </div>
           </div>
 
@@ -72,13 +78,13 @@ function AuthPage() {
         </div>
       </div>
 
-      <div className="relative hidden bg-primary lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.12),transparent_55%)]" />
-        <div className="relative flex h-full flex-col justify-end p-12 text-primary-foreground">
+      <div className="relative hidden bg-brand-gradient lg:block">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
+        <div className="relative flex h-full flex-col justify-end p-12 text-white">
           <h2 className="text-3xl font-semibold leading-tight tracking-tight">
             Accurate expense tracking, built for finance teams.
           </h2>
-          <p className="mt-4 max-w-md text-sm text-primary-foreground/80">
+          <p className="mt-4 max-w-md text-sm text-white/85">
             Approval workflows, role-based access, full auditability, and enterprise-grade
             controls in one structured workspace.
           </p>

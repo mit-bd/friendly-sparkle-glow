@@ -42,7 +42,7 @@ import { ROLE_LABELS } from "@/lib/modules";
 import { createUser } from "@/lib/admin-users.functions";
 
 export const Route = createFileRoute("/_authenticated/users")({
-  head: () => ({ meta: [{ title: "Users & Roles — Expense Management System" }] }),
+  head: () => ({ meta: [{ title: "Users & Roles — Motion IT BD" }] }),
   component: UsersPage,
 });
 
