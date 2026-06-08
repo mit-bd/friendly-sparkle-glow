@@ -49,7 +49,7 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
       .limit(1)
       .maybeSingle();
 
-    let comp = (data as CompanyProfile) ?? null;
+    let comp: CompanyProfile | null = (data as CompanyProfile | null) ?? null;
 
     // Non-admins are blocked by RLS from the table; fall back to the safe
     // branding RPC that excludes sensitive identifiers (TIN/BIN/trade license).
