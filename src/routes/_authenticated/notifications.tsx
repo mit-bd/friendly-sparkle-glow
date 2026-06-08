@@ -42,6 +42,18 @@ const TYPE_META: Record<string, { icon: LucideIcon; tone: string }> = {
   expense_rejected: { icon: XCircle, tone: "bg-destructive/15 text-destructive" },
   expense_revision: { icon: RotateCcw, tone: "bg-warning/15 text-warning" },
   expense_updated: { icon: Bell, tone: "bg-muted text-muted-foreground" },
+  return_submitted: { icon: Clock, tone: "bg-chart-4/15 text-chart-4" },
+  return_pending: { icon: Clock, tone: "bg-chart-1/15 text-chart-1" },
+  return_approved: { icon: CheckCircle2, tone: "bg-chart-2/15 text-chart-2" },
+  return_rejected: { icon: XCircle, tone: "bg-destructive/15 text-destructive" },
+  return_revision: { icon: RotateCcw, tone: "bg-warning/15 text-warning" },
+  return_updated: { icon: Bell, tone: "bg-muted text-muted-foreground" },
+  damage_submitted: { icon: Clock, tone: "bg-chart-4/15 text-chart-4" },
+  damage_pending: { icon: Clock, tone: "bg-chart-1/15 text-chart-1" },
+  damage_approved: { icon: CheckCircle2, tone: "bg-chart-2/15 text-chart-2" },
+  damage_rejected: { icon: XCircle, tone: "bg-destructive/15 text-destructive" },
+  damage_revision: { icon: RotateCcw, tone: "bg-warning/15 text-warning" },
+  damage_updated: { icon: Bell, tone: "bg-muted text-muted-foreground" },
 };
 
 function NotificationCenter() {
