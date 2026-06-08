@@ -80,6 +80,7 @@ function ExpenseDetailsPage() {
   const [attachments, setAttachments] = useState<ExpenseAttachment[]>([]);
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [subs, setSubs] = useState<ExpenseSubcategory[]>([]);
+  const [events, setEvents] = useState<ExpenseEvent[]>([]);
   const [names, setNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -95,7 +96,7 @@ function ExpenseDetailsPage() {
     }
     const exp = data as Expense;
     setExpense(exp);
-    const [cats, subcats, atts] = await Promise.all([
+    const [cats, subcats, atts, evts] = await Promise.all([
       fetchCategories(true),
       fetchSubcategories(true),
       supabase
@@ -103,11 +104,21 @@ function ExpenseDetailsPage() {
         .select("*")
         .eq("expense_id", id)
         .order("created_at"),
+      fetchExpenseEvents(id).catch(() => [] as ExpenseEvent[]),
     ]);
     setCategories(cats);
     setSubs(subcats);
     setAttachments((atts.data ?? []) as ExpenseAttachment[]);
-    setNames(await fetchUserNames([exp.created_by ?? "", exp.updated_by ?? ""]));
+    setEvents(evts);
+    const ids = [
+      exp.created_by,
+      exp.updated_by,
+      exp.submitted_by,
+      exp.approved_by,
+      exp.rejected_by,
+      ...evts.map((e) => e.actor_id),
+    ].filter(Boolean) as string[];
+    setNames(await fetchUserNames(ids));
     setLoading(false);
   }, [id]);
 
