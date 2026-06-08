@@ -49,6 +49,7 @@ import { useAuth } from "@/lib/auth-context";
 import { logActivity } from "@/lib/audit";
 import {
   BACKUP_RANGE_PRESETS,
+  BACKUP_TABLES_TOTAL,
   downloadBackup,
   generateBackup,
   marketingCount,
