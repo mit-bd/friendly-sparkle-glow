@@ -41,13 +41,33 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
+    // Admins can read the full row (including sensitive tax/license fields).
     const { data } = await supabase
       .from("company_profile")
       .select("*")
       .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();
-    const comp = (data as CompanyProfile) ?? null;
+
+    let comp: CompanyProfile | null = (data as CompanyProfile | null) ?? null;
+
+    // Non-admins are blocked by RLS from the table; fall back to the safe
+    // branding RPC that excludes sensitive identifiers (TIN/BIN/trade license).
+    if (!comp) {
+      const { data: rpcData } = await (supabase as unknown as {
+        rpc: (fn: string) => Promise<{ data: Partial<CompanyProfile>[] | null }>;
+      }).rpc("get_company_branding");
+      const row = rpcData?.[0] ?? null;
+      comp = row
+        ? ({
+            trade_license: null,
+            bin_number: null,
+            tin_number: null,
+            ...row,
+          } as CompanyProfile)
+        : null;
+    }
+
     setCompany(comp);
     setLogoUrl(await getSignedUrl("logos", comp?.logo_url));
     setLoading(false);
