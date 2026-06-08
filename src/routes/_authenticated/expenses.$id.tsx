@@ -181,12 +181,27 @@ function ExpenseDetailsPage() {
 
   async function setStatus(status: Expense["status"]) {
     setBusy(true);
+    const from = expense!.status;
     const { error } = await supabase.from("expenses").update({ status }).eq("id", expense!.id);
-    setBusy(false);
     if (error) {
+      setBusy(false);
       toast.error(error.message);
       return;
     }
+    if (user) {
+      try {
+        await logExpenseEvent({
+          expenseId: expense!.id,
+          actorId: user.id,
+          action: status === "deleted" ? "deleted" : "updated",
+          fromStatus: from,
+          toStatus: status,
+        });
+      } catch {
+        /* best-effort history */
+      }
+    }
+    setBusy(false);
     toast.success("Status updated.");
     load();
   }
