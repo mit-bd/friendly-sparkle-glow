@@ -1,50 +1,36 @@
-import { useId } from "react";
-
+import markUrl from "@/assets/brand/motion-it-bd-mark.png";
+import logoUrl from "@/assets/brand/motion-it-bd-logo.png";
 import { cn } from "@/lib/utils";
 
+/** CDN-stable URLs for the official Motion IT BD artwork. */
+export const MOTION_IT_BD_MARK = markUrl;
+export const MOTION_IT_BD_LOGO = logoUrl;
+
 interface BrandMarkProps {
-  /** Pixel size of the square mark. */
   className?: string;
   title?: string;
+  /**
+   * "mark" = the gradient glyph only (default, pairs with adjacent text).
+   * "full" = glyph + "motion it bd" wordmark (use on light surfaces).
+   */
+  variant?: "mark" | "full";
 }
 
 /**
- * Motion IT BD default brand mark — a scalable, gradient "M" motion glyph.
+ * Official Motion IT BD brand mark.
  *
- * Used as the fallback logo whenever a company has not uploaded custom
- * artwork. Because it is pure SVG it resizes crisply at any dimension and
- * always inherits the live brand gradient tokens.
+ * Renders the real uploaded logo artwork. It is the default/fallback logo
+ * shown wherever a company has not uploaded custom branding. Uses
+ * object-contain so it always resizes crisply and preserves aspect ratio
+ * across desktop, tablet, mobile, print, and PDF exports.
  */
-export function BrandMark({ className, title = "Motion IT BD" }: BrandMarkProps) {
-  const id = useId();
+export function BrandMark({ className, title = "Motion IT BD", variant = "mark" }: BrandMarkProps) {
   return (
-    <svg
-      viewBox="0 0 100 100"
-      role="img"
-      aria-label={title}
-      className={cn("h-full w-full", className)}
-    >
-      <defs>
-        <linearGradient id={`brand-${id}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--brand-from)" />
-          <stop offset="100%" stopColor="var(--brand-to)" />
-        </linearGradient>
-      </defs>
-      <rect x="0" y="0" width="100" height="100" rx="22" fill={`url(#brand-${id})`} />
-      {/* Motion speed lines */}
-      <g stroke="white" strokeWidth="6" strokeLinecap="round" opacity="0.85">
-        <line x1="14" y1="40" x2="26" y2="40" />
-        <line x1="14" y1="58" x2="22" y2="58" />
-      </g>
-      {/* Forward-leaning "M" */}
-      <path
-        d="M34 74 V30 L52 58 L70 30 V74"
-        fill="none"
-        stroke="white"
-        strokeWidth="8.5"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
-    </svg>
+    <img
+      src={variant === "full" ? logoUrl : markUrl}
+      alt={title}
+      className={cn("h-full w-full select-none object-contain", className)}
+      draggable={false}
+    />
   );
 }
