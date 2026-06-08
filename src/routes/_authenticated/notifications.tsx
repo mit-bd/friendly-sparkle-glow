@@ -182,7 +182,7 @@ function NotificationCenter() {
                   key={n.id}
                   className={cn(
                     "flex items-start gap-4 px-5 py-4 transition-colors",
-                    n.expense_id && "cursor-pointer hover:bg-accent/50",
+                    (n.expense_id || n.return_id || n.damage_id) && "cursor-pointer hover:bg-accent/50",
                     !n.read_at && "bg-brand-gradient-soft/40",
                   )}
                   onClick={() => openItem(n)}
