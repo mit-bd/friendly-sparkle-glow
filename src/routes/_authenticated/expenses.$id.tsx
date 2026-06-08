@@ -19,6 +19,9 @@ import { NoAccess } from "@/components/NoAccess";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AttachmentUploader, type AttachmentValue } from "@/components/AttachmentUploader";
 import { ExpenseFields, type ExpenseFormValues } from "@/components/expenses/ExpenseFields";
+import { ApprovalPanel } from "@/components/expenses/ApprovalPanel";
+import { ExpenseTimeline } from "@/components/expenses/ExpenseTimeline";
+import { ExpenseDiscussion } from "@/components/expenses/ExpenseDiscussion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -43,6 +46,11 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { getDownloadUrl, getSignedUrl, removeFile } from "@/lib/storage";
+import {
+  fetchExpenseEvents,
+  logExpenseEvent,
+  type ExpenseEvent,
+} from "@/lib/approvals";
 import {
   ATTACHMENT_BUCKET,
   fetchCategories,
