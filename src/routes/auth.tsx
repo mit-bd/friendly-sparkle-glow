@@ -91,7 +91,7 @@ function AuthPage() {
         className="relative hidden bg-cover bg-center lg:block"
         style={{ backgroundImage: `url(${brandBg})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/45 via-black/10 to-transparent" />
         <div className="relative flex h-full flex-col justify-end p-12 text-white">
           <h2 className="text-3xl font-semibold leading-tight tracking-tight">
             Accurate expense tracking, built for finance teams.
