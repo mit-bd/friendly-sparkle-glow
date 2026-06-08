@@ -36,7 +36,8 @@ export type AuditEntityType =
   | "return"
   | "damage"
   | "return_attachment"
-  | "damage_attachment";
+  | "damage_attachment"
+  | "notification";
 
 export interface ActivityLog {
   id: string;
@@ -93,6 +94,7 @@ export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
   damage: "Damage",
   return_attachment: "Return Attachment",
   damage_attachment: "Damage Attachment",
+  notification: "Notification",
 };
 
 /** Tailwind tone classes per action (theme-safe semantic tokens). */
