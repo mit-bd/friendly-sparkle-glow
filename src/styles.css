@@ -65,6 +65,10 @@
   --color-brand: var(--brand-from);
   --color-brand-from: var(--brand-from);
   --color-brand-to: var(--brand-to);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
 }
 
 :root {
@@ -85,6 +89,10 @@
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
+  /* Centralized semantic status tokens (theme-aware) */
+  --success: oklch(0.6 0.16 152);
+  --warning: oklch(0.62 0.16 70);
+  --warning-foreground: oklch(0.99 0.01 80);
   --border: oklch(0.929 0.013 255.508);
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.64 0.2 40);
@@ -106,6 +114,8 @@
   /* Motion IT BD brand identity — orange → red */
   --brand-from: oklch(0.74 0.19 52);
   --brand-to: oklch(0.58 0.22 27);
+  /* Readable foreground for content placed on the brand gradient. */
+  --brand-foreground: oklch(0.99 0.01 80);
   --gradient-brand: linear-gradient(135deg, var(--brand-from), var(--brand-to));
   --gradient-brand-soft: linear-gradient(
     135deg,
@@ -132,6 +142,9 @@
   --accent-foreground: oklch(0.984 0.003 247.858);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.984 0.003 247.858);
+  --success: oklch(0.72 0.17 152);
+  --warning: oklch(0.8 0.15 75);
+  --warning-foreground: oklch(0.2 0.03 60);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.7 0.2 44);
@@ -151,6 +164,7 @@
 
   --brand-from: oklch(0.78 0.18 54);
   --brand-to: oklch(0.62 0.22 28);
+  --brand-foreground: oklch(0.99 0.01 80);
   --gradient-brand: linear-gradient(135deg, var(--brand-from), var(--brand-to));
   --gradient-brand-soft: linear-gradient(
     135deg,

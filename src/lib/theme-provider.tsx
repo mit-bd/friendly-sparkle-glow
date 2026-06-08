@@ -23,13 +23,34 @@ function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
 }
 
+/**
+ * Resolve the theme synchronously so the first client render already matches
+ * the persisted choice. The inline boot script in __root applies the `dark`
+ * class before paint, so we read it back here to stay in sync (no flash).
+ */
+function getInitialTheme(): Theme {
+  if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
+    return "dark";
+  }
+  if (typeof localStorage !== "undefined") {
+    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    if (stored === "light" || stored === "dark") return stored;
+  }
+  if (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  ) {
+    return "dark";
+  }
+  return "light";
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {
-    const stored = (typeof localStorage !== "undefined" &&
-      localStorage.getItem(STORAGE_KEY)) as Theme | null;
-    const initial: Theme = stored ?? "light";
+    const initial = getInitialTheme();
     setThemeState(initial);
     applyTheme(initial);
   }, []);

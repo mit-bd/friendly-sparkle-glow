@@ -129,7 +129,7 @@ async function runChecks(): Promise<Check[]> {
 
 const HEALTH_META: Record<Health, { label: string; badge: string; icon: LucideIcon; tone: string }> = {
   ok: { label: "Operational", badge: "bg-chart-2/15 text-chart-2", icon: CheckCircle2, tone: "text-chart-2" },
-  warn: { label: "Degraded", badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400", icon: AlertTriangle, tone: "text-amber-600 dark:text-amber-400" },
+  warn: { label: "Degraded", badge: "bg-warning/15 text-warning", icon: AlertTriangle, tone: "text-warning" },
   down: { label: "Down", badge: "bg-destructive/15 text-destructive", icon: XCircle, tone: "text-destructive" },
 };
 

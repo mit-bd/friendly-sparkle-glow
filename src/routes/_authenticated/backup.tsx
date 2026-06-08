@@ -70,9 +70,9 @@ function BackupPage() {
         description="Operational guidance for protecting and recovering critical business data."
       />
 
-      <Card className="border-amber-500/30 bg-amber-500/5">
+      <Card className="border-warning/40 bg-warning/5">
         <CardContent className="flex items-start gap-3 py-4">
-          <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
           <p className="text-sm text-muted-foreground">
             The managed database is backed up automatically at the platform level. This page is
             operational guidance only — it does not perform automated backups itself.

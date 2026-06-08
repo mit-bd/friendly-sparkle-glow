@@ -118,7 +118,7 @@ export function AttachmentUploader({
           {uploading ? (
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           ) : (
-            <span className="flex h-11 w-11 items-center justify-center rounded-md bg-brand-gradient text-white shadow-brand">
+            <span className="flex h-11 w-11 items-center justify-center rounded-md bg-brand-gradient text-brand-foreground shadow-brand">
               <Upload className="h-5 w-5" />
             </span>
           )}

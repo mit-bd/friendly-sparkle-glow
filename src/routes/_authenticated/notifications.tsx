@@ -40,7 +40,7 @@ const TYPE_META: Record<string, { icon: LucideIcon; tone: string }> = {
   expense_pending: { icon: Clock, tone: "bg-chart-1/15 text-chart-1" },
   expense_approved: { icon: CheckCircle2, tone: "bg-chart-2/15 text-chart-2" },
   expense_rejected: { icon: XCircle, tone: "bg-destructive/15 text-destructive" },
-  expense_revision: { icon: RotateCcw, tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
+  expense_revision: { icon: RotateCcw, tone: "bg-warning/15 text-warning" },
   expense_updated: { icon: Bell, tone: "bg-muted text-muted-foreground" },
 };
 
