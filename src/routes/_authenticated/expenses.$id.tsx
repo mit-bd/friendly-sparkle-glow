@@ -516,6 +516,7 @@ function EditExpenseDialog({
   subcategories: ExpenseSubcategory[];
   onSaved: () => void;
 }) {
+  const { user } = useAuth();
   const [form, setForm] = useState<ExpenseFormValues>({
     expense_date: expense.expense_date,
     category_id: expense.category_id ?? "",
