@@ -51,12 +51,15 @@ function Dashboard() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {STATS.map((s) => (
-          <Card key={s.label}>
+          <Card key={s.label} className="relative overflow-hidden">
+            <span className="absolute inset-x-0 top-0 h-1 bg-brand-gradient" aria-hidden />
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {s.label}
               </CardTitle>
-              <s.icon className="h-4 w-4 text-muted-foreground" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-gradient-soft text-brand">
+                <s.icon className="h-4 w-4" />
+              </span>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-semibold tracking-tight">{s.value}</div>
