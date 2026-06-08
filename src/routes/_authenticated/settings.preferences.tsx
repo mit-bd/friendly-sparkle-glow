@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { usePreferences, type PageSize } from "@/lib/preferences";
+import { playNotificationChime } from "@/lib/notification-sound";
 import { RANGE_PRESETS, type RangePreset } from "@/lib/analytics";
 import { useTheme } from "@/lib/theme-provider";
 
@@ -122,7 +123,36 @@ function PreferencesPage() {
         <CardHeader>
           <CardTitle className="text-base">Notifications</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label>Live notification alerts</Label>
+              <p className="text-xs text-muted-foreground">
+                Pop up a toast when a new notification arrives (approvals, submissions…).
+              </p>
+            </div>
+            <Switch
+              checked={prefs.notifyInApp}
+              onCheckedChange={(v) => update({ notifyInApp: v })}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <Label>Notification sound</Label>
+              <p className="text-xs text-muted-foreground">
+                Play a subtle chime when a new notification arrives.
+              </p>
+            </div>
+            <Switch
+              checked={prefs.notifySound}
+              onCheckedChange={(v) => {
+                update({ notifySound: v });
+                if (v) playNotificationChime();
+              }}
+            />
+          </div>
+
           <div className="flex items-center justify-between">
             <div>
               <Label>In-app toasts</Label>

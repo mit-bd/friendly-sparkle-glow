@@ -3,10 +3,12 @@ import type { ReactNode } from "react";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
+import { NotificationListener } from "./NotificationListener";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
+      <NotificationListener />
       <AppSidebar />
       <SidebarInset className="min-w-0">
         <AppTopbar />

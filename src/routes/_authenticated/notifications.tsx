@@ -42,6 +42,18 @@ const TYPE_META: Record<string, { icon: LucideIcon; tone: string }> = {
   expense_rejected: { icon: XCircle, tone: "bg-destructive/15 text-destructive" },
   expense_revision: { icon: RotateCcw, tone: "bg-warning/15 text-warning" },
   expense_updated: { icon: Bell, tone: "bg-muted text-muted-foreground" },
+  return_submitted: { icon: Clock, tone: "bg-chart-4/15 text-chart-4" },
+  return_pending: { icon: Clock, tone: "bg-chart-1/15 text-chart-1" },
+  return_approved: { icon: CheckCircle2, tone: "bg-chart-2/15 text-chart-2" },
+  return_rejected: { icon: XCircle, tone: "bg-destructive/15 text-destructive" },
+  return_revision: { icon: RotateCcw, tone: "bg-warning/15 text-warning" },
+  return_updated: { icon: Bell, tone: "bg-muted text-muted-foreground" },
+  damage_submitted: { icon: Clock, tone: "bg-chart-4/15 text-chart-4" },
+  damage_pending: { icon: Clock, tone: "bg-chart-1/15 text-chart-1" },
+  damage_approved: { icon: CheckCircle2, tone: "bg-chart-2/15 text-chart-2" },
+  damage_rejected: { icon: XCircle, tone: "bg-destructive/15 text-destructive" },
+  damage_revision: { icon: RotateCcw, tone: "bg-warning/15 text-warning" },
+  damage_updated: { icon: Bell, tone: "bg-muted text-muted-foreground" },
 };
 
 function NotificationCenter() {
@@ -91,6 +103,8 @@ function NotificationCenter() {
       }
     }
     if (n.expense_id) navigate({ to: "/expenses/$id", params: { id: n.expense_id } });
+    else if (n.return_id) navigate({ to: "/returns/$id", params: { id: n.return_id } });
+    else if (n.damage_id) navigate({ to: "/damages/$id", params: { id: n.damage_id } });
   }
 
   async function markAll() {
@@ -168,7 +182,7 @@ function NotificationCenter() {
                   key={n.id}
                   className={cn(
                     "flex items-start gap-4 px-5 py-4 transition-colors",
-                    n.expense_id && "cursor-pointer hover:bg-accent/50",
+                    (n.expense_id || n.return_id || n.damage_id) && "cursor-pointer hover:bg-accent/50",
                     !n.read_at && "bg-brand-gradient-soft/40",
                   )}
                   onClick={() => openItem(n)}
