@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/analytics/EmptyState";
 import { StatusBadge } from "@/components/StatusBadge";
+import { useAuth } from "@/lib/auth-context";
 import { formatCurrency, formatDate, formatDateTime, type ExpenseStatus } from "@/lib/expenses";
 import { ACTIVITY_ACTION_LABELS, ACTIVITY_ENTITY_LABELS, ACTIVITY_TONE } from "@/lib/audit";
 import {
