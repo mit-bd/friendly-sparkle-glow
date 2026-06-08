@@ -184,6 +184,8 @@ function Dashboard() {
               </div>
             </div>
           )}
+
+          <RecentPanels />
         </>
       )}
     </div>
