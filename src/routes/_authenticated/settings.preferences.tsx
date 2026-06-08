@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { usePreferences, type PageSize } from "@/lib/preferences";
+import { playNotificationChime } from "@/lib/notification-sound";
 import { RANGE_PRESETS, type RangePreset } from "@/lib/analytics";
 import { useTheme } from "@/lib/theme-provider";
 
