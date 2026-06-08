@@ -207,7 +207,7 @@ function MarketingOverview() {
                         <XAxis dataKey="label" fontSize={11} />
                         <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} fontSize={11} />
                         <Tooltip formatter={(v: number) => formatBDT(v)} />
-                        <Bar dataKey="total" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="total" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
