@@ -364,6 +364,29 @@ function ExpenseDetailsPage() {
             <CardContent className="space-y-4 text-sm">
               <Field label="Created by" value={expense.created_by ? names[expense.created_by] ?? "—" : "—"} />
               <Field label="Created date" value={formatDateTime(expense.created_at)} />
+              <Field
+                label="Submitted by"
+                value={expense.submitted_by ? names[expense.submitted_by] ?? "—" : "—"}
+              />
+              <Field label="Submitted at" value={formatDateTime(expense.submitted_at)} />
+              {expense.approved_at && (
+                <>
+                  <Field
+                    label="Approved by"
+                    value={expense.approved_by ? names[expense.approved_by] ?? "—" : "—"}
+                  />
+                  <Field label="Approved at" value={formatDateTime(expense.approved_at)} />
+                </>
+              )}
+              {expense.rejected_at && (
+                <>
+                  <Field
+                    label="Rejected by"
+                    value={expense.rejected_by ? names[expense.rejected_by] ?? "—" : "—"}
+                  />
+                  <Field label="Rejected at" value={formatDateTime(expense.rejected_at)} />
+                </>
+              )}
               <Field label="Last updated by" value={expense.updated_by ? names[expense.updated_by] ?? "—" : "—"} />
               <Field label="Last updated date" value={formatDateTime(expense.updated_at)} />
             </CardContent>
