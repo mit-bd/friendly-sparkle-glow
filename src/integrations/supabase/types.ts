@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_label: string | null
+          entity_type: string
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type: string
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type?: string
+          id?: string
+          metadata?: Json
+        }
+        Relationships: []
+      }
       company_profile: {
         Row: {
           address: string | null
@@ -119,9 +152,13 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           id: string
           is_active: boolean
           name: string
+          restored_at: string | null
+          restored_by: string | null
           sort_order: number
           updated_at: string
           updated_by: string | null
@@ -129,9 +166,13 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           is_active?: boolean
           name: string
+          restored_at?: string | null
+          restored_by?: string | null
           sort_order?: number
           updated_at?: string
           updated_by?: string | null
@@ -139,9 +180,13 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           is_active?: boolean
           name?: string
+          restored_at?: string | null
+          restored_by?: string | null
           sort_order?: number
           updated_at?: string
           updated_by?: string | null
@@ -241,9 +286,13 @@ export type Database = {
           category_id: string
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           id: string
           is_active: boolean
           name: string
+          restored_at: string | null
+          restored_by: string | null
           sort_order: number
           updated_at: string
           updated_by: string | null
@@ -252,9 +301,13 @@ export type Database = {
           category_id: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           is_active?: boolean
           name: string
+          restored_at?: string | null
+          restored_by?: string | null
           sort_order?: number
           updated_at?: string
           updated_by?: string | null
@@ -263,9 +316,13 @@ export type Database = {
           category_id?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           is_active?: boolean
           name?: string
+          restored_at?: string | null
+          restored_by?: string | null
           sort_order?: number
           updated_at?: string
           updated_by?: string | null
@@ -288,6 +345,8 @@ export type Database = {
           category_id: string | null
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           description: string | null
           expense_date: string
           expense_number: string
@@ -295,6 +354,8 @@ export type Database = {
           notes: string | null
           rejected_at: string | null
           rejected_by: string | null
+          restored_at: string | null
+          restored_by: string | null
           status: Database["public"]["Enums"]["expense_status"]
           subcategory_id: string | null
           submitted_at: string | null
@@ -309,6 +370,8 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           description?: string | null
           expense_date?: string
           expense_number: string
@@ -316,6 +379,8 @@ export type Database = {
           notes?: string | null
           rejected_at?: string | null
           rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
           status?: Database["public"]["Enums"]["expense_status"]
           subcategory_id?: string | null
           submitted_at?: string | null
@@ -330,6 +395,8 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           description?: string | null
           expense_date?: string
           expense_number?: string
@@ -337,6 +404,8 @@ export type Database = {
           notes?: string | null
           rejected_at?: string | null
           rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
           status?: Database["public"]["Enums"]["expense_status"]
           subcategory_id?: string | null
           submitted_at?: string | null
@@ -360,6 +429,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      field_changes: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          entity_id: string
+          entity_label: string | null
+          entity_type: string
+          field: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          entity_id: string
+          entity_label?: string | null
+          entity_type: string
+          field: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          entity_id?: string
+          entity_label?: string | null
+          entity_type?: string
+          field?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Relationships: []
       }
       notification_settings: {
         Row: {
@@ -650,6 +755,16 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      log_activity: {
+        Args: {
+          _action: string
+          _entity_id: string
+          _entity_label: string
+          _entity_type: string
+          _metadata: Json
+        }
+        Returns: undefined
+      }
       log_report_export: {
         Args: {
           _expense_count: number

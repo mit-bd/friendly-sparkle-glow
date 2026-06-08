@@ -11,6 +11,7 @@ import type { Session, User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { ModuleKey, PermissionAction } from "./modules";
+import { logActivity } from "./audit";
 
 export type AppRole = "admin" | "manager" | "accountant" | "viewer";
 
@@ -162,6 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
+    await logActivity({ action: "logout", entityType: "session" });
     await supabase.auth.signOut();
     setProfile(null);
     setRoles([]);

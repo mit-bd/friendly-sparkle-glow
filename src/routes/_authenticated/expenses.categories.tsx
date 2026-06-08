@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Plus, Pencil, Tags, FolderTree } from "lucide-react";
+import { Loader2, Plus, Pencil, Tags, FolderTree, Trash2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -26,8 +26,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { softDeleteCategory, softDeleteSubcategory } from "@/lib/audit";
 import {
   fetchCategories,
   fetchSubcategories,
@@ -41,10 +52,14 @@ export const Route = createFileRoute("/_authenticated/expenses/categories")({
 });
 
 function CategoriesPage() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [subs, setSubs] = useState<ExpenseSubcategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [delTarget, setDelTarget] = useState<
+    { kind: "category" | "subcategory"; id: string; name: string } | null
+  >(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [catDialog, setCatDialog] = useState<{ open: boolean; edit: ExpenseCategory | null }>({
     open: false,
@@ -105,6 +120,22 @@ function CategoriesPage() {
     if (error) {
       toast.error(error.message);
       load();
+    }
+  }
+
+  async function confirmDelete() {
+    if (!delTarget || !user) return;
+    setDeleting(true);
+    try {
+      if (delTarget.kind === "category") await softDeleteCategory(delTarget.id, user.id);
+      else await softDeleteSubcategory(delTarget.id, user.id);
+      toast.success(`${delTarget.name} moved to the recycle bin.`);
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to delete.");
+    } finally {
+      setDeleting(false);
+      setDelTarget(null);
     }
   }
 
@@ -171,6 +202,15 @@ function CategoriesPage() {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Delete category"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDelTarget({ kind: "category", id: cat.id, name: cat.name })}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </CardHeader>
                   <AccordionContent>
@@ -206,6 +246,17 @@ function CategoriesPage() {
                               >
                                 <Pencil className="h-4 w-4" />
                               </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Delete subcategory"
+                                className="text-destructive hover:text-destructive"
+                                onClick={() =>
+                                  setDelTarget({ kind: "subcategory", id: sub.id, name: sub.name })
+                                }
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           </div>
                         ))
@@ -240,6 +291,32 @@ function CategoriesPage() {
         onSaved={load}
         nextOrder={subs.filter((s) => s.category_id === subDialog.categoryId).length + 1}
       />
+
+      <AlertDialog open={!!delTarget} onOpenChange={(o) => !o && setDelTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              Move to recycle bin?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="font-medium text-foreground">{delTarget?.name}</span>{" "}
+              ({delTarget?.kind === "category" ? "Category" : "Subcategory"}) will be moved to the
+              recycle bin. It will be hidden from expense forms but can be restored later by an admin.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={confirmDelete}
+            >
+              Move to recycle bin
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

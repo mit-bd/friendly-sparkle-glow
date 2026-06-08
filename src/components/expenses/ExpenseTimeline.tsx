@@ -8,6 +8,7 @@ import {
   Trash2,
   Undo2,
   MessageSquare,
+  Paperclip,
   type LucideIcon,
 } from "lucide-react";
 
@@ -24,6 +25,8 @@ const ACTION_ICON: Record<ExpenseAction, LucideIcon> = {
   updated: Pencil,
   deleted: Trash2,
   restored: Undo2,
+  attachment_added: Paperclip,
+  attachment_removed: Paperclip,
   comment: MessageSquare,
 };
 
@@ -36,6 +39,8 @@ const ACTION_TONE: Record<ExpenseAction, string> = {
   updated: "bg-chart-1/15 text-chart-1",
   deleted: "bg-muted text-muted-foreground",
   restored: "bg-chart-2/15 text-chart-2",
+  attachment_added: "bg-chart-4/15 text-chart-4",
+  attachment_removed: "bg-muted text-muted-foreground",
   comment: "bg-muted text-muted-foreground",
 };
 

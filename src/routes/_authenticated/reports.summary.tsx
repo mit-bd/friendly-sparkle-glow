@@ -52,6 +52,7 @@ import {
 } from "@/lib/reports";
 import type { ExpenseCategory, ExpenseSubcategory } from "@/lib/expenses";
 import { fetchUserNames, formatCurrency, formatDate, formatDateTime } from "@/lib/expenses";
+import { logActivity } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/reports/summary")({
   head: () => ({ meta: [{ title: "Reports Center — Motion IT BD" }] }),
@@ -243,6 +244,12 @@ function ReportsCenterPage() {
         });
         reportNumber = logged.report_number;
         createdAt = logged.created_at;
+        void logActivity({
+          action: "export",
+          entityType: "report",
+          entityLabel: `${reportNumber} · ${REPORT_TYPE_LABELS[reportType]}`,
+          metadata: { count: rows.length, total },
+        });
       }
 
       setGenerated({
@@ -266,8 +273,23 @@ function ReportsCenterPage() {
     }
   }
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    if (generated)
+      void logActivity({
+        action: "print",
+        entityType: "report",
+        entityLabel: `${generated.reportNumber} · ${REPORT_TYPE_LABELS[generated.type]}`,
+      });
+    window.print();
+  };
   const handleExportPdf = () => {
+    if (generated)
+      void logActivity({
+        action: "export",
+        entityType: "report",
+        entityLabel: `${generated.reportNumber} · ${REPORT_TYPE_LABELS[generated.type]}`,
+        metadata: { format: "pdf" },
+      });
     toast.message("Use the print dialog's \u201cSave as PDF\u201d to export.");
     window.print();
   };

@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { logActivity } from "@/lib/audit";
 import { ROLE_LABELS } from "@/lib/modules";
 import { createUser } from "@/lib/admin-users.functions";
 
@@ -107,6 +108,13 @@ function UsersPage() {
       return;
     }
     toast.success(`Role updated to ${ROLE_LABELS[role]}.`);
+    void logActivity({
+      action: "permission_change",
+      entityType: "user",
+      entityId: row.id,
+      entityLabel: row.full_name?.trim() || row.email,
+      metadata: { role },
+    });
   }
 
   async function toggleStatus(row: UserRow, active: boolean) {
@@ -119,6 +127,12 @@ function UsersPage() {
       return;
     }
     toast.success(`User ${active ? "reactivated" : "deactivated"}.`);
+    void logActivity({
+      action: active ? "user_activate" : "user_deactivate",
+      entityType: "user",
+      entityId: row.id,
+      entityLabel: row.full_name?.trim() || row.email,
+    });
   }
 
   return (
@@ -247,6 +261,12 @@ function CreateUserDialog({
     try {
       await createUserFn({ data: { full_name: fullName, email, phone, password, role } });
       toast.success("User created.");
+      void logActivity({
+        action: "user_create",
+        entityType: "user",
+        entityLabel: fullName?.trim() || email,
+        metadata: { role },
+      });
       reset();
       onOpenChange(false);
       onCreated();
