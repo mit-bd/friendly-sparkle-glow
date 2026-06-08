@@ -1,15 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { FileText } from "lucide-react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { ModulePlaceholder } from "@/components/ModulePlaceholder";
-
+// The former "Detailed Reports" placeholder is superseded by the Reports Center,
+// which generates every report type (incl. the line-item Approved Expense report).
 export const Route = createFileRoute("/_authenticated/reports/detailed")({
-  head: () => ({ meta: [{ title: "Detailed Reports — Motion IT BD" }] }),
-  component: () => (
-    <ModulePlaceholder
-      title="Detailed Reports"
-      description="Line-item level reporting with branded export headers."
-      icon={FileText}
-    />
-  ),
+  beforeLoad: () => {
+    throw redirect({ to: "/reports/summary" });
+  },
 });

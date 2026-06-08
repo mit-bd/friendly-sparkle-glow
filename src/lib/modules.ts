@@ -64,8 +64,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: FileBarChart,
     module: "reports",
     children: [
-      { label: "Summary Reports", to: "/reports/summary" },
-      { label: "Detailed Reports", to: "/reports/detailed" },
+      { label: "Reports Center", to: "/reports/summary" },
       { label: "Export History", to: "/reports/export-history" },
     ],
   },

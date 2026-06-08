@@ -215,6 +215,11 @@
  * Print / PDF inheritance. Report headers and brand accents keep their
  * color when printed or exported to PDF so exports stay on-brand.
  */
+@page {
+  size: A4 portrait;
+  margin: 14mm;
+}
+
 @media print {
   .brand-rule,
   .bg-brand-gradient,
@@ -225,5 +230,50 @@
 
   .no-print {
     display: none !important;
+  }
+
+  /* Isolate the report sheet: hide everything else (app shell, controls). */
+  body * {
+    visibility: hidden;
+  }
+  .report-print-area,
+  .report-print-area * {
+    visibility: visible;
+  }
+  .report-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Page-break helpers used by report bodies. */
+  .report-block,
+  .report-table tr,
+  .report-footer {
+    break-inside: avoid;
+  }
+  .report-page-break {
+    break-after: page;
+  }
+  /* Repeat table headers on every printed page for multi-page ledgers. */
+  .report-table thead {
+    display: table-header-group;
+  }
+  .report-table tfoot {
+    display: table-row-group;
+  }
+  .report-footer {
+    margin-top: 24px;
   }
 }

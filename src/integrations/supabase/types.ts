@@ -465,6 +465,63 @@ export type Database = {
         }
         Relationships: []
       }
+      report_counters: {
+        Row: {
+          last_seq: number
+          year: number
+        }
+        Insert: {
+          last_seq?: number
+          year: number
+        }
+        Update: {
+          last_seq?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      report_exports: {
+        Row: {
+          created_at: string
+          expense_count: number
+          filters: Json
+          generated_by: string | null
+          id: string
+          range_from: string | null
+          range_to: string | null
+          report_number: string
+          report_type: string
+          title: string
+          total_amount: number
+        }
+        Insert: {
+          created_at?: string
+          expense_count?: number
+          filters?: Json
+          generated_by?: string | null
+          id?: string
+          range_from?: string | null
+          range_to?: string | null
+          report_number: string
+          report_type: string
+          title: string
+          total_amount?: number
+        }
+        Update: {
+          created_at?: string
+          expense_count?: number
+          filters?: Json
+          generated_by?: string | null
+          id?: string
+          range_from?: string | null
+          range_to?: string | null
+          report_number?: string
+          report_type?: string
+          title?: string
+          total_amount?: number
+        }
+        Relationships: []
+      }
       role_permissions: {
         Row: {
           can_approve: boolean
@@ -593,7 +650,38 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      log_report_export: {
+        Args: {
+          _expense_count: number
+          _filters: Json
+          _range_from: string
+          _range_to: string
+          _report_type: string
+          _title: string
+          _total_amount: number
+        }
+        Returns: {
+          created_at: string
+          expense_count: number
+          filters: Json
+          generated_by: string | null
+          id: string
+          range_from: string | null
+          range_to: string | null
+          report_number: string
+          report_type: string
+          title: string
+          total_amount: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "report_exports"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       next_expense_number: { Args: never; Returns: string }
+      next_report_number: { Args: never; Returns: string }
     }
     Enums: {
       app_role: "admin" | "manager" | "accountant" | "viewer"
