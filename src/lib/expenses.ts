@@ -7,6 +7,7 @@ export type ExpenseStatus =
   | "pending_approval"
   | "approved"
   | "rejected"
+  | "revision_requested"
   | "deleted";
 
 export interface StatusMeta {
@@ -41,6 +42,11 @@ export const EXPENSE_STATUS: Record<ExpenseStatus, StatusMeta> = {
   rejected: {
     label: "Rejected",
     badge: "border-transparent bg-destructive/15 text-destructive",
+    countsToward: false,
+  },
+  revision_requested: {
+    label: "Revision Requested",
+    badge: "border-transparent bg-amber-500/15 text-amber-600 dark:text-amber-400",
     countsToward: false,
   },
   deleted: {
@@ -100,6 +106,12 @@ export interface Expense {
   created_at: string;
   updated_by: string | null;
   updated_at: string;
+  submitted_by?: string | null;
+  submitted_at?: string | null;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  rejected_by?: string | null;
+  rejected_at?: string | null;
 }
 
 export function formatCurrency(amount: number): string {
