@@ -472,6 +472,7 @@ export type Database = {
         | "approved"
         | "rejected"
         | "deleted"
+        | "revision_requested"
       signatory_type: "accountant" | "manager" | "ceo"
       user_status: "active" | "inactive"
     }
@@ -609,6 +610,7 @@ export const Constants = {
         "approved",
         "rejected",
         "deleted",
+        "revision_requested",
       ],
       signatory_type: ["accountant", "manager", "ceo"],
       user_status: ["active", "inactive"],
