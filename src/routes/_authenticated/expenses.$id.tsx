@@ -119,6 +119,8 @@ function ExpenseDetailsPage() {
       exp.submitted_by,
       exp.approved_by,
       exp.rejected_by,
+      exp.deleted_by,
+      exp.restored_by,
       ...evts.map((e) => e.actor_id),
       ...fch.map((c) => c.changed_by),
     ].filter(Boolean) as string[];
