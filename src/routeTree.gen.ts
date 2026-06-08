@@ -28,6 +28,7 @@ import { Route as AuthenticatedMarketingIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedDamagesIndexRouteImport } from './routes/_authenticated/damages.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
+import { Route as AuthenticatedSettingsPreferencesRouteImport } from './routes/_authenticated/settings.preferences'
 import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_authenticated/settings.permissions'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsMarketingRouteImport } from './routes/_authenticated/settings.marketing'
@@ -155,6 +156,12 @@ const AuthenticatedSettingsSignatoriesRoute =
   AuthenticatedSettingsSignatoriesRouteImport.update({
     id: '/settings/signatories',
     path: '/settings/signatories',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsPreferencesRoute =
+  AuthenticatedSettingsPreferencesRouteImport.update({
+    id: '/settings/preferences',
+    path: '/settings/preferences',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsPermissionsRoute =
@@ -358,6 +365,7 @@ export interface FileRoutesByFullPath {
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
+  '/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages/': typeof AuthenticatedDamagesIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
@@ -403,6 +411,7 @@ export interface FileRoutesByTo {
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
+  '/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages': typeof AuthenticatedDamagesIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
@@ -453,6 +462,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
+  '/_authenticated/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/_authenticated/damages/': typeof AuthenticatedDamagesIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
@@ -503,6 +513,7 @@ export interface FileRouteTypes {
     | '/settings/marketing'
     | '/settings/notifications'
     | '/settings/permissions'
+    | '/settings/preferences'
     | '/settings/signatories'
     | '/damages/'
     | '/expenses/'
@@ -548,6 +559,7 @@ export interface FileRouteTypes {
     | '/settings/marketing'
     | '/settings/notifications'
     | '/settings/permissions'
+    | '/settings/preferences'
     | '/settings/signatories'
     | '/damages'
     | '/expenses'
@@ -597,6 +609,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/marketing'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/permissions'
+    | '/_authenticated/settings/preferences'
     | '/_authenticated/settings/signatories'
     | '/_authenticated/damages/'
     | '/_authenticated/expenses/'
@@ -749,6 +762,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/signatories'
       fullPath: '/settings/signatories'
       preLoaderRoute: typeof AuthenticatedSettingsSignatoriesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/preferences': {
+      id: '/_authenticated/settings/preferences'
+      path: '/settings/preferences'
+      fullPath: '/settings/preferences'
+      preLoaderRoute: typeof AuthenticatedSettingsPreferencesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/permissions': {
@@ -1037,6 +1057,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsMarketingRoute: typeof AuthenticatedSettingsMarketingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsPermissionsRoute: typeof AuthenticatedSettingsPermissionsRoute
+  AuthenticatedSettingsPreferencesRoute: typeof AuthenticatedSettingsPreferencesRoute
   AuthenticatedSettingsSignatoriesRoute: typeof AuthenticatedSettingsSignatoriesRoute
   AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
   AuthenticatedDashboardCategoryIdRoute: typeof AuthenticatedDashboardCategoryIdRoute
@@ -1069,6 +1090,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsNotificationsRoute:
     AuthenticatedSettingsNotificationsRoute,
   AuthenticatedSettingsPermissionsRoute: AuthenticatedSettingsPermissionsRoute,
+  AuthenticatedSettingsPreferencesRoute: AuthenticatedSettingsPreferencesRoute,
   AuthenticatedSettingsSignatoriesRoute: AuthenticatedSettingsSignatoriesRoute,
   AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
   AuthenticatedDashboardCategoryIdRoute: AuthenticatedDashboardCategoryIdRoute,
