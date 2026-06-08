@@ -20,6 +20,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
+import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
 import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_authenticated/settings.permissions'
@@ -89,6 +90,11 @@ const AuthenticatedMarketingRoute = AuthenticatedMarketingRouteImport.update({
 const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
   id: '/damages',
   path: '/damages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedExpensesIndexRoute =
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/damages': typeof AuthenticatedDamagesRoute
   '/marketing': typeof AuthenticatedMarketingRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/damages': typeof AuthenticatedDamagesRoute
   '/marketing': typeof AuthenticatedMarketingRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -241,6 +249,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRoute
   '/_authenticated/marketing': typeof AuthenticatedMarketingRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -271,6 +280,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/update-password'
+    | '/audit'
     | '/damages'
     | '/marketing'
     | '/notifications'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/update-password'
+    | '/audit'
     | '/damages'
     | '/marketing'
     | '/notifications'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/reset-password'
     | '/update-password'
+    | '/_authenticated/audit'
     | '/_authenticated/damages'
     | '/_authenticated/marketing'
     | '/_authenticated/notifications'
@@ -433,6 +445,13 @@ declare module '@tanstack/react-router' {
       path: '/damages'
       fullPath: '/damages'
       preLoaderRoute: typeof AuthenticatedDamagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/audit': {
+      id: '/_authenticated/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuthenticatedAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/expenses/': {
@@ -544,6 +563,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRoute
   AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
@@ -569,6 +589,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRoute,
   AuthenticatedMarketingRoute: AuthenticatedMarketingRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
@@ -608,3 +629,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
