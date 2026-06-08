@@ -46,7 +46,7 @@ export const EXPENSE_STATUS: Record<ExpenseStatus, StatusMeta> = {
   },
   revision_requested: {
     label: "Revision Requested",
-    badge: "border-transparent bg-amber-500/15 text-amber-600 dark:text-amber-400",
+    badge: "border-transparent bg-warning/15 text-warning",
     countsToward: false,
   },
   deleted: {

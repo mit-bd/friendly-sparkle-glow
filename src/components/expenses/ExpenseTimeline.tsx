@@ -35,7 +35,7 @@ const ACTION_TONE: Record<ExpenseAction, string> = {
   submitted: "bg-chart-4/15 text-chart-4",
   approved: "bg-chart-2/15 text-chart-2",
   rejected: "bg-destructive/15 text-destructive",
-  revision_requested: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+  revision_requested: "bg-warning/15 text-warning",
   updated: "bg-chart-1/15 text-chart-1",
   deleted: "bg-muted text-muted-foreground",
   restored: "bg-chart-2/15 text-chart-2",
