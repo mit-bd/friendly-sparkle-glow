@@ -32,7 +32,7 @@ export function ReportHeader({ title, subtitle, meta, className }: ReportHeaderP
     <header className={cn("space-y-4", className)}>
       <div className="flex items-start justify-between gap-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg shadow-brand">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg">
             {logoUrl ? (
               <img
                 src={logoUrl}
