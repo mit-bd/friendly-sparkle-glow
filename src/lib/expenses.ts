@@ -72,6 +72,8 @@ export interface ExpenseCategory {
   name: string;
   is_active: boolean;
   sort_order: number;
+  deleted_at?: string | null;
+  deleted_by?: string | null;
 }
 
 export interface ExpenseSubcategory {
@@ -80,6 +82,8 @@ export interface ExpenseSubcategory {
   name: string;
   is_active: boolean;
   sort_order: number;
+  deleted_at?: string | null;
+  deleted_by?: string | null;
 }
 
 export interface ExpenseAttachment {
@@ -112,6 +116,10 @@ export interface Expense {
   approved_at?: string | null;
   rejected_by?: string | null;
   rejected_at?: string | null;
+  deleted_at?: string | null;
+  deleted_by?: string | null;
+  restored_at?: string | null;
+  restored_by?: string | null;
 }
 
 export function formatCurrency(amount: number): string {
@@ -153,6 +161,7 @@ export async function fetchCategories(includeInactive = false) {
     .order("sort_order")
     .order("name");
   if (!includeInactive) query = query.eq("is_active", true);
+  query = query.is("deleted_at", null);
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []) as ExpenseCategory[];
@@ -165,6 +174,7 @@ export async function fetchSubcategories(includeInactive = false) {
     .order("sort_order")
     .order("name");
   if (!includeInactive) query = query.eq("is_active", true);
+  query = query.is("deleted_at", null);
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []) as ExpenseSubcategory[];
