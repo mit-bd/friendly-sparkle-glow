@@ -103,6 +103,8 @@ function NotificationCenter() {
       }
     }
     if (n.expense_id) navigate({ to: "/expenses/$id", params: { id: n.expense_id } });
+    else if (n.return_id) navigate({ to: "/returns/$id", params: { id: n.return_id } });
+    else if (n.damage_id) navigate({ to: "/damages/$id", params: { id: n.damage_id } });
   }
 
   async function markAll() {
