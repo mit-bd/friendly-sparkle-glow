@@ -9,50 +9,535 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as UpdatePasswordRouteImport } from './routes/update-password'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
+import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
+import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
+import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
+import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
+import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_authenticated/settings.permissions'
+import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
+import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
+import { Route as AuthenticatedReportsSummaryRouteImport } from './routes/_authenticated/reports.summary'
+import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/_authenticated/reports.export-history'
+import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
+import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
+import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
+import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
+import { Route as AuthenticatedExpensesAddRouteImport } from './routes/_authenticated/expenses.add'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
+  id: '/update-password',
+  path: '/update-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMarketingRoute = AuthenticatedMarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
+  id: '/damages',
+  path: '/damages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedExpensesIndexRoute =
+  AuthenticatedExpensesIndexRouteImport.update({
+    id: '/expenses/',
+    path: '/expenses/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsSignatoriesRoute =
+  AuthenticatedSettingsSignatoriesRouteImport.update({
+    id: '/settings/signatories',
+    path: '/settings/signatories',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsPermissionsRoute =
+  AuthenticatedSettingsPermissionsRouteImport.update({
+    id: '/settings/permissions',
+    path: '/settings/permissions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsNotificationsRoute =
+  AuthenticatedSettingsNotificationsRouteImport.update({
+    id: '/settings/notifications',
+    path: '/settings/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsCompanyRoute =
+  AuthenticatedSettingsCompanyRouteImport.update({
+    id: '/settings/company',
+    path: '/settings/company',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportsSummaryRoute =
+  AuthenticatedReportsSummaryRouteImport.update({
+    id: '/reports/summary',
+    path: '/reports/summary',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportsExportHistoryRoute =
+  AuthenticatedReportsExportHistoryRouteImport.update({
+    id: '/reports/export-history',
+    path: '/reports/export-history',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReportsDetailedRoute =
+  AuthenticatedReportsDetailedRouteImport.update({
+    id: '/reports/detailed',
+    path: '/reports/detailed',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesRecycleBinRoute =
+  AuthenticatedExpensesRecycleBinRouteImport.update({
+    id: '/expenses/recycle-bin',
+    path: '/expenses/recycle-bin',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesPendingRoute =
+  AuthenticatedExpensesPendingRouteImport.update({
+    id: '/expenses/pending',
+    path: '/expenses/pending',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesCategoriesRoute =
+  AuthenticatedExpensesCategoriesRouteImport.update({
+    id: '/expenses/categories',
+    path: '/expenses/categories',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExpensesAddRoute =
+  AuthenticatedExpensesAddRouteImport.update({
+    id: '/expenses/add',
+    path: '/expenses/add',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/update-password': typeof UpdatePasswordRoute
+  '/damages': typeof AuthenticatedDamagesRoute
+  '/marketing': typeof AuthenticatedMarketingRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/returns': typeof AuthenticatedReturnsRoute
+  '/users': typeof AuthenticatedUsersRoute
+  '/expenses/add': typeof AuthenticatedExpensesAddRoute
+  '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
+  '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
+  '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
+  '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
+  '/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
+  '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/update-password': typeof UpdatePasswordRoute
+  '/damages': typeof AuthenticatedDamagesRoute
+  '/marketing': typeof AuthenticatedMarketingRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/returns': typeof AuthenticatedReturnsRoute
+  '/users': typeof AuthenticatedUsersRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/expenses/add': typeof AuthenticatedExpensesAddRoute
+  '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
+  '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
+  '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
+  '/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
+  '/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
+  '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/expenses': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/update-password': typeof UpdatePasswordRoute
+  '/_authenticated/damages': typeof AuthenticatedDamagesRoute
+  '/_authenticated/marketing': typeof AuthenticatedMarketingRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/returns': typeof AuthenticatedReturnsRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/expenses/add': typeof AuthenticatedExpensesAddRoute
+  '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
+  '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
+  '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
+  '/_authenticated/reports/export-history': typeof AuthenticatedReportsExportHistoryRoute
+  '/_authenticated/reports/summary': typeof AuthenticatedReportsSummaryRoute
+  '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
+  '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/update-password'
+    | '/damages'
+    | '/marketing'
+    | '/notifications'
+    | '/profile'
+    | '/returns'
+    | '/users'
+    | '/expenses/add'
+    | '/expenses/categories'
+    | '/expenses/pending'
+    | '/expenses/recycle-bin'
+    | '/reports/detailed'
+    | '/reports/export-history'
+    | '/reports/summary'
+    | '/settings/company'
+    | '/settings/notifications'
+    | '/settings/permissions'
+    | '/settings/signatories'
+    | '/expenses/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/auth'
+    | '/reset-password'
+    | '/update-password'
+    | '/damages'
+    | '/marketing'
+    | '/notifications'
+    | '/profile'
+    | '/returns'
+    | '/users'
+    | '/'
+    | '/expenses/add'
+    | '/expenses/categories'
+    | '/expenses/pending'
+    | '/expenses/recycle-bin'
+    | '/reports/detailed'
+    | '/reports/export-history'
+    | '/reports/summary'
+    | '/settings/company'
+    | '/settings/notifications'
+    | '/settings/permissions'
+    | '/settings/signatories'
+    | '/expenses'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/update-password'
+    | '/_authenticated/damages'
+    | '/_authenticated/marketing'
+    | '/_authenticated/notifications'
+    | '/_authenticated/profile'
+    | '/_authenticated/returns'
+    | '/_authenticated/users'
+    | '/_authenticated/'
+    | '/_authenticated/expenses/add'
+    | '/_authenticated/expenses/categories'
+    | '/_authenticated/expenses/pending'
+    | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/reports/detailed'
+    | '/_authenticated/reports/export-history'
+    | '/_authenticated/reports/summary'
+    | '/_authenticated/settings/company'
+    | '/_authenticated/settings/notifications'
+    | '/_authenticated/settings/permissions'
+    | '/_authenticated/settings/signatories'
+    | '/_authenticated/expenses/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  UpdatePasswordRoute: typeof UpdatePasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/update-password': {
+      id: '/update-password'
+      path: '/update-password'
+      fullPath: '/update-password'
+      preLoaderRoute: typeof UpdatePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/returns': {
+      id: '/_authenticated/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof AuthenticatedReturnsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/marketing': {
+      id: '/_authenticated/marketing'
+      path: '/marketing'
+      fullPath: '/marketing'
+      preLoaderRoute: typeof AuthenticatedMarketingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/damages': {
+      id: '/_authenticated/damages'
+      path: '/damages'
+      fullPath: '/damages'
+      preLoaderRoute: typeof AuthenticatedDamagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/': {
+      id: '/_authenticated/expenses/'
+      path: '/expenses'
+      fullPath: '/expenses/'
+      preLoaderRoute: typeof AuthenticatedExpensesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/signatories': {
+      id: '/_authenticated/settings/signatories'
+      path: '/settings/signatories'
+      fullPath: '/settings/signatories'
+      preLoaderRoute: typeof AuthenticatedSettingsSignatoriesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/permissions': {
+      id: '/_authenticated/settings/permissions'
+      path: '/settings/permissions'
+      fullPath: '/settings/permissions'
+      preLoaderRoute: typeof AuthenticatedSettingsPermissionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/notifications': {
+      id: '/_authenticated/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/company': {
+      id: '/_authenticated/settings/company'
+      path: '/settings/company'
+      fullPath: '/settings/company'
+      preLoaderRoute: typeof AuthenticatedSettingsCompanyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports/summary': {
+      id: '/_authenticated/reports/summary'
+      path: '/reports/summary'
+      fullPath: '/reports/summary'
+      preLoaderRoute: typeof AuthenticatedReportsSummaryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports/export-history': {
+      id: '/_authenticated/reports/export-history'
+      path: '/reports/export-history'
+      fullPath: '/reports/export-history'
+      preLoaderRoute: typeof AuthenticatedReportsExportHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports/detailed': {
+      id: '/_authenticated/reports/detailed'
+      path: '/reports/detailed'
+      fullPath: '/reports/detailed'
+      preLoaderRoute: typeof AuthenticatedReportsDetailedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/recycle-bin': {
+      id: '/_authenticated/expenses/recycle-bin'
+      path: '/expenses/recycle-bin'
+      fullPath: '/expenses/recycle-bin'
+      preLoaderRoute: typeof AuthenticatedExpensesRecycleBinRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/pending': {
+      id: '/_authenticated/expenses/pending'
+      path: '/expenses/pending'
+      fullPath: '/expenses/pending'
+      preLoaderRoute: typeof AuthenticatedExpensesPendingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/categories': {
+      id: '/_authenticated/expenses/categories'
+      path: '/expenses/categories'
+      fullPath: '/expenses/categories'
+      preLoaderRoute: typeof AuthenticatedExpensesCategoriesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/expenses/add': {
+      id: '/_authenticated/expenses/add'
+      path: '/expenses/add'
+      fullPath: '/expenses/add'
+      preLoaderRoute: typeof AuthenticatedExpensesAddRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRoute
+  AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedExpensesAddRoute: typeof AuthenticatedExpensesAddRoute
+  AuthenticatedExpensesCategoriesRoute: typeof AuthenticatedExpensesCategoriesRoute
+  AuthenticatedExpensesPendingRoute: typeof AuthenticatedExpensesPendingRoute
+  AuthenticatedExpensesRecycleBinRoute: typeof AuthenticatedExpensesRecycleBinRoute
+  AuthenticatedReportsDetailedRoute: typeof AuthenticatedReportsDetailedRoute
+  AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
+  AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
+  AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
+  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
+  AuthenticatedSettingsPermissionsRoute: typeof AuthenticatedSettingsPermissionsRoute
+  AuthenticatedSettingsSignatoriesRoute: typeof AuthenticatedSettingsSignatoriesRoute
+  AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDamagesRoute: AuthenticatedDamagesRoute,
+  AuthenticatedMarketingRoute: AuthenticatedMarketingRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedReturnsRoute: AuthenticatedReturnsRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedExpensesAddRoute: AuthenticatedExpensesAddRoute,
+  AuthenticatedExpensesCategoriesRoute: AuthenticatedExpensesCategoriesRoute,
+  AuthenticatedExpensesPendingRoute: AuthenticatedExpensesPendingRoute,
+  AuthenticatedExpensesRecycleBinRoute: AuthenticatedExpensesRecycleBinRoute,
+  AuthenticatedReportsDetailedRoute: AuthenticatedReportsDetailedRoute,
+  AuthenticatedReportsExportHistoryRoute:
+    AuthenticatedReportsExportHistoryRoute,
+  AuthenticatedReportsSummaryRoute: AuthenticatedReportsSummaryRoute,
+  AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
+  AuthenticatedSettingsNotificationsRoute:
+    AuthenticatedSettingsNotificationsRoute,
+  AuthenticatedSettingsPermissionsRoute: AuthenticatedSettingsPermissionsRoute,
+  AuthenticatedSettingsSignatoriesRoute: AuthenticatedSettingsSignatoriesRoute,
+  AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  UpdatePasswordRoute: UpdatePasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
