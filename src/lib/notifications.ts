@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logActivity } from "@/lib/audit";
 
 const db = supabase as unknown as {
   from: (table: string) => any;
@@ -11,6 +12,8 @@ export interface AppNotification {
   title: string;
   body: string | null;
   expense_id: string | null;
+  return_id: string | null;
+  damage_id: string | null;
   read_at: string | null;
   created_at: string;
 }
@@ -40,6 +43,13 @@ export async function markNotificationRead(id: string): Promise<void> {
     .update({ read_at: new Date().toISOString() })
     .eq("id", id);
   if (error) throw error;
+  void logActivity({
+    action: "update",
+    entityType: "notification",
+    entityId: id,
+    entityLabel: "Notification read",
+    metadata: { event: "notification_read" },
+  });
 }
 
 export async function markAllNotificationsRead(): Promise<void> {
@@ -48,6 +58,12 @@ export async function markAllNotificationsRead(): Promise<void> {
     .update({ read_at: new Date().toISOString() })
     .is("read_at", null);
   if (error) throw error;
+  void logActivity({
+    action: "update",
+    entityType: "notification",
+    entityLabel: "All notifications read",
+    metadata: { event: "notification_read_all" },
+  });
 }
 
 export async function deleteNotification(id: string): Promise<void> {
