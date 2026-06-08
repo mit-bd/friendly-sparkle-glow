@@ -253,23 +253,8 @@ function ExpenseDetailsPage() {
             <StatusBadge status={expense.status} />
           </div>
           <div className="flex flex-wrap gap-2">
-            {canApprove && !["approved", "rejected", "deleted"].includes(expense.status) && (
-              <>
-                <Button size="sm" disabled={busy} onClick={() => setStatus("approved")}>
-                  <CheckCircle2 className="h-4 w-4" />
-                  Approve
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={busy}
-                  onClick={() => setStatus("rejected")}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <XCircle className="h-4 w-4" />
-                  Reject
-                </Button>
-              </>
+            {canApprove && isOpenForReview && (
+              <ApprovalPanel expense={expense} onDone={load} />
             )}
             {canEdit && expense.status !== "deleted" && (
               <AlertDialog>
