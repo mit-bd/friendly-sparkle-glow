@@ -54,6 +54,7 @@ import { Route as AuthenticatedReturnsReasonIdRouteImport } from './routes/_auth
 import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
 import { Route as AuthenticatedDashboardSubcategoryIdRouteImport } from './routes/_authenticated/dashboard.subcategory.$id'
 import { Route as AuthenticatedDashboardCategoryIdRouteImport } from './routes/_authenticated/dashboard.category.$id'
+import { Route as AuthenticatedDamagesTypeIdRouteImport } from './routes/_authenticated/damages.type.$id'
 
 const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
   id: '/update-password',
@@ -307,6 +308,12 @@ const AuthenticatedDashboardCategoryIdRoute =
     path: '/dashboard/category/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDamagesTypeIdRoute =
+  AuthenticatedDamagesTypeIdRouteImport.update({
+    id: '/type/$id',
+    path: '/type/$id',
+    getParentRoute: () => AuthenticatedDamagesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/returns/': typeof AuthenticatedReturnsIndexRoute
+  '/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
@@ -392,6 +400,7 @@ export interface FileRoutesByTo {
   '/expenses': typeof AuthenticatedExpensesIndexRoute
   '/marketing': typeof AuthenticatedMarketingIndexRoute
   '/returns': typeof AuthenticatedReturnsIndexRoute
+  '/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
@@ -440,6 +449,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/_authenticated/returns/': typeof AuthenticatedReturnsIndexRoute
+  '/_authenticated/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
   '/_authenticated/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
@@ -488,6 +498,7 @@ export interface FileRouteTypes {
     | '/expenses/'
     | '/marketing/'
     | '/returns/'
+    | '/damages/type/$id'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
     | '/marketing/platform/$id'
@@ -531,6 +542,7 @@ export interface FileRouteTypes {
     | '/expenses'
     | '/marketing'
     | '/returns'
+    | '/damages/type/$id'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
     | '/marketing/platform/$id'
@@ -578,6 +590,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/'
     | '/_authenticated/marketing/'
     | '/_authenticated/returns/'
+    | '/_authenticated/damages/type/$id'
     | '/_authenticated/dashboard/category/$id'
     | '/_authenticated/dashboard/subcategory/$id'
     | '/_authenticated/marketing/platform/$id'
@@ -908,6 +921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardCategoryIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/damages/type/$id': {
+      id: '/_authenticated/damages/type/$id'
+      path: '/type/$id'
+      fullPath: '/damages/type/$id'
+      preLoaderRoute: typeof AuthenticatedDamagesTypeIdRouteImport
+      parentRoute: typeof AuthenticatedDamagesRoute
+    }
   }
 }
 
@@ -917,6 +937,7 @@ interface AuthenticatedDamagesRouteChildren {
   AuthenticatedDamagesPendingRoute: typeof AuthenticatedDamagesPendingRoute
   AuthenticatedDamagesReportsRoute: typeof AuthenticatedDamagesReportsRoute
   AuthenticatedDamagesIndexRoute: typeof AuthenticatedDamagesIndexRoute
+  AuthenticatedDamagesTypeIdRoute: typeof AuthenticatedDamagesTypeIdRoute
 }
 
 const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
@@ -925,6 +946,7 @@ const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
   AuthenticatedDamagesPendingRoute: AuthenticatedDamagesPendingRoute,
   AuthenticatedDamagesReportsRoute: AuthenticatedDamagesReportsRoute,
   AuthenticatedDamagesIndexRoute: AuthenticatedDamagesIndexRoute,
+  AuthenticatedDamagesTypeIdRoute: AuthenticatedDamagesTypeIdRoute,
 }
 
 const AuthenticatedDamagesRouteWithChildren =
