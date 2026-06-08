@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { logActivity } from "@/lib/audit";
 import { MODULE_LABELS, ROLE_LABELS, type ModuleKey } from "@/lib/modules";
 
 export const Route = createFileRoute("/_authenticated/settings/permissions")({
