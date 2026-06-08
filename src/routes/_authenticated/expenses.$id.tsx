@@ -168,8 +168,16 @@ function ExpenseDetailsPage() {
   }
 
   const isOwner = expense.created_by === user?.id;
-  const canEdit = isAdmin || (isOwner && can("expenses", "edit"));
   const canApprove = isAdmin || can("expenses", "approve");
+  const isLocked = expense.status === "approved";
+  // Approved expenses are locked: only admins / approvers can modify them.
+  const canEdit = isLocked
+    ? canApprove
+    : isAdmin || (isOwner && can("expenses", "edit"));
+  const canComment = isAdmin || can("expenses", "view") || isOwner;
+  const isOpenForReview = ["submitted", "pending_approval", "revision_requested"].includes(
+    expense.status,
+  );
   const catName = expense.category_id ? categories.find((c) => c.id === expense.category_id)?.name : null;
   const subName = expense.subcategory_id ? subs.find((s) => s.id === expense.subcategory_id)?.name : null;
 
