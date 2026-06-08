@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
+import { Route as AuthenticatedSystemRouteImport } from './routes/_authenticated/system'
 import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
@@ -83,6 +84,11 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
 const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSystemRoute = AuthenticatedSystemRouteImport.update({
+  id: '/system',
+  path: '/system',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
@@ -327,6 +333,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/returns': typeof AuthenticatedReturnsRouteWithChildren
+  '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
@@ -370,6 +377,7 @@ export interface FileRoutesByTo {
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
@@ -419,6 +427,7 @@ export interface FileRoutesById {
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/returns': typeof AuthenticatedReturnsRouteWithChildren
+  '/_authenticated/system': typeof AuthenticatedSystemRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/damages/$id': typeof AuthenticatedDamagesIdRoute
@@ -469,6 +478,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/returns'
+    | '/system'
     | '/users'
     | '/damages/$id'
     | '/damages/add'
@@ -512,6 +522,7 @@ export interface FileRouteTypes {
     | '/loss'
     | '/notifications'
     | '/profile'
+    | '/system'
     | '/users'
     | '/'
     | '/damages/$id'
@@ -560,6 +571,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notifications'
     | '/_authenticated/profile'
     | '/_authenticated/returns'
+    | '/_authenticated/system'
     | '/_authenticated/users'
     | '/_authenticated/'
     | '/_authenticated/damages/$id'
@@ -646,6 +658,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/system': {
+      id: '/_authenticated/system'
+      path: '/system'
+      fullPath: '/system'
+      preLoaderRoute: typeof AuthenticatedSystemRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/returns': {
@@ -1002,6 +1021,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRouteWithChildren
+  AuthenticatedSystemRoute: typeof AuthenticatedSystemRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedExpensesIdRoute: typeof AuthenticatedExpensesIdRoute
@@ -1031,6 +1051,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReturnsRoute: AuthenticatedReturnsRouteWithChildren,
+  AuthenticatedSystemRoute: AuthenticatedSystemRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedExpensesIdRoute: AuthenticatedExpensesIdRoute,
@@ -1067,3 +1088,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
