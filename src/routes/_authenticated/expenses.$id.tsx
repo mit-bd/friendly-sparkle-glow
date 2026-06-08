@@ -4,8 +4,6 @@ import {
   ArrowLeft,
   Loader2,
   Pencil,
-  CheckCircle2,
-  XCircle,
   Trash2,
   FileText,
   Download,
