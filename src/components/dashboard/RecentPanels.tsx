@@ -305,5 +305,3 @@ export function RecentPanels() {
     </div>
   );
 }
-
-import { useAuth } from "@/lib/auth-context";
