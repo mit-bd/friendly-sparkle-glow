@@ -484,6 +484,10 @@ function ReportsCenterPage() {
                   <FileDown className="h-4 w-4" />
                   Export PDF
                 </Button>
+                <Button variant="outline" onClick={handleExportCsv}>
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Export CSV
+                </Button>
               </>
             )}
           </div>
