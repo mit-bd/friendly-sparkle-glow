@@ -47,7 +47,7 @@ async function runChecks(): Promise<Check[]> {
 
   // Database
   try {
-    const { error } = await db.from("expense_counters").select("year").limit(1);
+    const { error } = await db.from("expenses").select("id").limit(1);
     checks.push({
       key: "database",
       label: "Database",
@@ -98,7 +98,7 @@ async function runChecks(): Promise<Check[]> {
 
   // Report engine
   try {
-    const { error } = await db.from("report_counters").select("year").limit(1);
+    const { error } = await db.from("report_exports").select("id").limit(1);
     checks.push({
       key: "reports",
       label: "Report Engine",
