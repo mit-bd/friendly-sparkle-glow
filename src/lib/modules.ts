@@ -8,6 +8,7 @@ import {
   Bell,
   Users,
   Settings,
+  History,
   type LucideIcon,
 } from "lucide-react";
 
@@ -18,6 +19,7 @@ export type ModuleKey =
   | "returns"
   | "damages"
   | "reports"
+  | "audit"
   | "users"
   | "settings";
 
@@ -68,6 +70,16 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Export History", to: "/reports/export-history" },
     ],
   },
+  {
+    label: "Audit & History",
+    to: "/audit",
+    icon: History,
+    module: "audit",
+    children: [
+      { label: "Activity Logs", to: "/audit" },
+      { label: "Recycle Bin", to: "/audit/recycle-bin" },
+    ],
+  },
   { label: "Notifications", to: "/notifications", icon: Bell, module: "dashboard" },
   { label: "Users & Roles", to: "/users", icon: Users, module: "users" },
   {
@@ -98,6 +110,7 @@ export const MODULE_LABELS: Record<ModuleKey, string> = {
   returns: "Returns",
   damages: "Damages",
   reports: "Reports",
+  audit: "Audit & History",
   users: "Users & Roles",
   settings: "Settings",
 };
