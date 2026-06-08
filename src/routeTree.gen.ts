@@ -23,6 +23,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
+import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings.index'
 import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns.index'
@@ -128,6 +129,11 @@ const AuthenticatedLossRoute = AuthenticatedLossRouteImport.update({
 const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
   id: '/damages',
   path: '/damages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBackupRoute = AuthenticatedBackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
@@ -347,6 +353,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/backup': typeof AuthenticatedBackupRoute
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/loss': typeof AuthenticatedLossRoute
   '/marketing': typeof AuthenticatedMarketingRouteWithChildren
@@ -397,6 +404,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/backup': typeof AuthenticatedBackupRoute
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -447,6 +455,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
+  '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/_authenticated/loss': typeof AuthenticatedLossRoute
   '/_authenticated/marketing': typeof AuthenticatedMarketingRouteWithChildren
@@ -501,6 +510,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/audit'
+    | '/backup'
     | '/damages'
     | '/loss'
     | '/marketing'
@@ -551,6 +561,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/audit'
+    | '/backup'
     | '/loss'
     | '/notifications'
     | '/profile'
@@ -600,6 +611,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/update-password'
     | '/_authenticated/audit'
+    | '/_authenticated/backup'
     | '/_authenticated/damages'
     | '/_authenticated/loss'
     | '/_authenticated/marketing'
@@ -752,6 +764,13 @@ declare module '@tanstack/react-router' {
       path: '/damages'
       fullPath: '/damages'
       preLoaderRoute: typeof AuthenticatedDamagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/backup': {
+      id: '/_authenticated/backup'
+      path: '/backup'
+      fullPath: '/backup'
+      preLoaderRoute: typeof AuthenticatedBackupRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/audit': {
@@ -1074,6 +1093,7 @@ const AuthenticatedReturnsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
+  AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
   AuthenticatedLossRoute: typeof AuthenticatedLossRoute
   AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRouteWithChildren
@@ -1107,6 +1127,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
+  AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
   AuthenticatedLossRoute: AuthenticatedLossRoute,
   AuthenticatedMarketingRoute: AuthenticatedMarketingRouteWithChildren,
@@ -1153,3 +1174,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
