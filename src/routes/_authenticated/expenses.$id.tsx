@@ -186,6 +186,16 @@ function ExpenseDetailsPage() {
   );
   const catName = expense.category_id ? categories.find((c) => c.id === expense.category_id)?.name : null;
   const subName = expense.subcategory_id ? subs.find((s) => s.id === expense.subcategory_id)?.name : null;
+  // Marketing rows carry extra currency/campaign fields (not in the base type).
+  const mk = expense as unknown as {
+    is_marketing?: boolean;
+    currency?: string;
+    original_amount?: number | null;
+    exchange_rate?: number;
+    campaign_name?: string | null;
+    platform_id?: string | null;
+  };
+  const isMarketing = !!mk.is_marketing;
 
   async function setStatus(status: Expense["status"]) {
     setBusy(true);
