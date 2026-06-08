@@ -18,12 +18,14 @@ import { CompanyLogo } from "./CompanyLogo";
 import { RoleBadge } from "@/components/RoleBadge";
 import { useAuth } from "@/lib/auth-context";
 import { getSignedUrl } from "@/lib/storage";
+import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
 import { useEffect, useState } from "react";
 
 export function AppTopbar() {
   const { profile, user, primaryRole, signOut } = useAuth();
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const { count: unread } = useUnreadNotifications();
 
   useEffect(() => {
     let active = true;
@@ -58,7 +60,11 @@ export function AppTopbar() {
       <Button variant="ghost" size="icon" asChild aria-label="Notifications" className="relative">
         <Link to="/notifications">
           <Bell className="h-5 w-5" />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-brand-gradient ring-2 ring-background" />
+          {unread > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-gradient px-1 text-[10px] font-semibold leading-none text-white ring-2 ring-background">
+              {unread > 99 ? "99+" : unread}
+            </span>
+          )}
         </Link>
       </Button>
       <ThemeToggle />
