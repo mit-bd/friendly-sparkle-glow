@@ -301,15 +301,24 @@ export interface LogReportInput {
 
 /** Generate a unique report number + archive entry via the secure RPC. */
 export async function logReportExport(input: LogReportInput): Promise<ReportExportRow> {
-  const { data, error } = await supabase.rpc("log_report_export", {
+  const args = {
     _report_type: input.reportType,
     _title: input.title,
     _range_from: input.rangeFrom,
     _range_to: input.rangeTo,
-    _filters: (input.filters ?? {}) as never,
+    _filters: input.filters ?? {},
     _expense_count: input.expenseCount,
     _total_amount: input.totalAmount,
-  });
+  } as unknown as {
+    _report_type: string;
+    _title: string;
+    _range_from: string;
+    _range_to: string;
+    _filters: never;
+    _expense_count: number;
+    _total_amount: number;
+  };
+  const { data, error } = await supabase.rpc("log_report_export", args);
   if (error) throw error;
   return data as unknown as ReportExportRow;
 }
