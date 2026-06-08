@@ -89,6 +89,7 @@ function AddExpensePage() {
     const { data, error } = await supabase
       .from("expenses")
       .insert({
+        expense_number: "", // replaced by DB trigger with EXP-YYYY-000001
         expense_date: form.expense_date,
         category_id: form.category_id,
         subcategory_id: form.subcategory_id,
