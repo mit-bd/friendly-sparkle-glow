@@ -17,12 +17,18 @@ export interface UserPreferences {
   pageSize: PageSize;
   /** Show in-app notification toasts. */
   notifyToasts: boolean;
+  /** Show live toasts for incoming notifications (approvals, submissions…). */
+  notifyInApp: boolean;
+  /** Play the subtle chime when a new notification arrives. */
+  notifySound: boolean;
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
   defaultRange: "this_month",
   pageSize: 25,
   notifyToasts: true,
+  notifyInApp: true,
+  notifySound: true,
 };
 
 const STORAGE_KEY = "ems-preferences";
