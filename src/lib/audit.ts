@@ -32,7 +32,11 @@ export type AuditEntityType =
   | "report"
   | "user"
   | "permission"
-  | "session";
+  | "session"
+  | "return"
+  | "damage"
+  | "return_attachment"
+  | "damage_attachment";
 
 export interface ActivityLog {
   id: string;
@@ -85,6 +89,10 @@ export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
   user: "User",
   permission: "Permission",
   session: "Session",
+  return: "Return",
+  damage: "Damage",
+  return_attachment: "Return Attachment",
+  damage_attachment: "Damage Attachment",
 };
 
 /** Tailwind tone classes per action (theme-safe semantic tokens). */
