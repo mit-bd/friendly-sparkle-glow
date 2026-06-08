@@ -36,7 +36,6 @@ import {
   buildTypeSummary,
   buildMonthly,
   sumBy,
-  formatTk,
   type DamageRecord,
   type DamageType,
 } from "@/lib/loss";
