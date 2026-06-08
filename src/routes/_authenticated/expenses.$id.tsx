@@ -335,9 +335,38 @@ function ExpenseDetailsPage() {
                 <p className="mt-0.5 text-2xl font-semibold tabular-nums text-brand-gradient">
                   {formatCurrency(expense.amount)}
                 </p>
+                {isMarketing && (mk.currency && mk.currency !== "BDT") && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Original {mk.currency} {formatCurrency(Number(mk.original_amount ?? 0))} × rate{" "}
+                    {mk.exchange_rate ?? 1} → BDT (converted)
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
+
+          {isMarketing && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Marketing details</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
+                <Field label="Platform" value={platformName ?? "—"} />
+                <Field label="Campaign" value={mk.campaign_name || "—"} />
+                <Field label="Currency" value={mk.currency || "BDT"} />
+                <Field
+                  label="Original amount"
+                  value={
+                    mk.original_amount != null
+                      ? `${mk.currency || "BDT"} ${formatCurrency(Number(mk.original_amount))}`
+                      : "—"
+                  }
+                />
+                <Field label="Exchange rate → BDT" value={String(mk.exchange_rate ?? 1)} />
+                <Field label="Converted BDT" value={formatCurrency(expense.amount)} />
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>
