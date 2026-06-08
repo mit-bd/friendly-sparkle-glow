@@ -12,6 +12,7 @@ import { AttachmentUploader, type AttachmentValue } from "@/components/Attachmen
 import { ExpenseFields, type ExpenseFormValues } from "@/components/expenses/ExpenseFields";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { logExpenseEvent } from "@/lib/approvals";
 import {
   fetchCategories,
   fetchSubcategories,
@@ -86,6 +87,8 @@ function AddExpensePage() {
     }
 
     setSaving(true);
+    // Submissions move straight into the approval queue: Submitted → Pending Approval.
+    const finalStatus = form.status === "submitted" ? "pending_approval" : form.status;
     const { data, error } = await supabase
       .from("expenses")
       .insert({
@@ -96,7 +99,7 @@ function AddExpensePage() {
         amount,
         description: form.description.trim() || null,
         notes: form.notes.trim() || null,
-        status: form.status,
+        status: finalStatus,
         created_by: user.id,
       })
       .select("id, expense_number")
@@ -106,6 +109,27 @@ function AddExpensePage() {
       setSaving(false);
       toast.error(error?.message ?? "Failed to create expense.");
       return;
+    }
+
+    // Record the opening entries in the permanent approval history.
+    try {
+      await logExpenseEvent({
+        expenseId: data.id,
+        actorId: user.id,
+        action: "created",
+        toStatus: finalStatus,
+      });
+      if (finalStatus !== "draft") {
+        await logExpenseEvent({
+          expenseId: data.id,
+          actorId: user.id,
+          action: "submitted",
+          fromStatus: "draft",
+          toStatus: finalStatus,
+        });
+      }
+    } catch {
+      /* best-effort history */
     }
 
     if (attachment) {
