@@ -191,6 +191,31 @@ function FixedCostReports() {
       headers = ["Month", "Total (BDT)"];
       body = monthly.map((m) => [m.label, m.total]);
       body.push(["Grand Total", sumAmount(generated.approved)]);
+    } else if (type === "outstanding") {
+      headers = ["Fixed Cost", "Number", "Month", "Total (BDT)", "Paid (BDT)", "Remaining (BDT)", "Status"];
+      body = generated.outstanding.map((r) => [
+        name(r.fixed_cost_template_id),
+        r.expense_number,
+        (r.period_month ?? r.expense_date).slice(0, 7),
+        r.amount,
+        r.fc_paid_amount,
+        remainingOf(r),
+        SETTLEMENT_STATUS[settlementOf(r)].label,
+      ]);
+      const totOut = generated.outstanding.reduce((a, r) => a + remainingOf(r), 0);
+      body.push(["Grand Total", "", "", "", "", totOut, ""]);
+    } else if (type === "payments") {
+      headers = ["Date", "Fixed Cost", "Number", "Reference", "Amount (BDT)", "Notes"];
+      body = generated.payments.map((p) => [
+        formatDate(p.payment_date),
+        name(p.template_id),
+        p.expense_number,
+        p.reference_number ?? "—",
+        p.amount,
+        p.notes ?? "",
+      ]);
+      const totPay = generated.payments.reduce((a, p) => a + Number(p.amount || 0), 0);
+      body.push(["Grand Total", "", "", "", totPay, ""]);
     } else {
       headers = ["Fixed Cost", "Number", "Month", "Amount (BDT)", "Status", "Created", "Approved"];
       body = generated.all.map((r) => [
