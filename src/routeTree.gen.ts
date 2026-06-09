@@ -18,6 +18,7 @@ import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSystemRouteImport } from './routes/_authenticated/system'
 import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
 import { Route as AuthenticatedReadinessRouteImport } from './routes/_authenticated/readiness'
+import { Route as AuthenticatedQaRouteImport } from './routes/_authenticated/qa'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
@@ -108,6 +109,11 @@ const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
 const AuthenticatedReadinessRoute = AuthenticatedReadinessRouteImport.update({
   id: '/readiness',
   path: '/readiness',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedQaRoute = AuthenticatedQaRouteImport.update({
+  id: '/qa',
+  path: '/qa',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
@@ -395,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/qa': typeof AuthenticatedQaRoute
   '/readiness': typeof AuthenticatedReadinessRoute
   '/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/system': typeof AuthenticatedSystemRoute
@@ -448,6 +455,7 @@ export interface FileRoutesByTo {
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/qa': typeof AuthenticatedQaRoute
   '/readiness': typeof AuthenticatedReadinessRoute
   '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
@@ -506,6 +514,7 @@ export interface FileRoutesById {
   '/_authenticated/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/qa': typeof AuthenticatedQaRoute
   '/_authenticated/readiness': typeof AuthenticatedReadinessRoute
   '/_authenticated/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/_authenticated/system': typeof AuthenticatedSystemRoute
@@ -566,6 +575,7 @@ export interface FileRouteTypes {
     | '/marketing'
     | '/notifications'
     | '/profile'
+    | '/qa'
     | '/readiness'
     | '/returns'
     | '/system'
@@ -619,6 +629,7 @@ export interface FileRouteTypes {
     | '/loss'
     | '/notifications'
     | '/profile'
+    | '/qa'
     | '/readiness'
     | '/system'
     | '/users'
@@ -676,6 +687,7 @@ export interface FileRouteTypes {
     | '/_authenticated/marketing'
     | '/_authenticated/notifications'
     | '/_authenticated/profile'
+    | '/_authenticated/qa'
     | '/_authenticated/readiness'
     | '/_authenticated/returns'
     | '/_authenticated/system'
@@ -791,6 +803,13 @@ declare module '@tanstack/react-router' {
       path: '/readiness'
       fullPath: '/readiness'
       preLoaderRoute: typeof AuthenticatedReadinessRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/qa': {
+      id: '/_authenticated/qa'
+      path: '/qa'
+      fullPath: '/qa'
+      preLoaderRoute: typeof AuthenticatedQaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profile': {
@@ -1214,6 +1233,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedQaRoute: typeof AuthenticatedQaRoute
   AuthenticatedReadinessRoute: typeof AuthenticatedReadinessRoute
   AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRouteWithChildren
   AuthenticatedSystemRoute: typeof AuthenticatedSystemRoute
@@ -1251,6 +1271,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMarketingRoute: AuthenticatedMarketingRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedQaRoute: AuthenticatedQaRoute,
   AuthenticatedReadinessRoute: AuthenticatedReadinessRoute,
   AuthenticatedReturnsRoute: AuthenticatedReturnsRouteWithChildren,
   AuthenticatedSystemRoute: AuthenticatedSystemRoute,

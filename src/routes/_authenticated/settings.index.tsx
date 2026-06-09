@@ -12,6 +12,7 @@ import {
   DatabaseBackup,
   Activity,
   Repeat,
+  ClipboardCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -60,6 +61,7 @@ const GROUPS: { heading: string; items: SettingLink[] }[] = [
     heading: "Production",
     items: [
       { label: "System Readiness", description: "Setup checklist and go-live status.", to: "/readiness", icon: Rocket, adminOnly: true },
+      { label: "QA Validation", description: "Business validation checklist: tested, issues, resolutions.", to: "/qa", icon: ClipboardCheck, adminOnly: true },
       { label: "System Health", description: "Live status of core platform services.", to: "/system", icon: Activity, adminOnly: true },
       { label: "Backup & Recovery", description: "Operational guidance for data protection.", to: "/backup", icon: DatabaseBackup, adminOnly: true },
     ],
