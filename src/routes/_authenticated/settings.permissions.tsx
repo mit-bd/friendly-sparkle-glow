@@ -53,6 +53,7 @@ const MODULE_ORDER: ModuleKey[] = [
   "returns",
   "damages",
   "finance",
+  "budgets",
   "reports",
   "users",
   "settings",

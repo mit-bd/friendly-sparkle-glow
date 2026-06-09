@@ -47,6 +47,149 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_alerts: {
+        Row: {
+          budget_id: string
+          created_at: string
+          id: string
+          level: string
+          period_start: string
+          used_amount: number
+          utilization: number
+        }
+        Insert: {
+          budget_id: string
+          created_at?: string
+          id?: string
+          level: string
+          period_start: string
+          used_amount?: number
+          utilization?: number
+        }
+        Update: {
+          budget_id?: string
+          created_at?: string
+          id?: string
+          level?: string
+          period_start?: string
+          used_amount?: number
+          utilization?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_alerts_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budget_counters: {
+        Row: {
+          last_seq: number
+          year: number
+        }
+        Insert: {
+          last_seq?: number
+          year: number
+        }
+        Update: {
+          last_seq?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      budgets: {
+        Row: {
+          amount: number
+          budget_number: string
+          budget_type: string
+          category_id: string | null
+          created_at: string
+          created_by: string | null
+          critical_threshold: number
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          period_end: string
+          period_start: string
+          restored_at: string | null
+          restored_by: string | null
+          subcategory_id: string | null
+          target_type: string
+          updated_at: string
+          updated_by: string | null
+          warning_threshold: number
+        }
+        Insert: {
+          amount?: number
+          budget_number?: string
+          budget_type?: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          critical_threshold?: number
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          period_end: string
+          period_start: string
+          restored_at?: string | null
+          restored_by?: string | null
+          subcategory_id?: string | null
+          target_type?: string
+          updated_at?: string
+          updated_by?: string | null
+          warning_threshold?: number
+        }
+        Update: {
+          amount?: number
+          budget_number?: string
+          budget_type?: string
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          critical_threshold?: number
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          period_end?: string
+          period_start?: string
+          restored_at?: string | null
+          restored_by?: string | null
+          subcategory_id?: string | null
+          target_type?: string
+          updated_at?: string
+          updated_by?: string | null
+          warning_threshold?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budgets_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "expense_subcategories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_profile: {
         Row: {
           address: string | null
@@ -1950,6 +2093,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      budget_generate_alerts: { Args: never; Returns: number }
+      budget_used_amount: {
+        Args: { b: Database["public"]["Tables"]["budgets"]["Row"] }
+        Returns: number
+      }
       finance_mark_overdue: { Args: never; Returns: number }
       generate_fixed_costs: { Args: { _month?: string }; Returns: number }
       get_company_branding: {
@@ -2019,6 +2167,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      next_budget_number: { Args: never; Returns: string }
       next_damage_number: { Args: never; Returns: string }
       next_expense_number: { Args: never; Returns: string }
       next_payable_number: { Args: never; Returns: string }

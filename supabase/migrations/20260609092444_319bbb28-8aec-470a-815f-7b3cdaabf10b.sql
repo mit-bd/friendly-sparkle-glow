@@ -1,0 +1,1 @@
+alter table public.budget_counters enable row level security;

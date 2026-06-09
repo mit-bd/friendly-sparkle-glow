@@ -27,6 +27,7 @@ import { Route as AuthenticatedIntelligenceRouteImport } from './routes/_authent
 import { Route as AuthenticatedFixedCostsRouteImport } from './routes/_authenticated/fixed-costs'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
+import { Route as AuthenticatedBudgetsRouteImport } from './routes/_authenticated/budgets'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings.index'
@@ -36,6 +37,7 @@ import { Route as AuthenticatedFixedCostsIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedFinanceIndexRouteImport } from './routes/_authenticated/finance.index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedDamagesIndexRouteImport } from './routes/_authenticated/damages.index'
+import { Route as AuthenticatedBudgetsIndexRouteImport } from './routes/_authenticated/budgets.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
 import { Route as AuthenticatedSettingsPreferencesRouteImport } from './routes/_authenticated/settings.preferences'
 import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_authenticated/settings.permissions'
@@ -66,6 +68,9 @@ import { Route as AuthenticatedDamagesReportsRouteImport } from './routes/_authe
 import { Route as AuthenticatedDamagesPendingRouteImport } from './routes/_authenticated/damages.pending'
 import { Route as AuthenticatedDamagesAddRouteImport } from './routes/_authenticated/damages.add'
 import { Route as AuthenticatedDamagesIdRouteImport } from './routes/_authenticated/damages.$id'
+import { Route as AuthenticatedBudgetsReportsRouteImport } from './routes/_authenticated/budgets.reports'
+import { Route as AuthenticatedBudgetsCreateRouteImport } from './routes/_authenticated/budgets.create'
+import { Route as AuthenticatedBudgetsIdRouteImport } from './routes/_authenticated/budgets.$id'
 import { Route as AuthenticatedReturnsReasonIdRouteImport } from './routes/_authenticated/returns.reason.$id'
 import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
 import { Route as AuthenticatedFinanceReceivablesIdRouteImport } from './routes/_authenticated/finance.receivables.$id'
@@ -165,6 +170,11 @@ const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
   path: '/damages',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBudgetsRoute = AuthenticatedBudgetsRouteImport.update({
+  id: '/budgets',
+  path: '/budgets',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBackupRoute = AuthenticatedBackupRouteImport.update({
   id: '/backup',
   path: '/backup',
@@ -216,6 +226,12 @@ const AuthenticatedDamagesIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedDamagesRoute,
+  } as any)
+const AuthenticatedBudgetsIndexRoute =
+  AuthenticatedBudgetsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedBudgetsRoute,
   } as any)
 const AuthenticatedSettingsSignatoriesRoute =
   AuthenticatedSettingsSignatoriesRouteImport.update({
@@ -392,6 +408,23 @@ const AuthenticatedDamagesIdRoute = AuthenticatedDamagesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedDamagesRoute,
 } as any)
+const AuthenticatedBudgetsReportsRoute =
+  AuthenticatedBudgetsReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedBudgetsRoute,
+  } as any)
+const AuthenticatedBudgetsCreateRoute =
+  AuthenticatedBudgetsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedBudgetsRoute,
+  } as any)
+const AuthenticatedBudgetsIdRoute = AuthenticatedBudgetsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedBudgetsRoute,
+} as any)
 const AuthenticatedReturnsReasonIdRoute =
   AuthenticatedReturnsReasonIdRouteImport.update({
     id: '/reason/$id',
@@ -442,6 +475,7 @@ export interface FileRoutesByFullPath {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
+  '/budgets': typeof AuthenticatedBudgetsRouteWithChildren
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
@@ -455,6 +489,9 @@ export interface FileRoutesByFullPath {
   '/returns': typeof AuthenticatedReturnsRouteWithChildren
   '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
+  '/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
+  '/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/pending': typeof AuthenticatedDamagesPendingRoute
@@ -485,6 +522,7 @@ export interface FileRoutesByFullPath {
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/budgets/': typeof AuthenticatedBudgetsIndexRoute
   '/damages/': typeof AuthenticatedDamagesIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/finance/': typeof AuthenticatedFinanceIndexRoute
@@ -515,6 +553,9 @@ export interface FileRoutesByTo {
   '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
+  '/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
+  '/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/pending': typeof AuthenticatedDamagesPendingRoute
@@ -545,6 +586,7 @@ export interface FileRoutesByTo {
   '/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/budgets': typeof AuthenticatedBudgetsIndexRoute
   '/damages': typeof AuthenticatedDamagesIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
   '/finance': typeof AuthenticatedFinanceIndexRoute
@@ -568,6 +610,7 @@ export interface FileRoutesById {
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
+  '/_authenticated/budgets': typeof AuthenticatedBudgetsRouteWithChildren
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/_authenticated/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/_authenticated/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
@@ -582,6 +625,9 @@ export interface FileRoutesById {
   '/_authenticated/system': typeof AuthenticatedSystemRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/_authenticated/budgets/create': typeof AuthenticatedBudgetsCreateRoute
+  '/_authenticated/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/_authenticated/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/_authenticated/damages/add': typeof AuthenticatedDamagesAddRoute
   '/_authenticated/damages/pending': typeof AuthenticatedDamagesPendingRoute
@@ -612,6 +658,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/permissions': typeof AuthenticatedSettingsPermissionsRoute
   '/_authenticated/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
+  '/_authenticated/budgets/': typeof AuthenticatedBudgetsIndexRoute
   '/_authenticated/damages/': typeof AuthenticatedDamagesIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
   '/_authenticated/finance/': typeof AuthenticatedFinanceIndexRoute
@@ -636,6 +683,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/audit'
     | '/backup'
+    | '/budgets'
     | '/damages'
     | '/finance'
     | '/fixed-costs'
@@ -649,6 +697,9 @@ export interface FileRouteTypes {
     | '/returns'
     | '/system'
     | '/users'
+    | '/budgets/$id'
+    | '/budgets/create'
+    | '/budgets/reports'
     | '/damages/$id'
     | '/damages/add'
     | '/damages/pending'
@@ -679,6 +730,7 @@ export interface FileRouteTypes {
     | '/settings/permissions'
     | '/settings/preferences'
     | '/settings/signatories'
+    | '/budgets/'
     | '/damages/'
     | '/expenses/'
     | '/finance/'
@@ -709,6 +761,9 @@ export interface FileRouteTypes {
     | '/system'
     | '/users'
     | '/'
+    | '/budgets/$id'
+    | '/budgets/create'
+    | '/budgets/reports'
     | '/damages/$id'
     | '/damages/add'
     | '/damages/pending'
@@ -739,6 +794,7 @@ export interface FileRouteTypes {
     | '/settings/permissions'
     | '/settings/preferences'
     | '/settings/signatories'
+    | '/budgets'
     | '/damages'
     | '/expenses'
     | '/finance'
@@ -761,6 +817,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/_authenticated/audit'
     | '/_authenticated/backup'
+    | '/_authenticated/budgets'
     | '/_authenticated/damages'
     | '/_authenticated/finance'
     | '/_authenticated/fixed-costs'
@@ -775,6 +832,9 @@ export interface FileRouteTypes {
     | '/_authenticated/system'
     | '/_authenticated/users'
     | '/_authenticated/'
+    | '/_authenticated/budgets/$id'
+    | '/_authenticated/budgets/create'
+    | '/_authenticated/budgets/reports'
     | '/_authenticated/damages/$id'
     | '/_authenticated/damages/add'
     | '/_authenticated/damages/pending'
@@ -805,6 +865,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/permissions'
     | '/_authenticated/settings/preferences'
     | '/_authenticated/settings/signatories'
+    | '/_authenticated/budgets/'
     | '/_authenticated/damages/'
     | '/_authenticated/expenses/'
     | '/_authenticated/finance/'
@@ -956,6 +1017,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDamagesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/budgets': {
+      id: '/_authenticated/budgets'
+      path: '/budgets'
+      fullPath: '/budgets'
+      preLoaderRoute: typeof AuthenticatedBudgetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/backup': {
       id: '/_authenticated/backup'
       path: '/backup'
@@ -1018,6 +1086,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/damages/'
       preLoaderRoute: typeof AuthenticatedDamagesIndexRouteImport
       parentRoute: typeof AuthenticatedDamagesRoute
+    }
+    '/_authenticated/budgets/': {
+      id: '/_authenticated/budgets/'
+      path: '/'
+      fullPath: '/budgets/'
+      preLoaderRoute: typeof AuthenticatedBudgetsIndexRouteImport
+      parentRoute: typeof AuthenticatedBudgetsRoute
     }
     '/_authenticated/settings/signatories': {
       id: '/_authenticated/settings/signatories'
@@ -1229,6 +1304,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDamagesIdRouteImport
       parentRoute: typeof AuthenticatedDamagesRoute
     }
+    '/_authenticated/budgets/reports': {
+      id: '/_authenticated/budgets/reports'
+      path: '/reports'
+      fullPath: '/budgets/reports'
+      preLoaderRoute: typeof AuthenticatedBudgetsReportsRouteImport
+      parentRoute: typeof AuthenticatedBudgetsRoute
+    }
+    '/_authenticated/budgets/create': {
+      id: '/_authenticated/budgets/create'
+      path: '/create'
+      fullPath: '/budgets/create'
+      preLoaderRoute: typeof AuthenticatedBudgetsCreateRouteImport
+      parentRoute: typeof AuthenticatedBudgetsRoute
+    }
+    '/_authenticated/budgets/$id': {
+      id: '/_authenticated/budgets/$id'
+      path: '/$id'
+      fullPath: '/budgets/$id'
+      preLoaderRoute: typeof AuthenticatedBudgetsIdRouteImport
+      parentRoute: typeof AuthenticatedBudgetsRoute
+    }
     '/_authenticated/returns/reason/$id': {
       id: '/_authenticated/returns/reason/$id'
       path: '/reason/$id'
@@ -1280,6 +1376,23 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedBudgetsRouteChildren {
+  AuthenticatedBudgetsIdRoute: typeof AuthenticatedBudgetsIdRoute
+  AuthenticatedBudgetsCreateRoute: typeof AuthenticatedBudgetsCreateRoute
+  AuthenticatedBudgetsReportsRoute: typeof AuthenticatedBudgetsReportsRoute
+  AuthenticatedBudgetsIndexRoute: typeof AuthenticatedBudgetsIndexRoute
+}
+
+const AuthenticatedBudgetsRouteChildren: AuthenticatedBudgetsRouteChildren = {
+  AuthenticatedBudgetsIdRoute: AuthenticatedBudgetsIdRoute,
+  AuthenticatedBudgetsCreateRoute: AuthenticatedBudgetsCreateRoute,
+  AuthenticatedBudgetsReportsRoute: AuthenticatedBudgetsReportsRoute,
+  AuthenticatedBudgetsIndexRoute: AuthenticatedBudgetsIndexRoute,
+}
+
+const AuthenticatedBudgetsRouteWithChildren =
+  AuthenticatedBudgetsRoute._addFileChildren(AuthenticatedBudgetsRouteChildren)
 
 interface AuthenticatedDamagesRouteChildren {
   AuthenticatedDamagesIdRoute: typeof AuthenticatedDamagesIdRoute
@@ -1411,6 +1524,7 @@ const AuthenticatedReturnsRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
+  AuthenticatedBudgetsRoute: typeof AuthenticatedBudgetsRouteWithChildren
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRouteWithChildren
   AuthenticatedFixedCostsRoute: typeof AuthenticatedFixedCostsRouteWithChildren
@@ -1450,6 +1564,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
+  AuthenticatedBudgetsRoute: AuthenticatedBudgetsRouteWithChildren,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRouteWithChildren,
   AuthenticatedFixedCostsRoute: AuthenticatedFixedCostsRouteWithChildren,
@@ -1501,3 +1616,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

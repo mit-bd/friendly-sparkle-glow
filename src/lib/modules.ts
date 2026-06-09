@@ -13,6 +13,7 @@ import {
   Repeat,
   LineChart,
   Landmark,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ export type ModuleKey =
   | "audit"
   | "users"
   | "finance"
+  | "budgets"
   | "settings";
 
 /** Default product/company name used before a custom company profile is set. */
@@ -127,6 +129,17 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    label: "Budget Control",
+    to: "/budgets",
+    icon: Wallet,
+    module: "budgets",
+    children: [
+      { label: "Budget Dashboard", to: "/budgets" },
+      { label: "Create Budget", to: "/budgets/create" },
+      { label: "Budget Reports", to: "/budgets/reports" },
+    ],
+  },
+  {
     label: "Reports",
     to: "/reports/summary",
     icon: FileBarChart,
@@ -189,5 +202,6 @@ export const MODULE_LABELS: Record<ModuleKey, string> = {
   audit: "Audit & History",
   users: "Users & Roles",
   finance: "Finance Control",
+  budgets: "Budget Control",
   settings: "Settings",
 };
