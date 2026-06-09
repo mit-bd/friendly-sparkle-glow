@@ -141,12 +141,15 @@ export async function globalSearch(rawTerm: string): Promise<SearchResult[]> {
       return (data ?? []) as any[];
     }),
     safe(async () => {
-      const { data } = await db
-        .from("profiles")
-        .select("id, full_name, email, status")
-        .or(`full_name.ilike.${like},email.ilike.${like}`)
-        .limit(PER_GROUP);
-      return (data ?? []) as any[];
+      const { data } = await db.rpc("list_directory");
+      const term = q.trim().toLowerCase();
+      return ((data ?? []) as any[])
+        .filter(
+          (p) =>
+            (p.full_name ?? "").toLowerCase().includes(term) ||
+            (p.email ?? "").toLowerCase().includes(term),
+        )
+        .slice(0, PER_GROUP);
     }),
     safe(async () => {
       const { data } = await db
