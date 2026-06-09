@@ -142,12 +142,12 @@ export async function globalSearch(rawTerm: string): Promise<SearchResult[]> {
     }),
     safe(async () => {
       const { data } = await db.rpc("list_directory");
-      const term = q.trim().toLowerCase();
+      const needle = term.toLowerCase();
       return ((data ?? []) as any[])
         .filter(
           (p) =>
-            (p.full_name ?? "").toLowerCase().includes(term) ||
-            (p.email ?? "").toLowerCase().includes(term),
+            (p.full_name ?? "").toLowerCase().includes(needle) ||
+            (p.email ?? "").toLowerCase().includes(needle),
         )
         .slice(0, PER_GROUP);
     }),
