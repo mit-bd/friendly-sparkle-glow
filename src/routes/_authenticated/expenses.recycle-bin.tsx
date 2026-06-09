@@ -263,6 +263,60 @@ function RecycleBinPage() {
             )}
           </TabsContent>
 
+          {/* RETURNS */}
+          <TabsContent value="returns" className="mt-4">
+            <BulkBar
+              count={selRet.size}
+              kind="returns"
+              onRestore={() =>
+                setPending({ mode: "restore", kind: "returns", ids: [...selRet], label: `${selRet.size} return(s)` })
+              }
+              onPurge={() =>
+                setPending({ mode: "purge", kind: "returns", ids: [...selRet], label: `${selRet.size} return(s)` })
+              }
+            />
+            {returns.length === 0 ? (
+              <EmptyState what="deleted returns" />
+            ) : (
+              <LossTable
+                numberLabel="Return #"
+                rows={returns.map((r) => ({ id: r.id, number: r.return_number, amount: r.net_loss_amount, date: r.return_date, deleted_at: r.deleted_at }))}
+                sel={selRet}
+                onToggle={(id) => toggle(selRet, setSelRet, id)}
+                onToggleAll={() => toggleAll(returns.map((x) => x.id), selRet, setSelRet)}
+                onRestore={(row) => setPending({ mode: "restore", kind: "returns", ids: [row.id], label: row.number })}
+                onPurge={(row) => setPending({ mode: "purge", kind: "returns", ids: [row.id], label: row.number })}
+              />
+            )}
+          </TabsContent>
+
+          {/* DAMAGES */}
+          <TabsContent value="damages" className="mt-4">
+            <BulkBar
+              count={selDmg.size}
+              kind="damages"
+              onRestore={() =>
+                setPending({ mode: "restore", kind: "damages", ids: [...selDmg], label: `${selDmg.size} damage(s)` })
+              }
+              onPurge={() =>
+                setPending({ mode: "purge", kind: "damages", ids: [...selDmg], label: `${selDmg.size} damage(s)` })
+              }
+            />
+            {damages.length === 0 ? (
+              <EmptyState what="deleted damages" />
+            ) : (
+              <LossTable
+                numberLabel="Damage #"
+                rows={damages.map((d) => ({ id: d.id, number: d.damage_number, amount: d.damage_value, date: d.damage_date, deleted_at: d.deleted_at }))}
+                sel={selDmg}
+                onToggle={(id) => toggle(selDmg, setSelDmg, id)}
+                onToggleAll={() => toggleAll(damages.map((x) => x.id), selDmg, setSelDmg)}
+                onRestore={(row) => setPending({ mode: "restore", kind: "damages", ids: [row.id], label: row.number })}
+                onPurge={(row) => setPending({ mode: "purge", kind: "damages", ids: [row.id], label: row.number })}
+              />
+            )}
+          </TabsContent>
+
           {/* CATEGORIES */}
           <TabsContent value="categories" className="mt-4">
             <BulkBar
