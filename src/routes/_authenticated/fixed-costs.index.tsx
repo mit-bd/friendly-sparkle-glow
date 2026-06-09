@@ -198,9 +198,9 @@ function FixedCostsOverview() {
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <MetricCard icon={Wallet} label="Fixed cost this month" value={formatCurrency(totalThisRange)} hint={`${approved.length} approved in range`} />
-            <MetricCard icon={Clock} label="Pending fixed costs" value={String(counts.pending)} hint="Awaiting approval" />
-            <MetricCard icon={CheckCircle2} label="Approved fixed costs" value={String(counts.approvedInRange)} hint="Count in range" />
+            <MetricCard icon={Wallet} label="Fixed cost this month" value={formatCurrency(totalThisRange)} hint={`${approved.length} paid in range`} />
+            <MetricCard icon={Clock} label="Outstanding" value={formatCurrency(summary.outstandingTotal)} hint={`${summary.generatedCount + summary.partialCount} unsettled`} />
+            <MetricCard icon={CheckCircle2} label="Settled records" value={String(summary.paidCount)} hint={`${summary.partialCount} partially paid`} />
             <MetricCard
               icon={TrendingUp}
               label="Fixed cost growth"
@@ -230,9 +230,9 @@ function FixedCostsOverview() {
             </Card>
 
             <Card>
-              <CardHeader><CardTitle className="text-base">Approved vs pending</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base">Paid vs outstanding</CardTitle></CardHeader>
               <CardContent>
-                {split.approved === 0 && split.pending === 0 ? (
+                {summary.paidTotal === 0 && summary.outstandingTotal === 0 ? (
                   <EmptyState icon={CheckCircle2} title="Nothing to compare yet" description="Generate fixed costs to see the split." />
                 ) : (
                   <ResponsiveContainer width="100%" height={280}>
