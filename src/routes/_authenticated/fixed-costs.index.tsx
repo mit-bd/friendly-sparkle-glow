@@ -309,11 +309,9 @@ function FixedCostsOverview() {
                   <SelectTrigger className="w-full sm:w-44"><SelectValue placeholder="Status" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value={ALL}>All statuses</SelectItem>
-                    {(Object.keys(EXPENSE_STATUS) as ExpenseStatus[])
-                      .filter((s) => s !== "deleted")
-                      .map((s) => (
-                        <SelectItem key={s} value={s}>{EXPENSE_STATUS[s].label}</SelectItem>
-                      ))}
+                    {(Object.keys(SETTLEMENT_STATUS) as SettlementStatus[]).map((s) => (
+                      <SelectItem key={s} value={s}>{SETTLEMENT_STATUS[s].label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -332,23 +330,27 @@ function FixedCostsOverview() {
                           <TableHead>Number</TableHead>
                           <TableHead>Month</TableHead>
                           <TableHead className="text-right">Amount</TableHead>
+                          <TableHead className="text-right">Paid</TableHead>
+                          <TableHead className="text-right">Remaining</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Created</TableHead>
-                          <TableHead>Approved</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {pageRows.map((r) => (
-                          <TableRow key={r.id}>
-                            <TableCell className="font-medium">{templateName(r.fixed_cost_template_id)}</TableCell>
+                          <TableRow key={r.id} className="cursor-pointer">
+                            <TableCell className="font-medium">
+                              <Link to="/fixed-costs/$id" params={{ id: r.id }} className="hover:text-brand hover:underline">
+                                {templateName(r.fixed_cost_template_id)}
+                              </Link>
+                            </TableCell>
                             <TableCell className="text-muted-foreground">{r.expense_number}</TableCell>
                             <TableCell className="whitespace-nowrap">
                               {(r.period_month ?? r.expense_date).slice(0, 7)}
                             </TableCell>
                             <TableCell className="text-right tabular-nums">{formatCurrency(r.amount)}</TableCell>
-                            <TableCell><StatusBadge status={r.status as ExpenseStatus} /></TableCell>
-                            <TableCell className="whitespace-nowrap">{formatDate(r.created_at)}</TableCell>
-                            <TableCell className="whitespace-nowrap">{r.approved_at ? formatDate(r.approved_at) : "—"}</TableCell>
+                            <TableCell className="text-right tabular-nums">{formatCurrency(r.fc_paid_amount)}</TableCell>
+                            <TableCell className="text-right tabular-nums">{formatCurrency(remainingOf(r))}</TableCell>
+                            <TableCell><SettlementBadge status={r.fc_settlement_status} /></TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
