@@ -30,18 +30,27 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/lib/auth-context";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/expenses";
+import { formatTk } from "@/lib/loss";
 import {
   fetchDeletedCategories,
   fetchDeletedExpenses,
   fetchDeletedSubcategories,
+  fetchDeletedReturns,
+  fetchDeletedDamages,
   purgeCategory,
   purgeExpense,
   purgeSubcategory,
+  purgeReturn,
+  purgeDamage,
   restoreCategory,
   restoreExpense,
   restoreSubcategory,
+  restoreReturn,
+  restoreDamage,
   type DeletedExpense,
   type DeletedTaxonomy,
+  type DeletedReturn,
+  type DeletedDamage,
 } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
@@ -49,7 +58,7 @@ export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
   component: RecycleBinPage,
 });
 
-type Kind = "expenses" | "categories" | "subcategories";
+type Kind = "expenses" | "categories" | "subcategories" | "returns" | "damages";
 
 interface PendingAction {
   mode: "restore" | "purge";
@@ -64,28 +73,38 @@ function RecycleBinPage() {
   const [expenses, setExpenses] = useState<DeletedExpense[]>([]);
   const [categories, setCategories] = useState<DeletedTaxonomy[]>([]);
   const [subcategories, setSubcategories] = useState<DeletedTaxonomy[]>([]);
+  const [returns, setReturns] = useState<DeletedReturn[]>([]);
+  const [damages, setDamages] = useState<DeletedDamage[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
   const [selExp, setSelExp] = useState<Set<string>>(new Set());
   const [selCat, setSelCat] = useState<Set<string>>(new Set());
   const [selSub, setSelSub] = useState<Set<string>>(new Set());
+  const [selRet, setSelRet] = useState<Set<string>>(new Set());
+  const [selDmg, setSelDmg] = useState<Set<string>>(new Set());
   const [pending, setPending] = useState<PendingAction | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [e, c, s] = await Promise.all([
+      const [e, c, s, ret, dmg] = await Promise.all([
         fetchDeletedExpenses(),
         fetchDeletedCategories(),
         fetchDeletedSubcategories(),
+        fetchDeletedReturns(),
+        fetchDeletedDamages(),
       ]);
       setExpenses(e);
       setCategories(c);
       setSubcategories(s);
+      setReturns(ret);
+      setDamages(dmg);
       setSelExp(new Set());
       setSelCat(new Set());
       setSelSub(new Set());
+      setSelRet(new Set());
+      setSelDmg(new Set());
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to load recycle bin.");
     } finally {
@@ -124,7 +143,9 @@ function RecycleBinPage() {
       const ops: Promise<void>[] = a.ids.map((id) => {
         if (a.kind === "expenses") return a.mode === "restore" ? restoreExpense(id) : purgeExpense(id);
         if (a.kind === "categories") return a.mode === "restore" ? restoreCategory(id) : purgeCategory(id);
-        return a.mode === "restore" ? restoreSubcategory(id) : purgeSubcategory(id);
+        if (a.kind === "subcategories") return a.mode === "restore" ? restoreSubcategory(id) : purgeSubcategory(id);
+        if (a.kind === "returns") return a.mode === "restore" ? restoreReturn(id) : purgeReturn(id);
+        return a.mode === "restore" ? restoreDamage(id) : purgeDamage(id);
       });
       await Promise.all(ops);
       toast.success(
@@ -143,6 +164,8 @@ function RecycleBinPage() {
 
   const tabs: { value: Kind; label: string; count: number }[] = [
     { value: "expenses", label: "Expenses", count: expenses.length },
+    { value: "returns", label: "Returns", count: returns.length },
+    { value: "damages", label: "Damages", count: damages.length },
     { value: "categories", label: "Categories", count: categories.length },
     { value: "subcategories", label: "Subcategories", count: subcategories.length },
   ];
