@@ -307,9 +307,8 @@ function CreateUserDialog({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="cu-password">Temporary password</Label>
-              <Input
+              <PasswordInput
                 id="cu-password"
-                type="text"
                 required
                 minLength={8}
                 value={password}
