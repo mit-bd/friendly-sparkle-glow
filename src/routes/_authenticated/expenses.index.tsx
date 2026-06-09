@@ -325,6 +325,9 @@ function ExpensesListPage() {
     (s) => filters.category === ALL || s.category_id === filters.category,
   );
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const pageAllSelected = rows.length > 0 && rows.every((r) => bulk.selection.isSelected(r.id));
+  const togglePageAll = () =>
+    pageAllSelected ? bulk.selection.removeMany(rows) : bulk.selection.addMany(rows);
 
   return (
     <div className="space-y-6">
@@ -332,14 +335,19 @@ function ExpensesListPage() {
         title="All Expenses"
         description="Browse, filter, and manage every recorded expense."
         actions={
-          canCreate && (
-            <Button asChild>
-              <Link to="/expenses/add">
-                <Plus className="h-4 w-4" />
-                Add expense
-              </Link>
-            </Button>
-          )
+          <div className="flex flex-wrap gap-2">
+            {canExport && (
+              <BulkScopeMenu busy={bulk.busy} onAction={runBulk} />
+            )}
+            {canCreate && (
+              <Button asChild>
+                <Link to="/expenses/add">
+                  <Plus className="h-4 w-4" />
+                  Add expense
+                </Link>
+              </Button>
+            )}
+          </div>
         }
       />
 
