@@ -11,6 +11,7 @@ import {
   History,
   TrendingDown,
   Repeat,
+  LineChart,
   type LucideIcon,
 } from "lucide-react";
 
@@ -47,6 +48,12 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", to: "/", icon: LayoutDashboard, module: "dashboard" },
+  {
+    label: "Executive Analytics",
+    to: "/intelligence",
+    icon: LineChart,
+    module: "dashboard",
+  },
   {
     label: "Expenses",
     to: "/expenses",
