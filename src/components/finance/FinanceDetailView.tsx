@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/lib/auth-context";
-import { getDownloadUrl, getSignedUrl, removeFile, uploadFile } from "@/lib/storage";
+import { getDownloadUrl, getSignedUrl, removeFile } from "@/lib/storage";
 import { fetchFieldChanges, type FieldChange } from "@/lib/audit";
 import { fetchUserNames, formatDate, formatDateTime } from "@/lib/expenses";
 import type { ExpenseEvent } from "@/lib/approvals";
@@ -408,6 +408,3 @@ function SettleDialog({ kind, recordId, max, userId, onClose, onSaved }: { kind:
     </Dialog>
   );
 }
-
-/** Avoid unused-var lint on uploadFile import path (handled inside AttachmentUploader). */
-void uploadFile;
