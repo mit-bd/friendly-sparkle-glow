@@ -570,6 +570,17 @@ function ExpensesListPage() {
           </Button>
         </div>
       </div>
+
+      <BulkActionBar
+        count={bulk.selection.count}
+        canExport={canExport}
+        busy={bulk.busy}
+        onClear={bulk.selection.clear}
+        onPrint={() => runBulk("selected", "print")}
+        onPdf={() => runBulk("selected", "pdf")}
+        onCsv={() => runBulk("selected", "csv")}
+      />
+      {bulk.printNode}
     </div>
   );
 }
