@@ -2127,6 +2127,16 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      list_directory: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          email: string
+          full_name: string
+          id: string
+          status: string
+        }[]
+      }
       log_activity: {
         Args: {
           _action: string
