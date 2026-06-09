@@ -450,6 +450,15 @@ function AuditPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10 print:hidden">
+                    <Checkbox
+                      checked={pageAllSelected}
+                      onCheckedChange={() =>
+                        pageAllSelected ? bulk.selection.removeMany(rows) : bulk.selection.addMany(rows)
+                      }
+                      aria-label="Select all on page"
+                    />
+                  </TableHead>
                   <TableHead>Date &amp; Time</TableHead>
                   <TableHead>User</TableHead>
                   <TableHead>Action</TableHead>
@@ -460,6 +469,13 @@ function AuditPage() {
               <TableBody>
                 {rows.map((l) => (
                   <TableRow key={l.id}>
+                    <TableCell className="print:hidden">
+                      <Checkbox
+                        checked={bulk.selection.isSelected(l.id)}
+                        onCheckedChange={() => bulk.selection.toggle(l.id)}
+                        aria-label="Select log entry"
+                      />
+                    </TableCell>
                     <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
                       {formatDateTime(l.created_at)}
                     </TableCell>
