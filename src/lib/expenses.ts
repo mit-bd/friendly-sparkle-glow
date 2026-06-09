@@ -184,11 +184,11 @@ export async function fetchSubcategories(includeInactive = false) {
 export async function fetchUserNames(ids: string[]): Promise<Record<string, string>> {
   const unique = [...new Set(ids.filter(Boolean))];
   if (unique.length === 0) return {};
-  const { data } = await supabase
-    .from("profiles")
-    .select("id, full_name, email")
-    .in("id", unique);
+  const { data } = await (supabase as any).rpc("list_directory");
+  const wanted = new Set(unique);
   const map: Record<string, string> = {};
-  for (const p of data ?? []) map[p.id] = p.full_name?.trim() || p.email || "—";
+  for (const p of (data ?? []) as { id: string; full_name: string | null; email: string | null }[]) {
+    if (wanted.has(p.id)) map[p.id] = p.full_name?.trim() || p.email || "—";
+  }
   return map;
 }
