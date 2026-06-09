@@ -36,6 +36,7 @@ import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsMarketingRouteImport } from './routes/_authenticated/settings.marketing'
 import { Route as AuthenticatedSettingsLossRouteImport } from './routes/_authenticated/settings.loss'
+import { Route as AuthenticatedSettingsFixedCostsRouteImport } from './routes/_authenticated/settings.fixed-costs'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedReturnsReportsRouteImport } from './routes/_authenticated/returns.reports'
 import { Route as AuthenticatedReturnsPendingRouteImport } from './routes/_authenticated/returns.pending'
@@ -205,6 +206,12 @@ const AuthenticatedSettingsLossRoute =
   AuthenticatedSettingsLossRouteImport.update({
     id: '/settings/loss',
     path: '/settings/loss',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsFixedCostsRoute =
+  AuthenticatedSettingsFixedCostsRouteImport.update({
+    id: '/settings/fixed-costs',
+    path: '/settings/fixed-costs',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsCompanyRoute =
@@ -382,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/fixed-costs': typeof AuthenticatedSettingsFixedCostsRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
@@ -431,6 +439,7 @@ export interface FileRoutesByTo {
   '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/fixed-costs': typeof AuthenticatedSettingsFixedCostsRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
@@ -485,6 +494,7 @@ export interface FileRoutesById {
   '/_authenticated/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/_authenticated/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/_authenticated/settings/fixed-costs': typeof AuthenticatedSettingsFixedCostsRoute
   '/_authenticated/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/_authenticated/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
@@ -539,6 +549,7 @@ export interface FileRouteTypes {
     | '/returns/pending'
     | '/returns/reports'
     | '/settings/company'
+    | '/settings/fixed-costs'
     | '/settings/loss'
     | '/settings/marketing'
     | '/settings/notifications'
@@ -588,6 +599,7 @@ export interface FileRouteTypes {
     | '/returns/pending'
     | '/returns/reports'
     | '/settings/company'
+    | '/settings/fixed-costs'
     | '/settings/loss'
     | '/settings/marketing'
     | '/settings/notifications'
@@ -641,6 +653,7 @@ export interface FileRouteTypes {
     | '/_authenticated/returns/pending'
     | '/_authenticated/returns/reports'
     | '/_authenticated/settings/company'
+    | '/_authenticated/settings/fixed-costs'
     | '/_authenticated/settings/loss'
     | '/_authenticated/settings/marketing'
     | '/_authenticated/settings/notifications'
@@ -855,6 +868,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/loss'
       fullPath: '/settings/loss'
       preLoaderRoute: typeof AuthenticatedSettingsLossRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/fixed-costs': {
+      id: '/_authenticated/settings/fixed-costs'
+      path: '/settings/fixed-costs'
+      fullPath: '/settings/fixed-costs'
+      preLoaderRoute: typeof AuthenticatedSettingsFixedCostsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/company': {
@@ -1113,6 +1133,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
   AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
   AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
+  AuthenticatedSettingsFixedCostsRoute: typeof AuthenticatedSettingsFixedCostsRoute
   AuthenticatedSettingsLossRoute: typeof AuthenticatedSettingsLossRoute
   AuthenticatedSettingsMarketingRoute: typeof AuthenticatedSettingsMarketingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
@@ -1148,6 +1169,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedReportsExportHistoryRoute,
   AuthenticatedReportsSummaryRoute: AuthenticatedReportsSummaryRoute,
   AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
+  AuthenticatedSettingsFixedCostsRoute: AuthenticatedSettingsFixedCostsRoute,
   AuthenticatedSettingsLossRoute: AuthenticatedSettingsLossRoute,
   AuthenticatedSettingsMarketingRoute: AuthenticatedSettingsMarketingRoute,
   AuthenticatedSettingsNotificationsRoute:
@@ -1174,3 +1196,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
