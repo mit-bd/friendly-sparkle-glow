@@ -23,7 +23,10 @@ export type ActivityAction =
   | "user_deactivate"
   | "user_activate"
   | "comment"
-  | "password_change";
+  | "password_change"
+  | "enable"
+  | "disable"
+  | "generate";
 
 export type AuditEntityType =
   | "expense"
@@ -38,7 +41,8 @@ export type AuditEntityType =
   | "damage"
   | "return_attachment"
   | "damage_attachment"
-  | "notification";
+  | "notification"
+  | "fixed_cost";
 
 export interface ActivityLog {
   id: string;
@@ -81,6 +85,9 @@ export const ACTIVITY_ACTION_LABELS: Record<string, string> = {
   user_activate: "User Activated",
   comment: "Commented",
   password_change: "Password Changed",
+  enable: "Enabled",
+  disable: "Disabled",
+  generate: "Generated",
 };
 
 export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
@@ -97,6 +104,7 @@ export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
   return_attachment: "Return Attachment",
   damage_attachment: "Damage Attachment",
   notification: "Notification",
+  fixed_cost: "Fixed Cost",
 };
 
 /** Tailwind tone classes per action (theme-safe semantic tokens). */
@@ -118,6 +126,9 @@ export const ACTIVITY_TONE: Record<string, string> = {
   user_activate: "bg-chart-2/15 text-chart-2",
   comment: "bg-muted text-muted-foreground",
   password_change: "bg-warning/15 text-warning",
+  enable: "bg-chart-2/15 text-chart-2",
+  disable: "bg-destructive/15 text-destructive",
+  generate: "bg-chart-1/15 text-chart-1",
 };
 
 /** Best-effort client logger for actions that don't hit a tracked table. */
