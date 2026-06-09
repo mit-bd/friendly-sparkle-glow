@@ -307,7 +307,7 @@ function FixedCostReports() {
 }
 
 function FixedCostReportSwitch({ report }: { report: Generated }) {
-  const { type, approved, all, templates } = report;
+  const { type, approved, all, templates, outstanding, payments } = report;
   const name = useMemo(() => {
     const m = new Map(templates.map((t) => [t.id, t.name]));
     return (id: string | null) => (id ? m.get(id) ?? "Fixed Cost" : "Fixed Cost");
@@ -316,7 +316,92 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
   const monthly = useMemo(() => buildMonthlyFixedCost(approved), [approved]);
   const grand = sumAmount(approved);
 
-  if (type === "approval" ? all.length === 0 : approved.length === 0) return <EmptyReportNote />;
+  const isEmpty =
+    type === "approval"
+      ? all.length === 0
+      : type === "outstanding"
+        ? outstanding.length === 0
+        : type === "payments"
+          ? payments.length === 0
+          : approved.length === 0;
+  if (isEmpty) return <EmptyReportNote />;
+
+  if (type === "outstanding") {
+    const totTotal = outstanding.reduce((a, r) => a + Number(r.amount || 0), 0);
+    const totPaid = outstanding.reduce((a, r) => a + Number(r.fc_paid_amount || 0), 0);
+    const totRemain = outstanding.reduce((a, r) => a + remainingOf(r), 0);
+    return (
+      <table className="report-table w-full border-collapse">
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className={th}>Fixed Cost</th>
+            <th className={th}>Number</th>
+            <th className={th}>Month</th>
+            <th className={th + " text-right"}>Total</th>
+            <th className={th + " text-right"}>Paid</th>
+            <th className={th + " text-right"}>Remaining</th>
+            <th className={th}>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {outstanding.map((r) => (
+            <tr key={r.id} className="border-b border-border break-inside-avoid">
+              <td className={td}>{name(r.fixed_cost_template_id)}</td>
+              <td className={td}>{r.expense_number}</td>
+              <td className={td}>{(r.period_month ?? r.expense_date).slice(0, 7)}</td>
+              <td className={num}>{formatCurrency(r.amount)}</td>
+              <td className={num}>{formatCurrency(r.fc_paid_amount)}</td>
+              <td className={num}>{formatCurrency(remainingOf(r))}</td>
+              <td className={td}>{SETTLEMENT_STATUS[settlementOf(r)].label}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-foreground/70 font-semibold">
+            <td className={td + " font-semibold"} colSpan={3}>Total ({outstanding.length} records)</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totTotal)}</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totPaid)}</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totRemain)}</td>
+            <td className={td} />
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
+
+  if (type === "payments") {
+    const totPay = payments.reduce((a, p) => a + Number(p.amount || 0), 0);
+    return (
+      <table className="report-table w-full border-collapse">
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className={th}>Date</th>
+            <th className={th}>Fixed Cost</th>
+            <th className={th}>Number</th>
+            <th className={th}>Reference</th>
+            <th className={th + " text-right"}>Amount (BDT)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {payments.map((p) => (
+            <tr key={p.id} className="border-b border-border break-inside-avoid">
+              <td className={td}>{formatDate(p.payment_date)}</td>
+              <td className={td}>{name(p.template_id)}</td>
+              <td className={td}>{p.expense_number}</td>
+              <td className={td}>{p.reference_number ?? "—"}</td>
+              <td className={num}>{formatCurrency(p.amount)}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-foreground/70 font-semibold">
+            <td className={td + " font-semibold"} colSpan={4}>Total ({payments.length} payments)</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totPay)}</td>
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
 
   if (type === "summary") {
     return (
