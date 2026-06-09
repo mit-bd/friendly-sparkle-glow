@@ -47,10 +47,14 @@ import {
   restoreSubcategory,
   restoreReturn,
   restoreDamage,
+  fetchDeletedFixedCostTemplates,
+  restoreFixedCostTemplate,
+  purgeFixedCostTemplate,
   type DeletedExpense,
   type DeletedTaxonomy,
   type DeletedReturn,
   type DeletedDamage,
+  type DeletedFixedCostTemplate,
 } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
@@ -58,7 +62,7 @@ export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
   component: RecycleBinPage,
 });
 
-type Kind = "expenses" | "categories" | "subcategories" | "returns" | "damages";
+type Kind = "expenses" | "categories" | "subcategories" | "returns" | "damages" | "fixed_costs";
 
 interface PendingAction {
   mode: "restore" | "purge";
@@ -75,6 +79,7 @@ function RecycleBinPage() {
   const [subcategories, setSubcategories] = useState<DeletedTaxonomy[]>([]);
   const [returns, setReturns] = useState<DeletedReturn[]>([]);
   const [damages, setDamages] = useState<DeletedDamage[]>([]);
+  const [fixedCosts, setFixedCosts] = useState<DeletedFixedCostTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
@@ -83,28 +88,32 @@ function RecycleBinPage() {
   const [selSub, setSelSub] = useState<Set<string>>(new Set());
   const [selRet, setSelRet] = useState<Set<string>>(new Set());
   const [selDmg, setSelDmg] = useState<Set<string>>(new Set());
+  const [selFc, setSelFc] = useState<Set<string>>(new Set());
   const [pending, setPending] = useState<PendingAction | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [e, c, s, ret, dmg] = await Promise.all([
+      const [e, c, s, ret, dmg, fc] = await Promise.all([
         fetchDeletedExpenses(),
         fetchDeletedCategories(),
         fetchDeletedSubcategories(),
         fetchDeletedReturns(),
         fetchDeletedDamages(),
+        fetchDeletedFixedCostTemplates(),
       ]);
       setExpenses(e);
       setCategories(c);
       setSubcategories(s);
       setReturns(ret);
       setDamages(dmg);
+      setFixedCosts(fc);
       setSelExp(new Set());
       setSelCat(new Set());
       setSelSub(new Set());
       setSelRet(new Set());
       setSelDmg(new Set());
+      setSelFc(new Set());
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to load recycle bin.");
     } finally {
