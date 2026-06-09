@@ -54,7 +54,6 @@ import { formatCurrency } from "@/lib/expenses";
 import {
   fetchApprovedFixedCosts,
   fetchFixedCostRecords,
-  fetchFixedCostCounts,
   fetchTemplates,
   buildMonthlyFixedCost,
   buildTopFixedCosts,
@@ -85,7 +84,6 @@ function FixedCostsOverview() {
   const [approved, setApproved] = useState<FixedCostRecord[]>([]);
   const [list, setList] = useState<FixedCostRecord[]>([]);
   const [templates, setTemplates] = useState<FixedCostTemplate[]>([]);
-  const [counts, setCounts] = useState({ pending: 0, approvedInRange: 0 });
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -100,14 +98,12 @@ function FixedCostsOverview() {
       fetchApprovedFixedCosts(range),
       fetchFixedCostRecords(),
       fetchTemplates(),
-      fetchFixedCostCounts(range),
     ])
-      .then(([a, l, t, c]) => {
+      .then(([a, l, t]) => {
         if (!active) return;
         setApproved(a);
         setList(l);
         setTemplates(t);
-        setCounts(c);
       })
       .catch((e) => toast.error(e instanceof Error ? e.message : "Failed to load fixed costs."))
       .finally(() => active && setLoading(false));
