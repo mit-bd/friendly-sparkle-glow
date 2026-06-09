@@ -139,13 +139,14 @@ function ExpensesListPage() {
         setSubs(s);
       })
       .catch(() => undefined);
-    supabase
-      .from("profiles")
-      .select("id, full_name, email")
-      .order("full_name")
-      .then(({ data }) =>
+    (supabase as any)
+      .rpc("list_directory")
+      .then(({ data }: { data: { id: string; full_name: string | null; email: string | null }[] | null }) =>
         setCreators(
-          (data ?? []).map((p) => ({ id: p.id, name: p.full_name?.trim() || p.email || "—" })),
+          (data ?? [])
+            .slice()
+            .sort((a, b) => (a.full_name ?? "").localeCompare(b.full_name ?? ""))
+            .map((p) => ({ id: p.id, name: p.full_name?.trim() || p.email || "—" })),
         ),
       );
   }, []);
