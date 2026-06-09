@@ -29,6 +29,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { StatusBadge } from "@/components/StatusBadge";
+import { BulkActionBar } from "@/components/bulk/BulkActionBar";
+import { BulkScopeMenu } from "@/components/bulk/BulkScopeMenu";
+import { useBulkExport } from "@/hooks/use-bulk-export";
+import type { BulkExportConfig, BulkScope } from "@/lib/bulk-export";
 import {
   Table,
   TableBody,
@@ -39,8 +45,10 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth-context";
 import { DEFAULT_PRESET, resolveRange, type DateRange, type RangePreset } from "@/lib/analytics";
+import { fetchUserNames, formatDate } from "@/lib/expenses";
 import {
   fetchApprovedMarketing,
+  fetchMarketingList,
   fetchPlatforms,
   buildPlatformSummary,
   buildMonthlyMarketing,
@@ -64,21 +72,27 @@ const CHART_COLORS = [
 ];
 
 function MarketingOverview() {
-  const { canAccessModule } = useAuth();
+  const { canAccessModule, can, isAdmin, profile } = useAuth();
+  const canExport = isAdmin || can("marketing", "export");
   const [preset, setPreset] = useState<RangePreset>(DEFAULT_PRESET);
   const [range, setRange] = useState<DateRange>(resolveRange(DEFAULT_PRESET));
   const [rows, setRows] = useState<MarketingExpense[]>([]);
   const [platforms, setPlatforms] = useState<MarketingPlatform[]>([]);
+  const [list, setList] = useState<MarketingExpense[]>([]);
+  const [names, setNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    Promise.all([fetchApprovedMarketing(range), fetchPlatforms(true)])
-      .then(([r, p]) => {
+    Promise.all([fetchApprovedMarketing(range), fetchPlatforms(true), fetchMarketingList()])
+      .then(async ([r, p, l]) => {
         if (!active) return;
         setRows(r);
         setPlatforms(p);
+        setList(l);
+        const map = await fetchUserNames(l.map((x) => x.created_by ?? "").filter(Boolean));
+        if (active) setNames(map);
       })
       .catch((e) => toast.error(e instanceof Error ? e.message : "Failed to load marketing data."))
       .finally(() => active && setLoading(false));
@@ -92,6 +106,32 @@ function MarketingOverview() {
   const currencies = useMemo(() => buildCurrencySummary(rows), [rows]);
   const total = platformSummary.grandTotal;
   const topPlatform = platformSummary.rows[0];
+
+  const platformMap = useMemo(() => new Map(platforms.map((p) => [p.id, p.name])), [platforms]);
+  const bulkConfig = useMemo<BulkExportConfig<MarketingExpense>>(() => ({
+    module: "marketing", moduleLabel: "Marketing", documentTitle: "Bulk Marketing Cost Report",
+    fileBase: "motion-it-bd-marketing", numberPrefix: "MKT", recordLabel: (r) => r.expense_number,
+    fields: [
+      { label: "Platform", value: (r) => (r.platform_id ? platformMap.get(r.platform_id) ?? "—" : "—") },
+      { label: "Campaign", value: (r) => r.campaign_name || "—" },
+      { label: "Amount (BDT)", value: (r) => formatBDT(r.amount) },
+      { label: "Original", value: (r) => (r.original_amount != null ? `${r.original_amount} ${r.currency}` : "—") },
+      { label: "Date", value: (r) => formatDate(r.expense_date) },
+      { label: "Status", value: (r) => r.status },
+      { label: "Created By", value: (r) => (r.created_by ? names[r.created_by] ?? "—" : "—") },
+    ],
+  }), [platformMap, names]);
+  const bulk = useBulkExport<MarketingExpense>({
+    config: bulkConfig, getId: (r) => r.id,
+    generatedBy: profile?.full_name?.trim() || profile?.email || "—", canExport,
+  });
+  const runBulk = (scope: BulkScope, kind: "print" | "pdf" | "csv") => {
+    const sel = scope === "selected" ? list.filter((r) => bulk.selection.isSelected(r.id)) : list;
+    if (kind === "print") bulk.runPrint(sel, scope);
+    else if (kind === "pdf") bulk.runPdf(sel, scope);
+    else bulk.runCsv(sel, scope);
+  };
+  const listAllSelected = list.length > 0 && list.every((r) => bulk.selection.isSelected(r.id));
 
   if (!canAccessModule("marketing")) {
     return (
@@ -109,6 +149,7 @@ function MarketingOverview() {
         description="Approved marketing spend across platforms — every total is in BDT (converted)."
         actions={
           <div className="flex flex-wrap gap-2">
+            {canExport && <BulkScopeMenu busy={bulk.busy} onAction={runBulk} />}
             <Button variant="outline" asChild>
               <Link to="/marketing/reports">
                 <FileBarChart className="h-4 w-4" />
