@@ -71,6 +71,8 @@ interface Generated {
   approved: FixedCostRecord[];
   all: FixedCostRecord[];
   templates: FixedCostTemplate[];
+  outstanding: FixedCostRecord[];
+  payments: PaymentHistoryRow[];
   reportNumber: string;
   generatedAt: string;
   generatedBy: string;
@@ -103,15 +105,24 @@ function FixedCostReports() {
   async function handleGenerate() {
     setGenerating(true);
     try {
-      const [approved, list, templates] = await Promise.all([
+      const [approved, list, templates, outstanding, payments] = await Promise.all([
         fetchApprovedFixedCosts(range),
         fetchFixedCostRecords(),
         fetchTemplates(),
+        fetchOutstandingFixedCosts(),
+        fetchFixedCostPaymentHistory(range),
       ]);
       const all = list.filter(
         (r) => (r.period_month ?? r.expense_date) >= range.from && (r.period_month ?? r.expense_date) <= range.to,
       );
-      const grand = sumAmount(approved);
+      const grand =
+        type === "outstanding"
+          ? outstanding.reduce((acc, r) => acc + remainingOf(r), 0)
+          : type === "payments"
+            ? payments.reduce((acc, p) => acc + Number(p.amount || 0), 0)
+            : sumAmount(approved);
+      const count =
+        type === "approval" ? all.length : type === "outstanding" ? outstanding.length : type === "payments" ? payments.length : approved.length;
       let reportNumber = "—";
       let createdAt = new Date().toISOString();
       if (canExport) {
@@ -122,7 +133,7 @@ function FixedCostReports() {
             rangeFrom: range.from,
             rangeTo: range.to,
             filters: { module: "fixed_costs", report: type, preset },
-            expenseCount: type === "approval" ? all.length : approved.length,
+            expenseCount: count,
             totalAmount: grand,
           });
           reportNumber = logged.report_number;
@@ -131,7 +142,7 @@ function FixedCostReports() {
             action: "export",
             entityType: "report",
             entityLabel: `${reportNumber} · ${meta.label}`,
-            metadata: { count: approved.length, total: grand },
+            metadata: { count, total: grand },
           });
         } catch {
           /* archive is best-effort */
@@ -142,6 +153,8 @@ function FixedCostReports() {
         approved,
         all,
         templates,
+        outstanding,
+        payments,
         reportNumber,
         generatedAt: formatDateTime(createdAt),
         generatedBy: profile?.full_name?.trim() || profile?.email || "—",
