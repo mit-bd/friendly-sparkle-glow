@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { ReportDocument } from "@/components/reports/ReportDocument";
 import { formatCurrency } from "@/lib/expenses";
 import {
@@ -25,7 +27,7 @@ export interface IntelReportModel {
   health: HealthScore;
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="report-block space-y-2">
       <h2 className="text-sm font-bold uppercase tracking-wide text-brand">{title}</h2>
