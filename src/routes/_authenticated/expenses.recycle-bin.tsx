@@ -154,6 +154,7 @@ function RecycleBinPage() {
         if (a.kind === "categories") return a.mode === "restore" ? restoreCategory(id) : purgeCategory(id);
         if (a.kind === "subcategories") return a.mode === "restore" ? restoreSubcategory(id) : purgeSubcategory(id);
         if (a.kind === "returns") return a.mode === "restore" ? restoreReturn(id) : purgeReturn(id);
+        if (a.kind === "fixed_costs") return a.mode === "restore" ? restoreFixedCostTemplate(id) : purgeFixedCostTemplate(id);
         return a.mode === "restore" ? restoreDamage(id) : purgeDamage(id);
       });
       await Promise.all(ops);
@@ -175,6 +176,7 @@ function RecycleBinPage() {
     { value: "expenses", label: "Expenses", count: expenses.length },
     { value: "returns", label: "Returns", count: returns.length },
     { value: "damages", label: "Damages", count: damages.length },
+    { value: "fixed_costs", label: "Fixed Costs", count: fixedCosts.length },
     { value: "categories", label: "Categories", count: categories.length },
     { value: "subcategories", label: "Subcategories", count: subcategories.length },
   ];
