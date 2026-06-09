@@ -109,7 +109,7 @@ function BudgetReports() {
 
   if (!canAccessModule("budgets")) return (<div className="space-y-8"><PageHeader title="Budget Reports" /><NoAccess /></div>);
 
-  const moneyHeader = (h: string, i: number) => MONEY.includes(h) || (h === "Variance");
+  const moneyHeader = (h: string) => MONEY.includes(h) || h === "Variance";
 
   return (
     <div className="space-y-8">
@@ -140,14 +140,14 @@ function BudgetReports() {
       {generated && (
         <ReportDocument reportName={LABELS[generated.type]} reportNumber={generated.reportNumber} generatedAt={generated.generatedAt} generatedBy={generated.generatedBy}>
           <Table>
-            <TableHeader><TableRow>{generated.built.headers.map((h, i) => (<TableHead key={`${h}-${i}`} className={moneyHeader(h, i) ? "text-right" : ""}>{h}</TableHead>))}</TableRow></TableHeader>
+            <TableHeader><TableRow>{generated.built.headers.map((h, i) => (<TableHead key={`${h}-${i}`} className={moneyHeader(h) ? "text-right" : ""}>{h}</TableHead>))}</TableRow></TableHeader>
             <TableBody>
               {generated.built.rows.length === 0 ? (
                 <TableRow><TableCell colSpan={generated.built.headers.length} className="text-center text-muted-foreground">No budgets to report.</TableCell></TableRow>
               ) : generated.built.rows.map((r, i) => (
                 <TableRow key={i}>{r.map((c, j) => {
                   const h = generated.built.headers[j];
-                  const money = moneyHeader(h, j);
+                  const money = moneyHeader(h);
                   const val = money && typeof c === "number" ? formatTk(c) : String(c ?? "");
                   return (<TableCell key={j} className={money ? "text-right tabular-nums" : ""}>{val}</TableCell>);
                 })}</TableRow>

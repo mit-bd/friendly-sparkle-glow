@@ -66,6 +66,7 @@ import { Route as AuthenticatedDamagesReportsRouteImport } from './routes/_authe
 import { Route as AuthenticatedDamagesPendingRouteImport } from './routes/_authenticated/damages.pending'
 import { Route as AuthenticatedDamagesAddRouteImport } from './routes/_authenticated/damages.add'
 import { Route as AuthenticatedDamagesIdRouteImport } from './routes/_authenticated/damages.$id'
+import { Route as AuthenticatedBudgetsReportsRouteImport } from './routes/_authenticated/budgets.reports'
 import { Route as AuthenticatedBudgetsIdRouteImport } from './routes/_authenticated/budgets.$id'
 import { Route as AuthenticatedReturnsReasonIdRouteImport } from './routes/_authenticated/returns.reason.$id'
 import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
@@ -393,6 +394,12 @@ const AuthenticatedDamagesIdRoute = AuthenticatedDamagesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedDamagesRoute,
 } as any)
+const AuthenticatedBudgetsReportsRoute =
+  AuthenticatedBudgetsReportsRouteImport.update({
+    id: '/budgets/reports',
+    path: '/budgets/reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedBudgetsIdRoute = AuthenticatedBudgetsIdRouteImport.update({
   id: '/budgets/$id',
   path: '/budgets/$id',
@@ -462,6 +469,7 @@ export interface FileRoutesByFullPath {
   '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
   '/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/pending': typeof AuthenticatedDamagesPendingRoute
@@ -523,6 +531,7 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
   '/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
   '/damages/pending': typeof AuthenticatedDamagesPendingRoute
@@ -591,6 +600,7 @@ export interface FileRoutesById {
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/_authenticated/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/_authenticated/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/_authenticated/damages/add': typeof AuthenticatedDamagesAddRoute
   '/_authenticated/damages/pending': typeof AuthenticatedDamagesPendingRoute
@@ -659,6 +669,7 @@ export interface FileRouteTypes {
     | '/system'
     | '/users'
     | '/budgets/$id'
+    | '/budgets/reports'
     | '/damages/$id'
     | '/damages/add'
     | '/damages/pending'
@@ -720,6 +731,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/'
     | '/budgets/$id'
+    | '/budgets/reports'
     | '/damages/$id'
     | '/damages/add'
     | '/damages/pending'
@@ -787,6 +799,7 @@ export interface FileRouteTypes {
     | '/_authenticated/users'
     | '/_authenticated/'
     | '/_authenticated/budgets/$id'
+    | '/_authenticated/budgets/reports'
     | '/_authenticated/damages/$id'
     | '/_authenticated/damages/add'
     | '/_authenticated/damages/pending'
@@ -1241,6 +1254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDamagesIdRouteImport
       parentRoute: typeof AuthenticatedDamagesRoute
     }
+    '/_authenticated/budgets/reports': {
+      id: '/_authenticated/budgets/reports'
+      path: '/budgets/reports'
+      fullPath: '/budgets/reports'
+      preLoaderRoute: typeof AuthenticatedBudgetsReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/budgets/$id': {
       id: '/_authenticated/budgets/$id'
       path: '/budgets/$id'
@@ -1445,6 +1465,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedBudgetsIdRoute: typeof AuthenticatedBudgetsIdRoute
+  AuthenticatedBudgetsReportsRoute: typeof AuthenticatedBudgetsReportsRoute
   AuthenticatedExpensesIdRoute: typeof AuthenticatedExpensesIdRoute
   AuthenticatedExpensesAddRoute: typeof AuthenticatedExpensesAddRoute
   AuthenticatedExpensesCategoriesRoute: typeof AuthenticatedExpensesCategoriesRoute
@@ -1485,6 +1506,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedBudgetsIdRoute: AuthenticatedBudgetsIdRoute,
+  AuthenticatedBudgetsReportsRoute: AuthenticatedBudgetsReportsRoute,
   AuthenticatedExpensesIdRoute: AuthenticatedExpensesIdRoute,
   AuthenticatedExpensesAddRoute: AuthenticatedExpensesAddRoute,
   AuthenticatedExpensesCategoriesRoute: AuthenticatedExpensesCategoriesRoute,
