@@ -49,6 +49,7 @@ import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/
 import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
 import { Route as AuthenticatedMarketingReportsRouteImport } from './routes/_authenticated/marketing.reports'
 import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
+import { Route as AuthenticatedFixedCostsReportsRouteImport } from './routes/_authenticated/fixed-costs.reports'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
 import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
@@ -285,6 +286,12 @@ const AuthenticatedMarketingAddRoute =
     path: '/add',
     getParentRoute: () => AuthenticatedMarketingRoute,
   } as any)
+const AuthenticatedFixedCostsReportsRoute =
+  AuthenticatedFixedCostsReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedFixedCostsRoute,
+  } as any)
 const AuthenticatedExpensesRecycleBinRoute =
   AuthenticatedExpensesRecycleBinRouteImport.update({
     id: '/expenses/recycle-bin',
@@ -393,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
@@ -444,6 +452,7 @@ export interface FileRoutesByTo {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
@@ -501,6 +510,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/_authenticated/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
@@ -558,6 +568,7 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
     | '/reports/detailed'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
     | '/reports/detailed'
@@ -665,6 +677,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/categories'
     | '/_authenticated/expenses/pending'
     | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/fixed-costs/reports'
     | '/_authenticated/marketing/add'
     | '/_authenticated/marketing/reports'
     | '/_authenticated/reports/detailed'
@@ -984,6 +997,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMarketingAddRouteImport
       parentRoute: typeof AuthenticatedMarketingRoute
     }
+    '/_authenticated/fixed-costs/reports': {
+      id: '/_authenticated/fixed-costs/reports'
+      path: '/reports'
+      fullPath: '/fixed-costs/reports'
+      preLoaderRoute: typeof AuthenticatedFixedCostsReportsRouteImport
+      parentRoute: typeof AuthenticatedFixedCostsRoute
+    }
     '/_authenticated/expenses/recycle-bin': {
       id: '/_authenticated/expenses/recycle-bin'
       path: '/expenses/recycle-bin'
@@ -1107,11 +1127,13 @@ const AuthenticatedDamagesRouteWithChildren =
   AuthenticatedDamagesRoute._addFileChildren(AuthenticatedDamagesRouteChildren)
 
 interface AuthenticatedFixedCostsRouteChildren {
+  AuthenticatedFixedCostsReportsRoute: typeof AuthenticatedFixedCostsReportsRoute
   AuthenticatedFixedCostsIndexRoute: typeof AuthenticatedFixedCostsIndexRoute
 }
 
 const AuthenticatedFixedCostsRouteChildren: AuthenticatedFixedCostsRouteChildren =
   {
+    AuthenticatedFixedCostsReportsRoute: AuthenticatedFixedCostsReportsRoute,
     AuthenticatedFixedCostsIndexRoute: AuthenticatedFixedCostsIndexRoute,
   }
 
