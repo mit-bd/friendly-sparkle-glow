@@ -28,7 +28,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { NoAccess } from "@/components/NoAccess";
 import { EmptyState } from "@/components/analytics/EmptyState";
 import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
-import { StatusBadge } from "@/components/StatusBadge";
+import { SettlementBadge } from "@/components/fixed-costs/SettlementBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,7 +50,7 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth-context";
 import { DEFAULT_PRESET, resolveRange, type DateRange, type RangePreset } from "@/lib/analytics";
-import { EXPENSE_STATUS, formatCurrency, formatDate, type ExpenseStatus } from "@/lib/expenses";
+import { formatCurrency } from "@/lib/expenses";
 import {
   fetchApprovedFixedCosts,
   fetchFixedCostRecords,
@@ -59,8 +59,12 @@ import {
   buildMonthlyFixedCost,
   buildTopFixedCosts,
   fixedCostGrowth,
-  approvedVsPending,
   sumAmount,
+  settlementSummary,
+  settlementOf,
+  remainingOf,
+  SETTLEMENT_STATUS,
+  type SettlementStatus,
   type FixedCostRecord,
   type FixedCostTemplate,
 } from "@/lib/fixed-costs";
