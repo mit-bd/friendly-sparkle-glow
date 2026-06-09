@@ -25,6 +25,7 @@ import { Route as AuthenticatedMarketingRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
 import { Route as AuthenticatedIntelligenceRouteImport } from './routes/_authenticated/intelligence'
 import { Route as AuthenticatedFixedCostsRouteImport } from './routes/_authenticated/fixed-costs'
+import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
@@ -52,6 +53,7 @@ import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_auth
 import { Route as AuthenticatedMarketingReportsRouteImport } from './routes/_authenticated/marketing.reports'
 import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
 import { Route as AuthenticatedFixedCostsReportsRouteImport } from './routes/_authenticated/fixed-costs.reports'
+import { Route as AuthenticatedFinanceReceivablesRouteImport } from './routes/_authenticated/finance.receivables'
 import { Route as AuthenticatedFinancePayablesRouteImport } from './routes/_authenticated/finance.payables'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
 import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
@@ -147,6 +149,11 @@ const AuthenticatedIntelligenceRoute =
 const AuthenticatedFixedCostsRoute = AuthenticatedFixedCostsRouteImport.update({
   id: '/fixed-costs',
   path: '/fixed-costs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
@@ -306,11 +313,17 @@ const AuthenticatedFixedCostsReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedFixedCostsRoute,
   } as any)
+const AuthenticatedFinanceReceivablesRoute =
+  AuthenticatedFinanceReceivablesRouteImport.update({
+    id: '/receivables',
+    path: '/receivables',
+    getParentRoute: () => AuthenticatedFinanceRoute,
+  } as any)
 const AuthenticatedFinancePayablesRoute =
   AuthenticatedFinancePayablesRouteImport.update({
-    id: '/finance/payables',
-    path: '/finance/payables',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/payables',
+    path: '/payables',
+    getParentRoute: () => AuthenticatedFinanceRoute,
   } as any)
 const AuthenticatedExpensesRecycleBinRoute =
   AuthenticatedExpensesRecycleBinRouteImport.update({
@@ -402,6 +415,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
+  '/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/loss': typeof AuthenticatedLossRoute
@@ -423,6 +437,7 @@ export interface FileRoutesByFullPath {
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
   '/finance/payables': typeof AuthenticatedFinancePayablesRoute
+  '/finance/receivables': typeof AuthenticatedFinanceReceivablesRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -459,6 +474,7 @@ export interface FileRoutesByTo {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
+  '/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -478,6 +494,7 @@ export interface FileRoutesByTo {
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
   '/finance/payables': typeof AuthenticatedFinancePayablesRoute
+  '/finance/receivables': typeof AuthenticatedFinanceReceivablesRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -517,6 +534,7 @@ export interface FileRoutesById {
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
+  '/_authenticated/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/_authenticated/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
   '/_authenticated/intelligence': typeof AuthenticatedIntelligenceRoute
   '/_authenticated/loss': typeof AuthenticatedLossRoute
@@ -539,6 +557,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
   '/_authenticated/finance/payables': typeof AuthenticatedFinancePayablesRoute
+  '/_authenticated/finance/receivables': typeof AuthenticatedFinanceReceivablesRoute
   '/_authenticated/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/_authenticated/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -579,6 +598,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/backup'
     | '/damages'
+    | '/finance'
     | '/fixed-costs'
     | '/intelligence'
     | '/loss'
@@ -600,6 +620,7 @@ export interface FileRouteTypes {
     | '/expenses/pending'
     | '/expenses/recycle-bin'
     | '/finance/payables'
+    | '/finance/receivables'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -636,6 +657,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/audit'
     | '/backup'
+    | '/finance'
     | '/intelligence'
     | '/loss'
     | '/notifications'
@@ -655,6 +677,7 @@ export interface FileRouteTypes {
     | '/expenses/pending'
     | '/expenses/recycle-bin'
     | '/finance/payables'
+    | '/finance/receivables'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -693,6 +716,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audit'
     | '/_authenticated/backup'
     | '/_authenticated/damages'
+    | '/_authenticated/finance'
     | '/_authenticated/fixed-costs'
     | '/_authenticated/intelligence'
     | '/_authenticated/loss'
@@ -715,6 +739,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/pending'
     | '/_authenticated/expenses/recycle-bin'
     | '/_authenticated/finance/payables'
+    | '/_authenticated/finance/receivables'
     | '/_authenticated/fixed-costs/reports'
     | '/_authenticated/marketing/add'
     | '/_authenticated/marketing/reports'
@@ -865,6 +890,13 @@ declare module '@tanstack/react-router' {
       path: '/fixed-costs'
       fullPath: '/fixed-costs'
       preLoaderRoute: typeof AuthenticatedFixedCostsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/finance': {
+      id: '/_authenticated/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof AuthenticatedFinanceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/damages': {
@@ -1056,12 +1088,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFixedCostsReportsRouteImport
       parentRoute: typeof AuthenticatedFixedCostsRoute
     }
+    '/_authenticated/finance/receivables': {
+      id: '/_authenticated/finance/receivables'
+      path: '/receivables'
+      fullPath: '/finance/receivables'
+      preLoaderRoute: typeof AuthenticatedFinanceReceivablesRouteImport
+      parentRoute: typeof AuthenticatedFinanceRoute
+    }
     '/_authenticated/finance/payables': {
       id: '/_authenticated/finance/payables'
-      path: '/finance/payables'
+      path: '/payables'
       fullPath: '/finance/payables'
       preLoaderRoute: typeof AuthenticatedFinancePayablesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedFinanceRoute
     }
     '/_authenticated/expenses/recycle-bin': {
       id: '/_authenticated/expenses/recycle-bin'
@@ -1185,6 +1224,19 @@ const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
 const AuthenticatedDamagesRouteWithChildren =
   AuthenticatedDamagesRoute._addFileChildren(AuthenticatedDamagesRouteChildren)
 
+interface AuthenticatedFinanceRouteChildren {
+  AuthenticatedFinancePayablesRoute: typeof AuthenticatedFinancePayablesRoute
+  AuthenticatedFinanceReceivablesRoute: typeof AuthenticatedFinanceReceivablesRoute
+}
+
+const AuthenticatedFinanceRouteChildren: AuthenticatedFinanceRouteChildren = {
+  AuthenticatedFinancePayablesRoute: AuthenticatedFinancePayablesRoute,
+  AuthenticatedFinanceReceivablesRoute: AuthenticatedFinanceReceivablesRoute,
+}
+
+const AuthenticatedFinanceRouteWithChildren =
+  AuthenticatedFinanceRoute._addFileChildren(AuthenticatedFinanceRouteChildren)
+
 interface AuthenticatedFixedCostsRouteChildren {
   AuthenticatedFixedCostsReportsRoute: typeof AuthenticatedFixedCostsReportsRoute
   AuthenticatedFixedCostsIndexRoute: typeof AuthenticatedFixedCostsIndexRoute
@@ -1247,6 +1299,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
+  AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRouteWithChildren
   AuthenticatedFixedCostsRoute: typeof AuthenticatedFixedCostsRouteWithChildren
   AuthenticatedIntelligenceRoute: typeof AuthenticatedIntelligenceRoute
   AuthenticatedLossRoute: typeof AuthenticatedLossRoute
@@ -1264,7 +1317,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExpensesCategoriesRoute: typeof AuthenticatedExpensesCategoriesRoute
   AuthenticatedExpensesPendingRoute: typeof AuthenticatedExpensesPendingRoute
   AuthenticatedExpensesRecycleBinRoute: typeof AuthenticatedExpensesRecycleBinRoute
-  AuthenticatedFinancePayablesRoute: typeof AuthenticatedFinancePayablesRoute
   AuthenticatedReportsDetailedRoute: typeof AuthenticatedReportsDetailedRoute
   AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
   AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
@@ -1286,6 +1338,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
+  AuthenticatedFinanceRoute: AuthenticatedFinanceRouteWithChildren,
   AuthenticatedFixedCostsRoute: AuthenticatedFixedCostsRouteWithChildren,
   AuthenticatedIntelligenceRoute: AuthenticatedIntelligenceRoute,
   AuthenticatedLossRoute: AuthenticatedLossRoute,
@@ -1303,7 +1356,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExpensesCategoriesRoute: AuthenticatedExpensesCategoriesRoute,
   AuthenticatedExpensesPendingRoute: AuthenticatedExpensesPendingRoute,
   AuthenticatedExpensesRecycleBinRoute: AuthenticatedExpensesRecycleBinRoute,
-  AuthenticatedFinancePayablesRoute: AuthenticatedFinancePayablesRoute,
   AuthenticatedReportsDetailedRoute: AuthenticatedReportsDetailedRoute,
   AuthenticatedReportsExportHistoryRoute:
     AuthenticatedReportsExportHistoryRoute,
