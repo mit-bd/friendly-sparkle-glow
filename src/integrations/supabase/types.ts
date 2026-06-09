@@ -614,10 +614,13 @@ export type Database = {
           exchange_rate: number
           expense_date: string
           expense_number: string
+          fixed_cost_template_id: string | null
           id: string
+          is_fixed_cost: boolean
           is_marketing: boolean
           notes: string | null
           original_amount: number | null
+          period_month: string | null
           platform_id: string | null
           rejected_at: string | null
           rejected_by: string | null
@@ -645,10 +648,13 @@ export type Database = {
           exchange_rate?: number
           expense_date?: string
           expense_number: string
+          fixed_cost_template_id?: string | null
           id?: string
+          is_fixed_cost?: boolean
           is_marketing?: boolean
           notes?: string | null
           original_amount?: number | null
+          period_month?: string | null
           platform_id?: string | null
           rejected_at?: string | null
           rejected_by?: string | null
@@ -676,10 +682,13 @@ export type Database = {
           exchange_rate?: number
           expense_date?: string
           expense_number?: string
+          fixed_cost_template_id?: string | null
           id?: string
+          is_fixed_cost?: boolean
           is_marketing?: boolean
           notes?: string | null
           original_amount?: number | null
+          period_month?: string | null
           platform_id?: string | null
           rejected_at?: string | null
           rejected_by?: string | null
@@ -698,6 +707,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_fixed_cost_template_id_fkey"
+            columns: ["fixed_cost_template_id"]
+            isOneToOne: false
+            referencedRelation: "fixed_cost_templates"
             referencedColumns: ["id"]
           },
           {
@@ -751,6 +767,78 @@ export type Database = {
           old_value?: string | null
         }
         Relationships: []
+      }
+      fixed_cost_templates: {
+        Row: {
+          auto_generate: boolean
+          category_id: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          description: string | null
+          effective_from: string
+          id: string
+          is_active: boolean
+          monthly_amount: number
+          name: string
+          notes: string | null
+          subcategory_id: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          auto_generate?: boolean
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          description?: string | null
+          effective_from?: string
+          id?: string
+          is_active?: boolean
+          monthly_amount?: number
+          name: string
+          notes?: string | null
+          subcategory_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          auto_generate?: boolean
+          category_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          description?: string | null
+          effective_from?: string
+          id?: string
+          is_active?: boolean
+          monthly_amount?: number
+          name?: string
+          notes?: string | null
+          subcategory_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fixed_cost_templates_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fixed_cost_templates_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "expense_subcategories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       marketing_platforms: {
         Row: {
@@ -1314,6 +1402,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_fixed_costs: { Args: { _month?: string }; Returns: number }
       get_company_branding: {
         Args: never
         Returns: {
