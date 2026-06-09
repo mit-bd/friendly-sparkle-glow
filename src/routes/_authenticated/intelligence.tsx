@@ -56,6 +56,7 @@ import { MarketingIntel } from "@/components/intelligence/MarketingIntel";
 import { AnomalyPanel } from "@/components/intelligence/AnomalyPanel";
 import { ManagementSummary } from "@/components/intelligence/ManagementSummary";
 import { HealthScoreCard } from "@/components/intelligence/HealthScoreCard";
+import { BudgetOverviewCard } from "@/components/budgets/BudgetOverviewCard";
 import {
   IntelReportDocument,
   type IntelReportModel,
@@ -280,6 +281,8 @@ function IntelligencePage() {
           <AnomalyPanel anomalies={anomalies} />
           <ManagementSummary insights={insights} />
         </div>
+
+        <BudgetOverviewCard title="Budget control & utilization" limit={8} />
       </div>
 
       {report && (
