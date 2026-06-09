@@ -25,6 +25,7 @@ import { Route as AuthenticatedMarketingRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
 import { Route as AuthenticatedIntelligenceRouteImport } from './routes/_authenticated/intelligence'
 import { Route as AuthenticatedFixedCostsRouteImport } from './routes/_authenticated/fixed-costs'
+import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
@@ -32,6 +33,7 @@ import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns.index'
 import { Route as AuthenticatedMarketingIndexRouteImport } from './routes/_authenticated/marketing.index'
 import { Route as AuthenticatedFixedCostsIndexRouteImport } from './routes/_authenticated/fixed-costs.index'
+import { Route as AuthenticatedFinanceIndexRouteImport } from './routes/_authenticated/finance.index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedDamagesIndexRouteImport } from './routes/_authenticated/damages.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
@@ -52,6 +54,9 @@ import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_auth
 import { Route as AuthenticatedMarketingReportsRouteImport } from './routes/_authenticated/marketing.reports'
 import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
 import { Route as AuthenticatedFixedCostsReportsRouteImport } from './routes/_authenticated/fixed-costs.reports'
+import { Route as AuthenticatedFinanceReportsRouteImport } from './routes/_authenticated/finance.reports'
+import { Route as AuthenticatedFinanceReceivablesRouteImport } from './routes/_authenticated/finance.receivables'
+import { Route as AuthenticatedFinancePayablesRouteImport } from './routes/_authenticated/finance.payables'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
 import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
@@ -63,6 +68,8 @@ import { Route as AuthenticatedDamagesAddRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDamagesIdRouteImport } from './routes/_authenticated/damages.$id'
 import { Route as AuthenticatedReturnsReasonIdRouteImport } from './routes/_authenticated/returns.reason.$id'
 import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
+import { Route as AuthenticatedFinanceReceivablesIdRouteImport } from './routes/_authenticated/finance.receivables.$id'
+import { Route as AuthenticatedFinancePayablesIdRouteImport } from './routes/_authenticated/finance.payables.$id'
 import { Route as AuthenticatedDashboardSubcategoryIdRouteImport } from './routes/_authenticated/dashboard.subcategory.$id'
 import { Route as AuthenticatedDashboardCategoryIdRouteImport } from './routes/_authenticated/dashboard.category.$id'
 import { Route as AuthenticatedDamagesTypeIdRouteImport } from './routes/_authenticated/damages.type.$id'
@@ -148,6 +155,11 @@ const AuthenticatedFixedCostsRoute = AuthenticatedFixedCostsRouteImport.update({
   path: '/fixed-costs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
   id: '/damages',
   path: '/damages',
@@ -186,6 +198,12 @@ const AuthenticatedFixedCostsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedFixedCostsRoute,
+  } as any)
+const AuthenticatedFinanceIndexRoute =
+  AuthenticatedFinanceIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedFinanceRoute,
   } as any)
 const AuthenticatedExpensesIndexRoute =
   AuthenticatedExpensesIndexRouteImport.update({
@@ -305,6 +323,24 @@ const AuthenticatedFixedCostsReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedFixedCostsRoute,
   } as any)
+const AuthenticatedFinanceReportsRoute =
+  AuthenticatedFinanceReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedFinanceRoute,
+  } as any)
+const AuthenticatedFinanceReceivablesRoute =
+  AuthenticatedFinanceReceivablesRouteImport.update({
+    id: '/receivables',
+    path: '/receivables',
+    getParentRoute: () => AuthenticatedFinanceRoute,
+  } as any)
+const AuthenticatedFinancePayablesRoute =
+  AuthenticatedFinancePayablesRouteImport.update({
+    id: '/payables',
+    path: '/payables',
+    getParentRoute: () => AuthenticatedFinanceRoute,
+  } as any)
 const AuthenticatedExpensesRecycleBinRoute =
   AuthenticatedExpensesRecycleBinRouteImport.update({
     id: '/expenses/recycle-bin',
@@ -368,6 +404,18 @@ const AuthenticatedMarketingPlatformIdRoute =
     path: '/platform/$id',
     getParentRoute: () => AuthenticatedMarketingRoute,
   } as any)
+const AuthenticatedFinanceReceivablesIdRoute =
+  AuthenticatedFinanceReceivablesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedFinanceReceivablesRoute,
+  } as any)
+const AuthenticatedFinancePayablesIdRoute =
+  AuthenticatedFinancePayablesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedFinancePayablesRoute,
+  } as any)
 const AuthenticatedDashboardSubcategoryIdRoute =
   AuthenticatedDashboardSubcategoryIdRouteImport.update({
     id: '/dashboard/subcategory/$id',
@@ -395,6 +443,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
+  '/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/loss': typeof AuthenticatedLossRoute
@@ -415,6 +464,9 @@ export interface FileRoutesByFullPath {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
+  '/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  '/finance/reports': typeof AuthenticatedFinanceReportsRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -435,6 +487,7 @@ export interface FileRoutesByFullPath {
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages/': typeof AuthenticatedDamagesIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/finance/': typeof AuthenticatedFinanceIndexRoute
   '/fixed-costs/': typeof AuthenticatedFixedCostsIndexRoute
   '/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/returns/': typeof AuthenticatedReturnsIndexRoute
@@ -442,6 +495,8 @@ export interface FileRoutesByFullPath {
   '/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/finance/payables/$id': typeof AuthenticatedFinancePayablesIdRoute
+  '/finance/receivables/$id': typeof AuthenticatedFinanceReceivablesIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
   '/returns/reason/$id': typeof AuthenticatedReturnsReasonIdRoute
 }
@@ -469,6 +524,9 @@ export interface FileRoutesByTo {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
+  '/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  '/finance/reports': typeof AuthenticatedFinanceReportsRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -489,6 +547,7 @@ export interface FileRoutesByTo {
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages': typeof AuthenticatedDamagesIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
+  '/finance': typeof AuthenticatedFinanceIndexRoute
   '/fixed-costs': typeof AuthenticatedFixedCostsIndexRoute
   '/marketing': typeof AuthenticatedMarketingIndexRoute
   '/returns': typeof AuthenticatedReturnsIndexRoute
@@ -496,6 +555,8 @@ export interface FileRoutesByTo {
   '/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/finance/payables/$id': typeof AuthenticatedFinancePayablesIdRoute
+  '/finance/receivables/$id': typeof AuthenticatedFinanceReceivablesIdRoute
   '/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
   '/returns/reason/$id': typeof AuthenticatedReturnsReasonIdRoute
 }
@@ -508,6 +569,7 @@ export interface FileRoutesById {
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
+  '/_authenticated/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/_authenticated/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
   '/_authenticated/intelligence': typeof AuthenticatedIntelligenceRoute
   '/_authenticated/loss': typeof AuthenticatedLossRoute
@@ -529,6 +591,9 @@ export interface FileRoutesById {
   '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
+  '/_authenticated/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  '/_authenticated/finance/reports': typeof AuthenticatedFinanceReportsRoute
   '/_authenticated/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/_authenticated/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -549,6 +614,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/_authenticated/damages/': typeof AuthenticatedDamagesIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/_authenticated/finance/': typeof AuthenticatedFinanceIndexRoute
   '/_authenticated/fixed-costs/': typeof AuthenticatedFixedCostsIndexRoute
   '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/_authenticated/returns/': typeof AuthenticatedReturnsIndexRoute
@@ -556,6 +622,8 @@ export interface FileRoutesById {
   '/_authenticated/damages/type/$id': typeof AuthenticatedDamagesTypeIdRoute
   '/_authenticated/dashboard/category/$id': typeof AuthenticatedDashboardCategoryIdRoute
   '/_authenticated/dashboard/subcategory/$id': typeof AuthenticatedDashboardSubcategoryIdRoute
+  '/_authenticated/finance/payables/$id': typeof AuthenticatedFinancePayablesIdRoute
+  '/_authenticated/finance/receivables/$id': typeof AuthenticatedFinanceReceivablesIdRoute
   '/_authenticated/marketing/platform/$id': typeof AuthenticatedMarketingPlatformIdRoute
   '/_authenticated/returns/reason/$id': typeof AuthenticatedReturnsReasonIdRoute
 }
@@ -569,6 +637,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/backup'
     | '/damages'
+    | '/finance'
     | '/fixed-costs'
     | '/intelligence'
     | '/loss'
@@ -589,6 +658,9 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/finance/payables'
+    | '/finance/receivables'
+    | '/finance/reports'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -609,6 +681,7 @@ export interface FileRouteTypes {
     | '/settings/signatories'
     | '/damages/'
     | '/expenses/'
+    | '/finance/'
     | '/fixed-costs/'
     | '/marketing/'
     | '/returns/'
@@ -616,6 +689,8 @@ export interface FileRouteTypes {
     | '/damages/type/$id'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
+    | '/finance/payables/$id'
+    | '/finance/receivables/$id'
     | '/marketing/platform/$id'
     | '/returns/reason/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -643,6 +718,9 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/finance/payables'
+    | '/finance/receivables'
+    | '/finance/reports'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -663,6 +741,7 @@ export interface FileRouteTypes {
     | '/settings/signatories'
     | '/damages'
     | '/expenses'
+    | '/finance'
     | '/fixed-costs'
     | '/marketing'
     | '/returns'
@@ -670,6 +749,8 @@ export interface FileRouteTypes {
     | '/damages/type/$id'
     | '/dashboard/category/$id'
     | '/dashboard/subcategory/$id'
+    | '/finance/payables/$id'
+    | '/finance/receivables/$id'
     | '/marketing/platform/$id'
     | '/returns/reason/$id'
   id:
@@ -681,6 +762,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audit'
     | '/_authenticated/backup'
     | '/_authenticated/damages'
+    | '/_authenticated/finance'
     | '/_authenticated/fixed-costs'
     | '/_authenticated/intelligence'
     | '/_authenticated/loss'
@@ -702,6 +784,9 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/categories'
     | '/_authenticated/expenses/pending'
     | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/finance/payables'
+    | '/_authenticated/finance/receivables'
+    | '/_authenticated/finance/reports'
     | '/_authenticated/fixed-costs/reports'
     | '/_authenticated/marketing/add'
     | '/_authenticated/marketing/reports'
@@ -722,6 +807,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/signatories'
     | '/_authenticated/damages/'
     | '/_authenticated/expenses/'
+    | '/_authenticated/finance/'
     | '/_authenticated/fixed-costs/'
     | '/_authenticated/marketing/'
     | '/_authenticated/returns/'
@@ -729,6 +815,8 @@ export interface FileRouteTypes {
     | '/_authenticated/damages/type/$id'
     | '/_authenticated/dashboard/category/$id'
     | '/_authenticated/dashboard/subcategory/$id'
+    | '/_authenticated/finance/payables/$id'
+    | '/_authenticated/finance/receivables/$id'
     | '/_authenticated/marketing/platform/$id'
     | '/_authenticated/returns/reason/$id'
   fileRoutesById: FileRoutesById
@@ -854,6 +942,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFixedCostsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/finance': {
+      id: '/_authenticated/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof AuthenticatedFinanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/damages': {
       id: '/_authenticated/damages'
       path: '/damages'
@@ -902,6 +997,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/fixed-costs/'
       preLoaderRoute: typeof AuthenticatedFixedCostsIndexRouteImport
       parentRoute: typeof AuthenticatedFixedCostsRoute
+    }
+    '/_authenticated/finance/': {
+      id: '/_authenticated/finance/'
+      path: '/'
+      fullPath: '/finance/'
+      preLoaderRoute: typeof AuthenticatedFinanceIndexRouteImport
+      parentRoute: typeof AuthenticatedFinanceRoute
     }
     '/_authenticated/expenses/': {
       id: '/_authenticated/expenses/'
@@ -1043,6 +1145,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFixedCostsReportsRouteImport
       parentRoute: typeof AuthenticatedFixedCostsRoute
     }
+    '/_authenticated/finance/reports': {
+      id: '/_authenticated/finance/reports'
+      path: '/reports'
+      fullPath: '/finance/reports'
+      preLoaderRoute: typeof AuthenticatedFinanceReportsRouteImport
+      parentRoute: typeof AuthenticatedFinanceRoute
+    }
+    '/_authenticated/finance/receivables': {
+      id: '/_authenticated/finance/receivables'
+      path: '/receivables'
+      fullPath: '/finance/receivables'
+      preLoaderRoute: typeof AuthenticatedFinanceReceivablesRouteImport
+      parentRoute: typeof AuthenticatedFinanceRoute
+    }
+    '/_authenticated/finance/payables': {
+      id: '/_authenticated/finance/payables'
+      path: '/payables'
+      fullPath: '/finance/payables'
+      preLoaderRoute: typeof AuthenticatedFinancePayablesRouteImport
+      parentRoute: typeof AuthenticatedFinanceRoute
+    }
     '/_authenticated/expenses/recycle-bin': {
       id: '/_authenticated/expenses/recycle-bin'
       path: '/expenses/recycle-bin'
@@ -1120,6 +1243,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMarketingPlatformIdRouteImport
       parentRoute: typeof AuthenticatedMarketingRoute
     }
+    '/_authenticated/finance/receivables/$id': {
+      id: '/_authenticated/finance/receivables/$id'
+      path: '/$id'
+      fullPath: '/finance/receivables/$id'
+      preLoaderRoute: typeof AuthenticatedFinanceReceivablesIdRouteImport
+      parentRoute: typeof AuthenticatedFinanceReceivablesRoute
+    }
+    '/_authenticated/finance/payables/$id': {
+      id: '/_authenticated/finance/payables/$id'
+      path: '/$id'
+      fullPath: '/finance/payables/$id'
+      preLoaderRoute: typeof AuthenticatedFinancePayablesIdRouteImport
+      parentRoute: typeof AuthenticatedFinancePayablesRoute
+    }
     '/_authenticated/dashboard/subcategory/$id': {
       id: '/_authenticated/dashboard/subcategory/$id'
       path: '/dashboard/subcategory/$id'
@@ -1164,6 +1301,54 @@ const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
 
 const AuthenticatedDamagesRouteWithChildren =
   AuthenticatedDamagesRoute._addFileChildren(AuthenticatedDamagesRouteChildren)
+
+interface AuthenticatedFinancePayablesRouteChildren {
+  AuthenticatedFinancePayablesIdRoute: typeof AuthenticatedFinancePayablesIdRoute
+}
+
+const AuthenticatedFinancePayablesRouteChildren: AuthenticatedFinancePayablesRouteChildren =
+  {
+    AuthenticatedFinancePayablesIdRoute: AuthenticatedFinancePayablesIdRoute,
+  }
+
+const AuthenticatedFinancePayablesRouteWithChildren =
+  AuthenticatedFinancePayablesRoute._addFileChildren(
+    AuthenticatedFinancePayablesRouteChildren,
+  )
+
+interface AuthenticatedFinanceReceivablesRouteChildren {
+  AuthenticatedFinanceReceivablesIdRoute: typeof AuthenticatedFinanceReceivablesIdRoute
+}
+
+const AuthenticatedFinanceReceivablesRouteChildren: AuthenticatedFinanceReceivablesRouteChildren =
+  {
+    AuthenticatedFinanceReceivablesIdRoute:
+      AuthenticatedFinanceReceivablesIdRoute,
+  }
+
+const AuthenticatedFinanceReceivablesRouteWithChildren =
+  AuthenticatedFinanceReceivablesRoute._addFileChildren(
+    AuthenticatedFinanceReceivablesRouteChildren,
+  )
+
+interface AuthenticatedFinanceRouteChildren {
+  AuthenticatedFinancePayablesRoute: typeof AuthenticatedFinancePayablesRouteWithChildren
+  AuthenticatedFinanceReceivablesRoute: typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  AuthenticatedFinanceReportsRoute: typeof AuthenticatedFinanceReportsRoute
+  AuthenticatedFinanceIndexRoute: typeof AuthenticatedFinanceIndexRoute
+}
+
+const AuthenticatedFinanceRouteChildren: AuthenticatedFinanceRouteChildren = {
+  AuthenticatedFinancePayablesRoute:
+    AuthenticatedFinancePayablesRouteWithChildren,
+  AuthenticatedFinanceReceivablesRoute:
+    AuthenticatedFinanceReceivablesRouteWithChildren,
+  AuthenticatedFinanceReportsRoute: AuthenticatedFinanceReportsRoute,
+  AuthenticatedFinanceIndexRoute: AuthenticatedFinanceIndexRoute,
+}
+
+const AuthenticatedFinanceRouteWithChildren =
+  AuthenticatedFinanceRoute._addFileChildren(AuthenticatedFinanceRouteChildren)
 
 interface AuthenticatedFixedCostsRouteChildren {
   AuthenticatedFixedCostsReportsRoute: typeof AuthenticatedFixedCostsReportsRoute
@@ -1227,6 +1412,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
+  AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRouteWithChildren
   AuthenticatedFixedCostsRoute: typeof AuthenticatedFixedCostsRouteWithChildren
   AuthenticatedIntelligenceRoute: typeof AuthenticatedIntelligenceRoute
   AuthenticatedLossRoute: typeof AuthenticatedLossRoute
@@ -1265,6 +1451,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
+  AuthenticatedFinanceRoute: AuthenticatedFinanceRouteWithChildren,
   AuthenticatedFixedCostsRoute: AuthenticatedFixedCostsRouteWithChildren,
   AuthenticatedIntelligenceRoute: AuthenticatedIntelligenceRoute,
   AuthenticatedLossRoute: AuthenticatedLossRoute,
@@ -1314,13 +1501,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

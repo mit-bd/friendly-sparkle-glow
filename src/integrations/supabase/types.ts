@@ -910,7 +910,9 @@ export type Database = {
           damage_id: string | null
           expense_id: string | null
           id: string
+          payable_id: string | null
           read_at: string | null
+          receivable_id: string | null
           return_id: string | null
           title: string
           type: string
@@ -922,7 +924,9 @@ export type Database = {
           damage_id?: string | null
           expense_id?: string | null
           id?: string
+          payable_id?: string | null
           read_at?: string | null
+          receivable_id?: string | null
           return_id?: string | null
           title: string
           type: string
@@ -934,7 +938,9 @@ export type Database = {
           damage_id?: string | null
           expense_id?: string | null
           id?: string
+          payable_id?: string | null
           read_at?: string | null
+          receivable_id?: string | null
           return_id?: string | null
           title?: string
           type?: string
@@ -956,6 +962,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "notifications_payable_id_fkey"
+            columns: ["payable_id"]
+            isOneToOne: false
+            referencedRelation: "payables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "notifications_return_id_fkey"
             columns: ["return_id"]
             isOneToOne: false
@@ -963,6 +983,249 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payable_attachments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_name: string | null
+          file_path: string
+          id: string
+          mime_type: string | null
+          payable_id: string
+          size_bytes: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          payable_id: string
+          size_bytes?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          payable_id?: string
+          size_bytes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payable_attachments_payable_id_fkey"
+            columns: ["payable_id"]
+            isOneToOne: false
+            referencedRelation: "payables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payable_counters: {
+        Row: {
+          last_seq: number
+          year: number
+        }
+        Insert: {
+          last_seq?: number
+          year: number
+        }
+        Update: {
+          last_seq?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      payable_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          from_status: string | null
+          id: string
+          notes: string | null
+          payable_id: string
+          to_status: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          notes?: string | null
+          payable_id: string
+          to_status?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          notes?: string | null
+          payable_id?: string
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payable_events_payable_id_fkey"
+            columns: ["payable_id"]
+            isOneToOne: false
+            referencedRelation: "payables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payable_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          file_name: string | null
+          file_path: string | null
+          id: string
+          mime_type: string | null
+          notes: string | null
+          payable_id: string
+          payment_date: string
+          size_bytes: number | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          payable_id: string
+          payment_date?: string
+          size_bytes?: number | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          payable_id?: string
+          payment_date?: string
+          size_bytes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payable_payments_payable_id_fkey"
+            columns: ["payable_id"]
+            isOneToOne: false
+            referencedRelation: "payables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payables: {
+        Row: {
+          amount: number
+          approval_status: string
+          approved_at: string | null
+          approved_by: string | null
+          contact_person: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          due_amount: number | null
+          due_date: string | null
+          email: string | null
+          id: string
+          mobile: string | null
+          notes: string | null
+          paid_amount: number
+          party_name: string
+          party_type: string
+          payable_number: string
+          reference_number: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          restored_at: string | null
+          restored_by: string | null
+          status: string
+          submitted_at: string | null
+          submitted_by: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          amount?: number
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          contact_person?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_amount?: number | null
+          due_date?: string | null
+          email?: string | null
+          id?: string
+          mobile?: string | null
+          notes?: string | null
+          paid_amount?: number
+          party_name: string
+          party_type?: string
+          payable_number?: string
+          reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          amount?: number
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          contact_person?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_amount?: number | null
+          due_date?: string | null
+          email?: string | null
+          id?: string
+          mobile?: string | null
+          notes?: string | null
+          paid_amount?: number
+          party_name?: string
+          party_type?: string
+          payable_number?: string
+          reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -1040,6 +1303,249 @@ export type Database = {
           severity?: string
           status?: string
           title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      receivable_attachments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_name: string | null
+          file_path: string
+          id: string
+          mime_type: string | null
+          receivable_id: string
+          size_bytes: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          receivable_id: string
+          size_bytes?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          receivable_id?: string
+          size_bytes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivable_attachments_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receivable_collections: {
+        Row: {
+          amount: number
+          collection_date: string
+          created_at: string
+          created_by: string | null
+          file_name: string | null
+          file_path: string | null
+          id: string
+          mime_type: string | null
+          notes: string | null
+          receivable_id: string
+          size_bytes: number | null
+        }
+        Insert: {
+          amount: number
+          collection_date?: string
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          receivable_id: string
+          size_bytes?: number | null
+        }
+        Update: {
+          amount?: number
+          collection_date?: string
+          created_at?: string
+          created_by?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          receivable_id?: string
+          size_bytes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivable_collections_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receivable_counters: {
+        Row: {
+          last_seq: number
+          year: number
+        }
+        Insert: {
+          last_seq?: number
+          year: number
+        }
+        Update: {
+          last_seq?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      receivable_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          from_status: string | null
+          id: string
+          notes: string | null
+          receivable_id: string
+          to_status: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          notes?: string | null
+          receivable_id: string
+          to_status?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          notes?: string | null
+          receivable_id?: string
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivable_events_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receivables: {
+        Row: {
+          amount: number
+          approval_status: string
+          approved_at: string | null
+          approved_by: string | null
+          collected_amount: number
+          contact_person: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          due_amount: number | null
+          due_date: string | null
+          email: string | null
+          id: string
+          mobile: string | null
+          notes: string | null
+          party_name: string
+          party_type: string
+          receivable_number: string
+          reference_number: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          restored_at: string | null
+          restored_by: string | null
+          status: string
+          submitted_at: string | null
+          submitted_by: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          amount?: number
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          collected_amount?: number
+          contact_person?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_amount?: number | null
+          due_date?: string | null
+          email?: string | null
+          id?: string
+          mobile?: string | null
+          notes?: string | null
+          party_name: string
+          party_type?: string
+          receivable_number?: string
+          reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          amount?: number
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          collected_amount?: number
+          contact_person?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          due_amount?: number | null
+          due_date?: string | null
+          email?: string | null
+          id?: string
+          mobile?: string | null
+          notes?: string | null
+          party_name?: string
+          party_type?: string
+          receivable_number?: string
+          reference_number?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          restored_at?: string | null
+          restored_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
           updated_at?: string
           updated_by?: string | null
         }
@@ -1444,6 +1950,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      finance_mark_overdue: { Args: never; Returns: number }
       generate_fixed_costs: { Args: { _month?: string }; Returns: number }
       get_company_branding: {
         Args: never
@@ -1514,6 +2021,8 @@ export type Database = {
       }
       next_damage_number: { Args: never; Returns: string }
       next_expense_number: { Args: never; Returns: string }
+      next_payable_number: { Args: never; Returns: string }
+      next_receivable_number: { Args: never; Returns: string }
       next_report_number: { Args: never; Returns: string }
       next_return_number: { Args: never; Returns: string }
     }

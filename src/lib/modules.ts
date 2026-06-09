@@ -12,6 +12,7 @@ import {
   TrendingDown,
   Repeat,
   LineChart,
+  Landmark,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,6 +26,7 @@ export type ModuleKey =
   | "reports"
   | "audit"
   | "users"
+  | "finance"
   | "settings";
 
 /** Default product/company name used before a custom company profile is set. */
@@ -113,6 +115,18 @@ export const NAV_ITEMS: NavItem[] = [
   },
   { label: "Loss Management", to: "/loss", icon: TrendingDown, module: "returns" },
   {
+    label: "Finance Control",
+    to: "/finance",
+    icon: Landmark,
+    module: "finance",
+    children: [
+      { label: "Finance Dashboard", to: "/finance" },
+      { label: "Receivables", to: "/finance/receivables" },
+      { label: "Payables", to: "/finance/payables" },
+      { label: "Finance Reports", to: "/finance/reports" },
+    ],
+  },
+  {
     label: "Reports",
     to: "/reports/summary",
     icon: FileBarChart,
@@ -174,5 +188,6 @@ export const MODULE_LABELS: Record<ModuleKey, string> = {
   reports: "Reports",
   audit: "Audit & History",
   users: "Users & Roles",
+  finance: "Finance Control",
   settings: "Settings",
 };
