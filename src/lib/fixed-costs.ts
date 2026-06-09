@@ -270,7 +270,7 @@ export function settlementSummary(rows: FixedCostRecord[]): SettlementSummary {
 const TEMPLATE_COLS =
   "id, name, category_id, subcategory_id, monthly_amount, description, notes, is_active, auto_generate, effective_from, created_by, created_at, updated_at, deleted_at, deleted_by";
 const RECORD_COLS =
-  "id, expense_number, expense_date, period_month, amount, description, notes, status, fixed_cost_template_id, created_at, approved_at, created_by";
+  "id, expense_number, expense_date, period_month, amount, description, notes, status, fixed_cost_template_id, created_at, approved_at, created_by, fc_settlement_status, fc_paid_amount";
 
 // ----------------------------------------------------------------------------
 // Templates
