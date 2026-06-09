@@ -329,9 +329,34 @@ function RecycleBinPage() {
           </TabsContent>
 
           {/* CATEGORIES */}
-          <TabsContent value="categories" className="mt-4">
-
+          {/* FIXED COSTS */}
+          <TabsContent value="fixed_costs" className="mt-4">
+            <BulkBar
+              count={selFc.size}
+              kind="fixed_costs"
+              onRestore={() =>
+                setPending({ mode: "restore", kind: "fixed_costs", ids: [...selFc], label: `${selFc.size} template(s)` })
+              }
+              onPurge={() =>
+                setPending({ mode: "purge", kind: "fixed_costs", ids: [...selFc], label: `${selFc.size} template(s)` })
+              }
+            />
+            {fixedCosts.length === 0 ? (
+              <EmptyState what="deleted fixed cost templates" />
+            ) : (
+              <TaxonomyTable
+                rows={fixedCosts.map((f) => ({ id: f.id, name: f.name, deleted_at: f.deleted_at, deleted_by: f.deleted_by }))}
+                sel={selFc}
+                onToggle={(id) => toggle(selFc, setSelFc, id)}
+                onToggleAll={() => toggleAll(fixedCosts.map((x) => x.id), selFc, setSelFc)}
+                onRestore={(r) => setPending({ mode: "restore", kind: "fixed_costs", ids: [r.id], label: r.name })}
+                onPurge={(r) => setPending({ mode: "purge", kind: "fixed_costs", ids: [r.id], label: r.name })}
+              />
+            )}
           </TabsContent>
+
+          {/* CATEGORIES */}
+          <TabsContent value="categories" className="mt-4">
             <BulkBar
               count={selCat.size}
               kind="categories"
