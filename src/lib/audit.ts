@@ -249,6 +249,85 @@ export async function fetchDeletedSubcategories(): Promise<DeletedTaxonomy[]> {
   return (data ?? []) as DeletedTaxonomy[];
 }
 
+/* ---- Deleted returns & damages (soft-deleted via status) ---- */
+
+export interface DeletedReturn {
+  id: string;
+  return_number: string;
+  net_loss_amount: number;
+  return_date: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+}
+
+export interface DeletedDamage {
+  id: string;
+  damage_number: string;
+  damage_value: number;
+  damage_date: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+}
+
+export async function fetchDeletedReturns(): Promise<DeletedReturn[]> {
+  const { data, error } = await db
+    .from("returns")
+    .select("id, return_number, net_loss_amount, return_date, deleted_at, deleted_by")
+    .eq("status", "deleted")
+    .order("deleted_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as DeletedReturn[];
+}
+
+export async function fetchDeletedDamages(): Promise<DeletedDamage[]> {
+  const { data, error } = await db
+    .from("damages")
+    .select("id, damage_number, damage_value, damage_date, deleted_at, deleted_by")
+    .eq("status", "deleted")
+    .order("deleted_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as DeletedDamage[];
+}
+
+/** Determine the status a loss record (return/damage) had before deletion. */
+async function priorLossStatus(entityType: "return" | "damage", id: string): Promise<ExpenseStatus> {
+  const { data } = await db
+    .from("field_changes")
+    .select("old_value")
+    .eq("entity_type", entityType)
+    .eq("entity_id", id)
+    .eq("field", "Status")
+    .eq("new_value", "deleted")
+    .order("changed_at", { ascending: false })
+    .limit(1);
+  const prev = data?.[0]?.old_value as ExpenseStatus | undefined;
+  return prev && prev !== "deleted" ? prev : "draft";
+}
+
+export async function restoreReturn(id: string): Promise<void> {
+  const status = await priorLossStatus("return", id);
+  const { error } = await db.from("returns").update({ status }).eq("id", id);
+  if (error) throw error;
+}
+
+export async function purgeReturn(id: string): Promise<void> {
+  await db.from("return_attachments").delete().eq("return_id", id);
+  const { error } = await db.from("returns").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function restoreDamage(id: string): Promise<void> {
+  const status = await priorLossStatus("damage", id);
+  const { error } = await db.from("damages").update({ status }).eq("id", id);
+  if (error) throw error;
+}
+
+export async function purgeDamage(id: string): Promise<void> {
+  await db.from("damage_attachments").delete().eq("damage_id", id);
+  const { error } = await db.from("damages").delete().eq("id", id);
+  if (error) throw error;
+}
+
 /** Determine the status an expense had immediately before it was deleted. */
 async function priorExpenseStatus(id: string): Promise<ExpenseStatus> {
   const { data } = await db

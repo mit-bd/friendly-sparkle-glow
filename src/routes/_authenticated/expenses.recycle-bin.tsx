@@ -30,18 +30,27 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/lib/auth-context";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/expenses";
+import { formatTk } from "@/lib/loss";
 import {
   fetchDeletedCategories,
   fetchDeletedExpenses,
   fetchDeletedSubcategories,
+  fetchDeletedReturns,
+  fetchDeletedDamages,
   purgeCategory,
   purgeExpense,
   purgeSubcategory,
+  purgeReturn,
+  purgeDamage,
   restoreCategory,
   restoreExpense,
   restoreSubcategory,
+  restoreReturn,
+  restoreDamage,
   type DeletedExpense,
   type DeletedTaxonomy,
+  type DeletedReturn,
+  type DeletedDamage,
 } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
@@ -49,7 +58,7 @@ export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
   component: RecycleBinPage,
 });
 
-type Kind = "expenses" | "categories" | "subcategories";
+type Kind = "expenses" | "categories" | "subcategories" | "returns" | "damages";
 
 interface PendingAction {
   mode: "restore" | "purge";
@@ -64,28 +73,38 @@ function RecycleBinPage() {
   const [expenses, setExpenses] = useState<DeletedExpense[]>([]);
   const [categories, setCategories] = useState<DeletedTaxonomy[]>([]);
   const [subcategories, setSubcategories] = useState<DeletedTaxonomy[]>([]);
+  const [returns, setReturns] = useState<DeletedReturn[]>([]);
+  const [damages, setDamages] = useState<DeletedDamage[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
   const [selExp, setSelExp] = useState<Set<string>>(new Set());
   const [selCat, setSelCat] = useState<Set<string>>(new Set());
   const [selSub, setSelSub] = useState<Set<string>>(new Set());
+  const [selRet, setSelRet] = useState<Set<string>>(new Set());
+  const [selDmg, setSelDmg] = useState<Set<string>>(new Set());
   const [pending, setPending] = useState<PendingAction | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [e, c, s] = await Promise.all([
+      const [e, c, s, ret, dmg] = await Promise.all([
         fetchDeletedExpenses(),
         fetchDeletedCategories(),
         fetchDeletedSubcategories(),
+        fetchDeletedReturns(),
+        fetchDeletedDamages(),
       ]);
       setExpenses(e);
       setCategories(c);
       setSubcategories(s);
+      setReturns(ret);
+      setDamages(dmg);
       setSelExp(new Set());
       setSelCat(new Set());
       setSelSub(new Set());
+      setSelRet(new Set());
+      setSelDmg(new Set());
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to load recycle bin.");
     } finally {
@@ -124,7 +143,9 @@ function RecycleBinPage() {
       const ops: Promise<void>[] = a.ids.map((id) => {
         if (a.kind === "expenses") return a.mode === "restore" ? restoreExpense(id) : purgeExpense(id);
         if (a.kind === "categories") return a.mode === "restore" ? restoreCategory(id) : purgeCategory(id);
-        return a.mode === "restore" ? restoreSubcategory(id) : purgeSubcategory(id);
+        if (a.kind === "subcategories") return a.mode === "restore" ? restoreSubcategory(id) : purgeSubcategory(id);
+        if (a.kind === "returns") return a.mode === "restore" ? restoreReturn(id) : purgeReturn(id);
+        return a.mode === "restore" ? restoreDamage(id) : purgeDamage(id);
       });
       await Promise.all(ops);
       toast.success(
@@ -143,6 +164,8 @@ function RecycleBinPage() {
 
   const tabs: { value: Kind; label: string; count: number }[] = [
     { value: "expenses", label: "Expenses", count: expenses.length },
+    { value: "returns", label: "Returns", count: returns.length },
+    { value: "damages", label: "Damages", count: damages.length },
     { value: "categories", label: "Categories", count: categories.length },
     { value: "subcategories", label: "Subcategories", count: subcategories.length },
   ];
@@ -237,6 +260,60 @@ function RecycleBinPage() {
                   </Table>
                 </CardContent>
               </Card>
+            )}
+          </TabsContent>
+
+          {/* RETURNS */}
+          <TabsContent value="returns" className="mt-4">
+            <BulkBar
+              count={selRet.size}
+              kind="returns"
+              onRestore={() =>
+                setPending({ mode: "restore", kind: "returns", ids: [...selRet], label: `${selRet.size} return(s)` })
+              }
+              onPurge={() =>
+                setPending({ mode: "purge", kind: "returns", ids: [...selRet], label: `${selRet.size} return(s)` })
+              }
+            />
+            {returns.length === 0 ? (
+              <EmptyState what="deleted returns" />
+            ) : (
+              <LossTable
+                numberLabel="Return #"
+                rows={returns.map((r) => ({ id: r.id, number: r.return_number, amount: r.net_loss_amount, date: r.return_date, deleted_at: r.deleted_at }))}
+                sel={selRet}
+                onToggle={(id) => toggle(selRet, setSelRet, id)}
+                onToggleAll={() => toggleAll(returns.map((x) => x.id), selRet, setSelRet)}
+                onRestore={(row) => setPending({ mode: "restore", kind: "returns", ids: [row.id], label: row.number })}
+                onPurge={(row) => setPending({ mode: "purge", kind: "returns", ids: [row.id], label: row.number })}
+              />
+            )}
+          </TabsContent>
+
+          {/* DAMAGES */}
+          <TabsContent value="damages" className="mt-4">
+            <BulkBar
+              count={selDmg.size}
+              kind="damages"
+              onRestore={() =>
+                setPending({ mode: "restore", kind: "damages", ids: [...selDmg], label: `${selDmg.size} damage(s)` })
+              }
+              onPurge={() =>
+                setPending({ mode: "purge", kind: "damages", ids: [...selDmg], label: `${selDmg.size} damage(s)` })
+              }
+            />
+            {damages.length === 0 ? (
+              <EmptyState what="deleted damages" />
+            ) : (
+              <LossTable
+                numberLabel="Damage #"
+                rows={damages.map((d) => ({ id: d.id, number: d.damage_number, amount: d.damage_value, date: d.damage_date, deleted_at: d.deleted_at }))}
+                sel={selDmg}
+                onToggle={(id) => toggle(selDmg, setSelDmg, id)}
+                onToggleAll={() => toggleAll(damages.map((x) => x.id), selDmg, setSelDmg)}
+                onRestore={(row) => setPending({ mode: "restore", kind: "damages", ids: [row.id], label: row.number })}
+                onPurge={(row) => setPending({ mode: "purge", kind: "damages", ids: [row.id], label: row.number })}
+              />
             )}
           </TabsContent>
 
@@ -440,5 +517,76 @@ function EmptyState({ what }: { what: string }) {
       <p className="mt-4 text-sm font-medium text-foreground">No {what}</p>
       <p className="mt-1 text-sm text-muted-foreground">Deleted records will appear here.</p>
     </div>
+  );
+}
+
+interface LossRow {
+  id: string;
+  number: string;
+  amount: number;
+  date: string;
+  deleted_at: string | null;
+}
+
+function LossTable({
+  numberLabel,
+  rows,
+  sel,
+  onToggle,
+  onToggleAll,
+  onRestore,
+  onPurge,
+}: {
+  numberLabel: string;
+  rows: LossRow[];
+  sel: Set<string>;
+  onToggle: (id: string) => void;
+  onToggleAll: () => void;
+  onRestore: (r: LossRow) => void;
+  onPurge: (r: LossRow) => void;
+}) {
+  return (
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-10">
+                <Checkbox
+                  checked={sel.size === rows.length && rows.length > 0}
+                  onCheckedChange={onToggleAll}
+                  aria-label="Select all"
+                />
+              </TableHead>
+              <TableHead>{numberLabel}</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Deleted</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((r) => (
+              <TableRow key={r.id}>
+                <TableCell>
+                  <Checkbox
+                    checked={sel.has(r.id)}
+                    onCheckedChange={() => onToggle(r.id)}
+                    aria-label={`Select ${r.number}`}
+                  />
+                </TableCell>
+                <TableCell className="font-medium">{r.number}</TableCell>
+                <TableCell className="tabular-nums">{formatTk(r.amount)}</TableCell>
+                <TableCell className="text-muted-foreground">{formatDate(r.date)}</TableCell>
+                <TableCell className="text-muted-foreground">{formatDateTime(r.deleted_at)}</TableCell>
+                <TableCell className="text-right">
+                  <RowActions onRestore={() => onRestore(r)} onPurge={() => onPurge(r)} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }
