@@ -50,9 +50,8 @@ export function AppTopbar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 bg-background/80 px-4 shadow-soft backdrop-blur-xl sm:px-6">
       <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="mr-1 h-6" />
       <div className="md:hidden">
         <CompanyLogo size="sm" />
       </div>
