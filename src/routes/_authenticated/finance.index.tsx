@@ -17,6 +17,11 @@ import {
   financeInsights, formatTk, isApprovedActive, supplierLiabilitySummary, topOutstandingParties,
   type FinanceInsight, type Payable, type Receivable,
 } from "@/lib/finance";
+import {
+  fetchOutstandingFixedCosts, fetchTemplates, remainingOf,
+  type FixedCostRecord, type FixedCostTemplate,
+} from "@/lib/fixed-costs";
+import { Repeat } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/finance/")({
   head: () => ({ meta: [{ title: "Finance Dashboard — Motion IT BD" }] }),
@@ -31,12 +36,14 @@ function FinanceDashboard() {
   const [pay, setPay] = useState<Payable[]>([]);
   const [collections, setCollections] = useState<{ amount: number; collection_date: string }[]>([]);
   const [payments, setPayments] = useState<{ amount: number; payment_date: string }[]>([]);
+  const [fixedCosts, setFixedCosts] = useState<FixedCostRecord[]>([]);
+  const [fcTemplates, setFcTemplates] = useState<FixedCostTemplate[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
-    Promise.all([fetchReceivables(), fetchPayables(), fetchAllCollections(), fetchAllPayments()])
-      .then(([r, p, c, pm]) => { if (!active) return; setRecv(r); setPay(p); setCollections(c); setPayments(pm); })
+    Promise.all([fetchReceivables(), fetchPayables(), fetchAllCollections(), fetchAllPayments(), fetchOutstandingFixedCosts().catch(() => []), fetchTemplates().catch(() => [])])
+      .then(([r, p, c, pm, fc, ft]) => { if (!active) return; setRecv(r); setPay(p); setCollections(c); setPayments(pm); setFixedCosts(fc as FixedCostRecord[]); setFcTemplates(ft as FixedCostTemplate[]); })
       .catch((e) => toast.error(e instanceof Error ? e.message : "Failed to load finance data."))
       .finally(() => active && setLoading(false));
     return () => { active = false; };
@@ -52,6 +59,14 @@ function FinanceDashboard() {
   const topSuppliers = useMemo(() => topOutstandingParties(approvedPay), [approvedPay]);
   const recvTrend = useMemo(() => buildMonthly(approvedRecv, (r) => r.created_at, (r) => r.amount), [approvedRecv]);
   const payTrend = useMemo(() => buildMonthly(approvedPay, (p) => p.created_at, (p) => p.amount), [approvedPay]);
+  const fcOutstandingTotal = useMemo(() => fixedCosts.reduce((a, r) => a + remainingOf(r), 0), [fixedCosts]);
+  const fcTopOutstanding = useMemo(() => {
+    const tName = new Map(fcTemplates.map((t) => [t.id, t.name]));
+    return [...fixedCosts]
+      .map((r) => ({ id: r.id, name: r.fixed_cost_template_id ? tName.get(r.fixed_cost_template_id) ?? "Fixed Cost" : "Fixed Cost", remaining: remainingOf(r), month: (r.period_month ?? r.expense_date).slice(0, 7) }))
+      .sort((a, b) => b.remaining - a.remaining)
+      .slice(0, 6);
+  }, [fixedCosts, fcTemplates]);
   const collectionTrend = useMemo(() => buildMonthly(collections, (c) => c.collection_date, (c) => c.amount), [collections]);
   const paymentTrend = useMemo(() => buildMonthly(payments, (c) => c.payment_date, (c) => c.amount), [payments]);
 
