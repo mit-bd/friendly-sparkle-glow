@@ -33,6 +33,7 @@ import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns.index'
 import { Route as AuthenticatedMarketingIndexRouteImport } from './routes/_authenticated/marketing.index'
 import { Route as AuthenticatedFixedCostsIndexRouteImport } from './routes/_authenticated/fixed-costs.index'
+import { Route as AuthenticatedFinanceIndexRouteImport } from './routes/_authenticated/finance.index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedDamagesIndexRouteImport } from './routes/_authenticated/damages.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
@@ -196,6 +197,12 @@ const AuthenticatedFixedCostsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedFixedCostsRoute,
+  } as any)
+const AuthenticatedFinanceIndexRoute =
+  AuthenticatedFinanceIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedFinanceRoute,
   } as any)
 const AuthenticatedExpensesIndexRoute =
   AuthenticatedExpensesIndexRouteImport.update({
@@ -472,6 +479,7 @@ export interface FileRoutesByFullPath {
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages/': typeof AuthenticatedDamagesIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/finance/': typeof AuthenticatedFinanceIndexRoute
   '/fixed-costs/': typeof AuthenticatedFixedCostsIndexRoute
   '/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/returns/': typeof AuthenticatedReturnsIndexRoute
@@ -490,7 +498,6 @@ export interface FileRoutesByTo {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
-  '/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -531,6 +538,7 @@ export interface FileRoutesByTo {
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages': typeof AuthenticatedDamagesIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
+  '/finance': typeof AuthenticatedFinanceIndexRoute
   '/fixed-costs': typeof AuthenticatedFixedCostsIndexRoute
   '/marketing': typeof AuthenticatedMarketingIndexRoute
   '/returns': typeof AuthenticatedReturnsIndexRoute
@@ -596,6 +604,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/_authenticated/damages/': typeof AuthenticatedDamagesIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/_authenticated/finance/': typeof AuthenticatedFinanceIndexRoute
   '/_authenticated/fixed-costs/': typeof AuthenticatedFixedCostsIndexRoute
   '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/_authenticated/returns/': typeof AuthenticatedReturnsIndexRoute
@@ -661,6 +670,7 @@ export interface FileRouteTypes {
     | '/settings/signatories'
     | '/damages/'
     | '/expenses/'
+    | '/finance/'
     | '/fixed-costs/'
     | '/marketing/'
     | '/returns/'
@@ -679,7 +689,6 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/audit'
     | '/backup'
-    | '/finance'
     | '/intelligence'
     | '/loss'
     | '/notifications'
@@ -720,6 +729,7 @@ export interface FileRouteTypes {
     | '/settings/signatories'
     | '/damages'
     | '/expenses'
+    | '/finance'
     | '/fixed-costs'
     | '/marketing'
     | '/returns'
@@ -784,6 +794,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/signatories'
     | '/_authenticated/damages/'
     | '/_authenticated/expenses/'
+    | '/_authenticated/finance/'
     | '/_authenticated/fixed-costs/'
     | '/_authenticated/marketing/'
     | '/_authenticated/returns/'
@@ -973,6 +984,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/fixed-costs/'
       preLoaderRoute: typeof AuthenticatedFixedCostsIndexRouteImport
       parentRoute: typeof AuthenticatedFixedCostsRoute
+    }
+    '/_authenticated/finance/': {
+      id: '/_authenticated/finance/'
+      path: '/'
+      fullPath: '/finance/'
+      preLoaderRoute: typeof AuthenticatedFinanceIndexRouteImport
+      parentRoute: typeof AuthenticatedFinanceRoute
     }
     '/_authenticated/expenses/': {
       id: '/_authenticated/expenses/'
@@ -1296,6 +1314,7 @@ const AuthenticatedFinanceReceivablesRouteWithChildren =
 interface AuthenticatedFinanceRouteChildren {
   AuthenticatedFinancePayablesRoute: typeof AuthenticatedFinancePayablesRouteWithChildren
   AuthenticatedFinanceReceivablesRoute: typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  AuthenticatedFinanceIndexRoute: typeof AuthenticatedFinanceIndexRoute
 }
 
 const AuthenticatedFinanceRouteChildren: AuthenticatedFinanceRouteChildren = {
@@ -1303,6 +1322,7 @@ const AuthenticatedFinanceRouteChildren: AuthenticatedFinanceRouteChildren = {
     AuthenticatedFinancePayablesRouteWithChildren,
   AuthenticatedFinanceReceivablesRoute:
     AuthenticatedFinanceReceivablesRouteWithChildren,
+  AuthenticatedFinanceIndexRoute: AuthenticatedFinanceIndexRoute,
 }
 
 const AuthenticatedFinanceRouteWithChildren =
