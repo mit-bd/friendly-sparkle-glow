@@ -159,41 +159,48 @@ function ExpensesListPage() {
     return () => clearTimeout(t);
   }, [searchInput]);
 
+  // Shared filter+search builder so the on-screen list and bulk exports stay
+  // perfectly in sync with the active filters.
+  const applyFilters = useCallback(
+    (q: ReturnType<typeof supabase.from>) => {
+      if (filters.category !== ALL) q = q.eq("category_id", filters.category);
+      if (filters.subcategory !== ALL) q = q.eq("subcategory_id", filters.subcategory);
+      if (filters.createdBy !== ALL) q = q.eq("created_by", filters.createdBy);
+      if (filters.dateFrom) q = q.gte("expense_date", filters.dateFrom);
+      if (filters.dateTo) q = q.lte("expense_date", filters.dateTo);
+      if (filters.amountMin) q = q.gte("amount", Number(filters.amountMin));
+      if (filters.amountMax) q = q.lte("amount", Number(filters.amountMax));
+
+      if (filters.status !== ALL) {
+        q = q.eq("status", filters.status as ExpenseStatus);
+      } else {
+        q = q.neq("status", "deleted");
+      }
+
+      const s = sanitize(search);
+      if (s) {
+        const like = `%${s}%`;
+        const ors = [
+          `expense_number.ilike.${like}`,
+          `description.ilike.${like}`,
+          `notes.ilike.${like}`,
+        ];
+        const lc = s.toLowerCase();
+        const catIds = categories.filter((c) => c.name.toLowerCase().includes(lc)).map((c) => c.id);
+        const subIds = subs.filter((x) => x.name.toLowerCase().includes(lc)).map((x) => x.id);
+        if (catIds.length) ors.push(`category_id.in.(${catIds.join(",")})`);
+        if (subIds.length) ors.push(`subcategory_id.in.(${subIds.join(",")})`);
+        if (!Number.isNaN(Number(s))) ors.push(`amount.eq.${Number(s)}`);
+        q = q.or(ors.join(","));
+      }
+      return q;
+    },
+    [filters, search, categories, subs],
+  );
+
   const load = useCallback(async () => {
     setLoading(true);
-    let q = supabase.from("expenses").select("*", { count: "exact" });
-
-    if (filters.category !== ALL) q = q.eq("category_id", filters.category);
-    if (filters.subcategory !== ALL) q = q.eq("subcategory_id", filters.subcategory);
-    if (filters.createdBy !== ALL) q = q.eq("created_by", filters.createdBy);
-    if (filters.dateFrom) q = q.gte("expense_date", filters.dateFrom);
-    if (filters.dateTo) q = q.lte("expense_date", filters.dateTo);
-    if (filters.amountMin) q = q.gte("amount", Number(filters.amountMin));
-    if (filters.amountMax) q = q.lte("amount", Number(filters.amountMax));
-
-    if (filters.status !== ALL) {
-      q = q.eq("status", filters.status as ExpenseStatus);
-    } else {
-      q = q.neq("status", "deleted");
-    }
-
-    const s = sanitize(search);
-    if (s) {
-      const like = `%${s}%`;
-      const ors = [
-        `expense_number.ilike.${like}`,
-        `description.ilike.${like}`,
-        `notes.ilike.${like}`,
-      ];
-      const lc = s.toLowerCase();
-      const catIds = categories.filter((c) => c.name.toLowerCase().includes(lc)).map((c) => c.id);
-      const subIds = subs.filter((x) => x.name.toLowerCase().includes(lc)).map((x) => x.id);
-      if (catIds.length) ors.push(`category_id.in.(${catIds.join(",")})`);
-      if (subIds.length) ors.push(`subcategory_id.in.(${subIds.join(",")})`);
-      if (!Number.isNaN(Number(s))) ors.push(`amount.eq.${Number(s)}`);
-      q = q.or(ors.join(","));
-    }
-
+    let q = applyFilters(supabase.from("expenses").select("*", { count: "exact" }));
     q = q.order(sortField, { ascending: sortAsc });
     q = q.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
 
@@ -208,7 +215,7 @@ function ExpensesListPage() {
     setTotal(count ?? 0);
     setNames(await fetchUserNames(list.map((r) => r.created_by ?? "")));
     setLoading(false);
-  }, [filters, search, sortField, sortAsc, page, categories, subs]);
+  }, [applyFilters, sortField, sortAsc, page]);
 
   useEffect(() => {
     if (canView) load();
