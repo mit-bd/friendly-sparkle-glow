@@ -477,6 +477,13 @@ function ExpensesListPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={pageAllSelected}
+                      onCheckedChange={togglePageAll}
+                      aria-label="Select all on page"
+                    />
+                  </TableHead>
                   <SortHead label="Expense No." field="expense_number" {...{ sortField, sortAsc, toggleSort }} />
                   <SortHead label="Date" field="expense_date" {...{ sortField, sortAsc, toggleSort }} />
                   <TableHead>Category</TableHead>
@@ -491,14 +498,14 @@ function ExpensesListPage() {
                 {loading ? (
                   Array.from({ length: 6 }).map((_, i) => (
                     <TableRow key={i}>
-                      {Array.from({ length: 8 }).map((__, j) => (
+                      {Array.from({ length: 9 }).map((__, j) => (
                         <TableCell key={j}><Skeleton className="h-5 w-full" /></TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : rows.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8}>
+                    <TableCell colSpan={9}>
                       <div className="flex flex-col items-center justify-center py-16 text-center">
                         <span className="flex h-12 w-12 items-center justify-center rounded-md bg-brand-gradient-soft text-brand-to">
                           <Receipt className="h-6 w-6" />
@@ -517,6 +524,13 @@ function ExpensesListPage() {
                       className="cursor-pointer"
                       onClick={() => navigate({ to: "/expenses/$id", params: { id: r.id } })}
                     >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={bulk.selection.isSelected(r.id)}
+                          onCheckedChange={() => bulk.selection.toggle(r.id)}
+                          aria-label={`Select ${r.expense_number}`}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">{r.expense_number}</TableCell>
                       <TableCell className="text-muted-foreground">{formatDate(r.expense_date)}</TableCell>
                       <TableCell>{r.category_id ? catMap.get(r.category_id) ?? "—" : "—"}</TableCell>
