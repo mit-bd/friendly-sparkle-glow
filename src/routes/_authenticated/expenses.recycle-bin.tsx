@@ -47,10 +47,14 @@ import {
   restoreSubcategory,
   restoreReturn,
   restoreDamage,
+  fetchDeletedFixedCostTemplates,
+  restoreFixedCostTemplate,
+  purgeFixedCostTemplate,
   type DeletedExpense,
   type DeletedTaxonomy,
   type DeletedReturn,
   type DeletedDamage,
+  type DeletedFixedCostTemplate,
 } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
@@ -58,7 +62,7 @@ export const Route = createFileRoute("/_authenticated/expenses/recycle-bin")({
   component: RecycleBinPage,
 });
 
-type Kind = "expenses" | "categories" | "subcategories" | "returns" | "damages";
+type Kind = "expenses" | "categories" | "subcategories" | "returns" | "damages" | "fixed_costs";
 
 interface PendingAction {
   mode: "restore" | "purge";
@@ -75,6 +79,7 @@ function RecycleBinPage() {
   const [subcategories, setSubcategories] = useState<DeletedTaxonomy[]>([]);
   const [returns, setReturns] = useState<DeletedReturn[]>([]);
   const [damages, setDamages] = useState<DeletedDamage[]>([]);
+  const [fixedCosts, setFixedCosts] = useState<DeletedFixedCostTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
@@ -83,28 +88,32 @@ function RecycleBinPage() {
   const [selSub, setSelSub] = useState<Set<string>>(new Set());
   const [selRet, setSelRet] = useState<Set<string>>(new Set());
   const [selDmg, setSelDmg] = useState<Set<string>>(new Set());
+  const [selFc, setSelFc] = useState<Set<string>>(new Set());
   const [pending, setPending] = useState<PendingAction | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [e, c, s, ret, dmg] = await Promise.all([
+      const [e, c, s, ret, dmg, fc] = await Promise.all([
         fetchDeletedExpenses(),
         fetchDeletedCategories(),
         fetchDeletedSubcategories(),
         fetchDeletedReturns(),
         fetchDeletedDamages(),
+        fetchDeletedFixedCostTemplates(),
       ]);
       setExpenses(e);
       setCategories(c);
       setSubcategories(s);
       setReturns(ret);
       setDamages(dmg);
+      setFixedCosts(fc);
       setSelExp(new Set());
       setSelCat(new Set());
       setSelSub(new Set());
       setSelRet(new Set());
       setSelDmg(new Set());
+      setSelFc(new Set());
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to load recycle bin.");
     } finally {
@@ -145,6 +154,7 @@ function RecycleBinPage() {
         if (a.kind === "categories") return a.mode === "restore" ? restoreCategory(id) : purgeCategory(id);
         if (a.kind === "subcategories") return a.mode === "restore" ? restoreSubcategory(id) : purgeSubcategory(id);
         if (a.kind === "returns") return a.mode === "restore" ? restoreReturn(id) : purgeReturn(id);
+        if (a.kind === "fixed_costs") return a.mode === "restore" ? restoreFixedCostTemplate(id) : purgeFixedCostTemplate(id);
         return a.mode === "restore" ? restoreDamage(id) : purgeDamage(id);
       });
       await Promise.all(ops);
@@ -166,6 +176,7 @@ function RecycleBinPage() {
     { value: "expenses", label: "Expenses", count: expenses.length },
     { value: "returns", label: "Returns", count: returns.length },
     { value: "damages", label: "Damages", count: damages.length },
+    { value: "fixed_costs", label: "Fixed Costs", count: fixedCosts.length },
     { value: "categories", label: "Categories", count: categories.length },
     { value: "subcategories", label: "Subcategories", count: subcategories.length },
   ];
@@ -313,6 +324,33 @@ function RecycleBinPage() {
                 onToggleAll={() => toggleAll(damages.map((x) => x.id), selDmg, setSelDmg)}
                 onRestore={(row) => setPending({ mode: "restore", kind: "damages", ids: [row.id], label: row.number })}
                 onPurge={(row) => setPending({ mode: "purge", kind: "damages", ids: [row.id], label: row.number })}
+              />
+            )}
+          </TabsContent>
+
+          {/* CATEGORIES */}
+          {/* FIXED COSTS */}
+          <TabsContent value="fixed_costs" className="mt-4">
+            <BulkBar
+              count={selFc.size}
+              kind="fixed_costs"
+              onRestore={() =>
+                setPending({ mode: "restore", kind: "fixed_costs", ids: [...selFc], label: `${selFc.size} template(s)` })
+              }
+              onPurge={() =>
+                setPending({ mode: "purge", kind: "fixed_costs", ids: [...selFc], label: `${selFc.size} template(s)` })
+              }
+            />
+            {fixedCosts.length === 0 ? (
+              <EmptyState what="deleted fixed cost templates" />
+            ) : (
+              <TaxonomyTable
+                rows={fixedCosts.map((f) => ({ id: f.id, name: f.name, deleted_at: f.deleted_at, deleted_by: f.deleted_by }))}
+                sel={selFc}
+                onToggle={(id) => toggle(selFc, setSelFc, id)}
+                onToggleAll={() => toggleAll(fixedCosts.map((x) => x.id), selFc, setSelFc)}
+                onRestore={(r) => setPending({ mode: "restore", kind: "fixed_costs", ids: [r.id], label: r.name })}
+                onPurge={(r) => setPending({ mode: "purge", kind: "fixed_costs", ids: [r.id], label: r.name })}
               />
             )}
           </TabsContent>

@@ -23,7 +23,10 @@ export type ActivityAction =
   | "user_deactivate"
   | "user_activate"
   | "comment"
-  | "password_change";
+  | "password_change"
+  | "enable"
+  | "disable"
+  | "generate";
 
 export type AuditEntityType =
   | "expense"
@@ -38,7 +41,8 @@ export type AuditEntityType =
   | "damage"
   | "return_attachment"
   | "damage_attachment"
-  | "notification";
+  | "notification"
+  | "fixed_cost";
 
 export interface ActivityLog {
   id: string;
@@ -81,6 +85,9 @@ export const ACTIVITY_ACTION_LABELS: Record<string, string> = {
   user_activate: "User Activated",
   comment: "Commented",
   password_change: "Password Changed",
+  enable: "Enabled",
+  disable: "Disabled",
+  generate: "Generated",
 };
 
 export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
@@ -97,6 +104,7 @@ export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
   return_attachment: "Return Attachment",
   damage_attachment: "Damage Attachment",
   notification: "Notification",
+  fixed_cost: "Fixed Cost",
 };
 
 /** Tailwind tone classes per action (theme-safe semantic tokens). */
@@ -118,6 +126,9 @@ export const ACTIVITY_TONE: Record<string, string> = {
   user_activate: "bg-chart-2/15 text-chart-2",
   comment: "bg-muted text-muted-foreground",
   password_change: "bg-warning/15 text-warning",
+  enable: "bg-chart-2/15 text-chart-2",
+  disable: "bg-destructive/15 text-destructive",
+  generate: "bg-chart-1/15 text-chart-1",
 };
 
 /** Best-effort client logger for actions that don't hit a tracked table. */
@@ -396,5 +407,38 @@ export async function softDeleteSubcategory(id: string, actorId: string): Promis
     .from("expense_subcategories")
     .update({ deleted_at: new Date().toISOString(), deleted_by: actorId, is_active: false })
     .eq("id", id);
+  if (error) throw error;
+}
+
+/* ---- Deleted fixed-cost templates (soft-deleted via deleted_at) ---- */
+
+export interface DeletedFixedCostTemplate {
+  id: string;
+  name: string;
+  monthly_amount: number;
+  deleted_at: string | null;
+  deleted_by: string | null;
+}
+
+export async function fetchDeletedFixedCostTemplates(): Promise<DeletedFixedCostTemplate[]> {
+  const { data, error } = await db
+    .from("fixed_cost_templates")
+    .select("id, name, monthly_amount, deleted_at, deleted_by")
+    .not("deleted_at", "is", null)
+    .order("deleted_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as DeletedFixedCostTemplate[];
+}
+
+export async function restoreFixedCostTemplate(id: string): Promise<void> {
+  const { error } = await db
+    .from("fixed_cost_templates")
+    .update({ deleted_at: null, deleted_by: null, is_active: true })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function purgeFixedCostTemplate(id: string): Promise<void> {
+  const { error } = await db.from("fixed_cost_templates").delete().eq("id", id);
   if (error) throw error;
 }

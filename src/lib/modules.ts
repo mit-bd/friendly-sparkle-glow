@@ -10,6 +10,7 @@ import {
   Settings,
   History,
   TrendingDown,
+  Repeat,
   type LucideIcon,
 } from "lucide-react";
 
@@ -17,6 +18,7 @@ export type ModuleKey =
   | "dashboard"
   | "expenses"
   | "marketing"
+  | "fixed_costs"
   | "returns"
   | "damages"
   | "reports"
@@ -66,6 +68,16 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Overview", to: "/marketing" },
       { label: "Add Marketing Cost", to: "/marketing/add" },
       { label: "Marketing Reports", to: "/marketing/reports" },
+    ],
+  },
+  {
+    label: "Fixed Costs",
+    to: "/fixed-costs",
+    icon: Repeat,
+    module: "fixed_costs",
+    children: [
+      { label: "Overview", to: "/fixed-costs" },
+      { label: "Fixed Cost Reports", to: "/fixed-costs/reports" },
     ],
   },
   {
@@ -125,6 +137,7 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Company Profile", to: "/settings/company" },
       { label: "Signatories", to: "/settings/signatories" },
       { label: "Marketing Setup", to: "/settings/marketing" },
+      { label: "Fixed Cost Management", to: "/settings/fixed-costs" },
       { label: "Loss Setup", to: "/settings/loss" },
       { label: "Notification Settings", to: "/settings/notifications" },
       { label: "Permissions", to: "/settings/permissions" },
@@ -147,6 +160,7 @@ export const MODULE_LABELS: Record<ModuleKey, string> = {
   dashboard: "Dashboard",
   expenses: "Expenses",
   marketing: "Marketing",
+  fixed_costs: "Fixed Costs",
   returns: "Returns",
   damages: "Damages",
   reports: "Reports",

@@ -22,12 +22,14 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
+import { Route as AuthenticatedFixedCostsRouteImport } from './routes/_authenticated/fixed-costs'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings.index'
 import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns.index'
 import { Route as AuthenticatedMarketingIndexRouteImport } from './routes/_authenticated/marketing.index'
+import { Route as AuthenticatedFixedCostsIndexRouteImport } from './routes/_authenticated/fixed-costs.index'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses.index'
 import { Route as AuthenticatedDamagesIndexRouteImport } from './routes/_authenticated/damages.index'
 import { Route as AuthenticatedSettingsSignatoriesRouteImport } from './routes/_authenticated/settings.signatories'
@@ -36,6 +38,7 @@ import { Route as AuthenticatedSettingsPermissionsRouteImport } from './routes/_
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
 import { Route as AuthenticatedSettingsMarketingRouteImport } from './routes/_authenticated/settings.marketing'
 import { Route as AuthenticatedSettingsLossRouteImport } from './routes/_authenticated/settings.loss'
+import { Route as AuthenticatedSettingsFixedCostsRouteImport } from './routes/_authenticated/settings.fixed-costs'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedReturnsReportsRouteImport } from './routes/_authenticated/returns.reports'
 import { Route as AuthenticatedReturnsPendingRouteImport } from './routes/_authenticated/returns.pending'
@@ -46,6 +49,7 @@ import { Route as AuthenticatedReportsExportHistoryRouteImport } from './routes/
 import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_authenticated/reports.detailed'
 import { Route as AuthenticatedMarketingReportsRouteImport } from './routes/_authenticated/marketing.reports'
 import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
+import { Route as AuthenticatedFixedCostsReportsRouteImport } from './routes/_authenticated/fixed-costs.reports'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
 import { Route as AuthenticatedExpensesPendingRouteImport } from './routes/_authenticated/expenses.pending'
 import { Route as AuthenticatedExpensesCategoriesRouteImport } from './routes/_authenticated/expenses.categories'
@@ -126,6 +130,11 @@ const AuthenticatedLossRoute = AuthenticatedLossRouteImport.update({
   path: '/loss',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFixedCostsRoute = AuthenticatedFixedCostsRouteImport.update({
+  id: '/fixed-costs',
+  path: '/fixed-costs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
   id: '/damages',
   path: '/damages',
@@ -158,6 +167,12 @@ const AuthenticatedMarketingIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedMarketingRoute,
+  } as any)
+const AuthenticatedFixedCostsIndexRoute =
+  AuthenticatedFixedCostsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedFixedCostsRoute,
   } as any)
 const AuthenticatedExpensesIndexRoute =
   AuthenticatedExpensesIndexRouteImport.update({
@@ -205,6 +220,12 @@ const AuthenticatedSettingsLossRoute =
   AuthenticatedSettingsLossRouteImport.update({
     id: '/settings/loss',
     path: '/settings/loss',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsFixedCostsRoute =
+  AuthenticatedSettingsFixedCostsRouteImport.update({
+    id: '/settings/fixed-costs',
+    path: '/settings/fixed-costs',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsCompanyRoute =
@@ -264,6 +285,12 @@ const AuthenticatedMarketingAddRoute =
     id: '/add',
     path: '/add',
     getParentRoute: () => AuthenticatedMarketingRoute,
+  } as any)
+const AuthenticatedFixedCostsReportsRoute =
+  AuthenticatedFixedCostsReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedFixedCostsRoute,
   } as any)
 const AuthenticatedExpensesRecycleBinRoute =
   AuthenticatedExpensesRecycleBinRouteImport.update({
@@ -355,6 +382,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
+  '/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
   '/loss': typeof AuthenticatedLossRoute
   '/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -372,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
@@ -382,6 +411,7 @@ export interface FileRoutesByFullPath {
   '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/fixed-costs': typeof AuthenticatedSettingsFixedCostsRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
@@ -390,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages/': typeof AuthenticatedDamagesIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/fixed-costs/': typeof AuthenticatedFixedCostsIndexRoute
   '/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/returns/': typeof AuthenticatedReturnsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -421,6 +452,7 @@ export interface FileRoutesByTo {
   '/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/reports/detailed': typeof AuthenticatedReportsDetailedRoute
@@ -431,6 +463,7 @@ export interface FileRoutesByTo {
   '/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/fixed-costs': typeof AuthenticatedSettingsFixedCostsRoute
   '/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
@@ -439,6 +472,7 @@ export interface FileRoutesByTo {
   '/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/damages': typeof AuthenticatedDamagesIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
+  '/fixed-costs': typeof AuthenticatedFixedCostsIndexRoute
   '/marketing': typeof AuthenticatedMarketingIndexRoute
   '/returns': typeof AuthenticatedReturnsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -457,6 +491,7 @@ export interface FileRoutesById {
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
+  '/_authenticated/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
   '/_authenticated/loss': typeof AuthenticatedLossRoute
   '/_authenticated/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -475,6 +510,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/categories': typeof AuthenticatedExpensesCategoriesRoute
   '/_authenticated/expenses/pending': typeof AuthenticatedExpensesPendingRoute
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
+  '/_authenticated/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/_authenticated/marketing/reports': typeof AuthenticatedMarketingReportsRoute
   '/_authenticated/reports/detailed': typeof AuthenticatedReportsDetailedRoute
@@ -485,6 +521,7 @@ export interface FileRoutesById {
   '/_authenticated/returns/pending': typeof AuthenticatedReturnsPendingRoute
   '/_authenticated/returns/reports': typeof AuthenticatedReturnsReportsRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/_authenticated/settings/fixed-costs': typeof AuthenticatedSettingsFixedCostsRoute
   '/_authenticated/settings/loss': typeof AuthenticatedSettingsLossRoute
   '/_authenticated/settings/marketing': typeof AuthenticatedSettingsMarketingRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
@@ -493,6 +530,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/signatories': typeof AuthenticatedSettingsSignatoriesRoute
   '/_authenticated/damages/': typeof AuthenticatedDamagesIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
+  '/_authenticated/fixed-costs/': typeof AuthenticatedFixedCostsIndexRoute
   '/_authenticated/marketing/': typeof AuthenticatedMarketingIndexRoute
   '/_authenticated/returns/': typeof AuthenticatedReturnsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -512,6 +550,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/backup'
     | '/damages'
+    | '/fixed-costs'
     | '/loss'
     | '/marketing'
     | '/notifications'
@@ -529,6 +568,7 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
     | '/reports/detailed'
@@ -539,6 +579,7 @@ export interface FileRouteTypes {
     | '/returns/pending'
     | '/returns/reports'
     | '/settings/company'
+    | '/settings/fixed-costs'
     | '/settings/loss'
     | '/settings/marketing'
     | '/settings/notifications'
@@ -547,6 +588,7 @@ export interface FileRouteTypes {
     | '/settings/signatories'
     | '/damages/'
     | '/expenses/'
+    | '/fixed-costs/'
     | '/marketing/'
     | '/returns/'
     | '/settings/'
@@ -578,6 +620,7 @@ export interface FileRouteTypes {
     | '/expenses/categories'
     | '/expenses/pending'
     | '/expenses/recycle-bin'
+    | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
     | '/reports/detailed'
@@ -588,6 +631,7 @@ export interface FileRouteTypes {
     | '/returns/pending'
     | '/returns/reports'
     | '/settings/company'
+    | '/settings/fixed-costs'
     | '/settings/loss'
     | '/settings/marketing'
     | '/settings/notifications'
@@ -596,6 +640,7 @@ export interface FileRouteTypes {
     | '/settings/signatories'
     | '/damages'
     | '/expenses'
+    | '/fixed-costs'
     | '/marketing'
     | '/returns'
     | '/settings'
@@ -613,6 +658,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audit'
     | '/_authenticated/backup'
     | '/_authenticated/damages'
+    | '/_authenticated/fixed-costs'
     | '/_authenticated/loss'
     | '/_authenticated/marketing'
     | '/_authenticated/notifications'
@@ -631,6 +677,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/categories'
     | '/_authenticated/expenses/pending'
     | '/_authenticated/expenses/recycle-bin'
+    | '/_authenticated/fixed-costs/reports'
     | '/_authenticated/marketing/add'
     | '/_authenticated/marketing/reports'
     | '/_authenticated/reports/detailed'
@@ -641,6 +688,7 @@ export interface FileRouteTypes {
     | '/_authenticated/returns/pending'
     | '/_authenticated/returns/reports'
     | '/_authenticated/settings/company'
+    | '/_authenticated/settings/fixed-costs'
     | '/_authenticated/settings/loss'
     | '/_authenticated/settings/marketing'
     | '/_authenticated/settings/notifications'
@@ -649,6 +697,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/signatories'
     | '/_authenticated/damages/'
     | '/_authenticated/expenses/'
+    | '/_authenticated/fixed-costs/'
     | '/_authenticated/marketing/'
     | '/_authenticated/returns/'
     | '/_authenticated/settings/'
@@ -759,6 +808,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLossRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/fixed-costs': {
+      id: '/_authenticated/fixed-costs'
+      path: '/fixed-costs'
+      fullPath: '/fixed-costs'
+      preLoaderRoute: typeof AuthenticatedFixedCostsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/damages': {
       id: '/_authenticated/damages'
       path: '/damages'
@@ -800,6 +856,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketing/'
       preLoaderRoute: typeof AuthenticatedMarketingIndexRouteImport
       parentRoute: typeof AuthenticatedMarketingRoute
+    }
+    '/_authenticated/fixed-costs/': {
+      id: '/_authenticated/fixed-costs/'
+      path: '/'
+      fullPath: '/fixed-costs/'
+      preLoaderRoute: typeof AuthenticatedFixedCostsIndexRouteImport
+      parentRoute: typeof AuthenticatedFixedCostsRoute
     }
     '/_authenticated/expenses/': {
       id: '/_authenticated/expenses/'
@@ -855,6 +918,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/loss'
       fullPath: '/settings/loss'
       preLoaderRoute: typeof AuthenticatedSettingsLossRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/fixed-costs': {
+      id: '/_authenticated/settings/fixed-costs'
+      path: '/settings/fixed-costs'
+      fullPath: '/settings/fixed-costs'
+      preLoaderRoute: typeof AuthenticatedSettingsFixedCostsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/company': {
@@ -926,6 +996,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/marketing/add'
       preLoaderRoute: typeof AuthenticatedMarketingAddRouteImport
       parentRoute: typeof AuthenticatedMarketingRoute
+    }
+    '/_authenticated/fixed-costs/reports': {
+      id: '/_authenticated/fixed-costs/reports'
+      path: '/reports'
+      fullPath: '/fixed-costs/reports'
+      preLoaderRoute: typeof AuthenticatedFixedCostsReportsRouteImport
+      parentRoute: typeof AuthenticatedFixedCostsRoute
     }
     '/_authenticated/expenses/recycle-bin': {
       id: '/_authenticated/expenses/recycle-bin'
@@ -1049,6 +1126,22 @@ const AuthenticatedDamagesRouteChildren: AuthenticatedDamagesRouteChildren = {
 const AuthenticatedDamagesRouteWithChildren =
   AuthenticatedDamagesRoute._addFileChildren(AuthenticatedDamagesRouteChildren)
 
+interface AuthenticatedFixedCostsRouteChildren {
+  AuthenticatedFixedCostsReportsRoute: typeof AuthenticatedFixedCostsReportsRoute
+  AuthenticatedFixedCostsIndexRoute: typeof AuthenticatedFixedCostsIndexRoute
+}
+
+const AuthenticatedFixedCostsRouteChildren: AuthenticatedFixedCostsRouteChildren =
+  {
+    AuthenticatedFixedCostsReportsRoute: AuthenticatedFixedCostsReportsRoute,
+    AuthenticatedFixedCostsIndexRoute: AuthenticatedFixedCostsIndexRoute,
+  }
+
+const AuthenticatedFixedCostsRouteWithChildren =
+  AuthenticatedFixedCostsRoute._addFileChildren(
+    AuthenticatedFixedCostsRouteChildren,
+  )
+
 interface AuthenticatedMarketingRouteChildren {
   AuthenticatedMarketingAddRoute: typeof AuthenticatedMarketingAddRoute
   AuthenticatedMarketingReportsRoute: typeof AuthenticatedMarketingReportsRoute
@@ -1095,6 +1188,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
+  AuthenticatedFixedCostsRoute: typeof AuthenticatedFixedCostsRouteWithChildren
   AuthenticatedLossRoute: typeof AuthenticatedLossRoute
   AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
@@ -1113,6 +1207,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsExportHistoryRoute: typeof AuthenticatedReportsExportHistoryRoute
   AuthenticatedReportsSummaryRoute: typeof AuthenticatedReportsSummaryRoute
   AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
+  AuthenticatedSettingsFixedCostsRoute: typeof AuthenticatedSettingsFixedCostsRoute
   AuthenticatedSettingsLossRoute: typeof AuthenticatedSettingsLossRoute
   AuthenticatedSettingsMarketingRoute: typeof AuthenticatedSettingsMarketingRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
@@ -1129,6 +1224,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
+  AuthenticatedFixedCostsRoute: AuthenticatedFixedCostsRouteWithChildren,
   AuthenticatedLossRoute: AuthenticatedLossRoute,
   AuthenticatedMarketingRoute: AuthenticatedMarketingRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
@@ -1148,6 +1244,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedReportsExportHistoryRoute,
   AuthenticatedReportsSummaryRoute: AuthenticatedReportsSummaryRoute,
   AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
+  AuthenticatedSettingsFixedCostsRoute: AuthenticatedSettingsFixedCostsRoute,
   AuthenticatedSettingsLossRoute: AuthenticatedSettingsLossRoute,
   AuthenticatedSettingsMarketingRoute: AuthenticatedSettingsMarketingRoute,
   AuthenticatedSettingsNotificationsRoute:
