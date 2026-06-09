@@ -56,6 +56,7 @@ import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_auth
 import { Route as AuthenticatedMarketingReportsRouteImport } from './routes/_authenticated/marketing.reports'
 import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
 import { Route as AuthenticatedFixedCostsReportsRouteImport } from './routes/_authenticated/fixed-costs.reports'
+import { Route as AuthenticatedFixedCostsIdRouteImport } from './routes/_authenticated/fixed-costs.$id'
 import { Route as AuthenticatedFinanceReportsRouteImport } from './routes/_authenticated/finance.reports'
 import { Route as AuthenticatedFinanceReceivablesRouteImport } from './routes/_authenticated/finance.receivables'
 import { Route as AuthenticatedFinancePayablesRouteImport } from './routes/_authenticated/finance.payables'
@@ -339,6 +340,12 @@ const AuthenticatedFixedCostsReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedFixedCostsRoute,
   } as any)
+const AuthenticatedFixedCostsIdRoute =
+  AuthenticatedFixedCostsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedFixedCostsRoute,
+  } as any)
 const AuthenticatedFinanceReportsRoute =
   AuthenticatedFinanceReportsRouteImport.update({
     id: '/reports',
@@ -504,6 +511,7 @@ export interface FileRoutesByFullPath {
   '/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
   '/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
   '/finance/reports': typeof AuthenticatedFinanceReportsRoute
+  '/fixed-costs/$id': typeof AuthenticatedFixedCostsIdRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -568,6 +576,7 @@ export interface FileRoutesByTo {
   '/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
   '/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
   '/finance/reports': typeof AuthenticatedFinanceReportsRoute
+  '/fixed-costs/$id': typeof AuthenticatedFixedCostsIdRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -640,6 +649,7 @@ export interface FileRoutesById {
   '/_authenticated/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
   '/_authenticated/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
   '/_authenticated/finance/reports': typeof AuthenticatedFinanceReportsRoute
+  '/_authenticated/fixed-costs/$id': typeof AuthenticatedFixedCostsIdRoute
   '/_authenticated/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/_authenticated/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -712,6 +722,7 @@ export interface FileRouteTypes {
     | '/finance/payables'
     | '/finance/receivables'
     | '/finance/reports'
+    | '/fixed-costs/$id'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -776,6 +787,7 @@ export interface FileRouteTypes {
     | '/finance/payables'
     | '/finance/receivables'
     | '/finance/reports'
+    | '/fixed-costs/$id'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -847,6 +859,7 @@ export interface FileRouteTypes {
     | '/_authenticated/finance/payables'
     | '/_authenticated/finance/receivables'
     | '/_authenticated/finance/reports'
+    | '/_authenticated/fixed-costs/$id'
     | '/_authenticated/fixed-costs/reports'
     | '/_authenticated/marketing/add'
     | '/_authenticated/marketing/reports'
@@ -1220,6 +1233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFixedCostsReportsRouteImport
       parentRoute: typeof AuthenticatedFixedCostsRoute
     }
+    '/_authenticated/fixed-costs/$id': {
+      id: '/_authenticated/fixed-costs/$id'
+      path: '/$id'
+      fullPath: '/fixed-costs/$id'
+      preLoaderRoute: typeof AuthenticatedFixedCostsIdRouteImport
+      parentRoute: typeof AuthenticatedFixedCostsRoute
+    }
     '/_authenticated/finance/reports': {
       id: '/_authenticated/finance/reports'
       path: '/reports'
@@ -1464,12 +1484,14 @@ const AuthenticatedFinanceRouteWithChildren =
   AuthenticatedFinanceRoute._addFileChildren(AuthenticatedFinanceRouteChildren)
 
 interface AuthenticatedFixedCostsRouteChildren {
+  AuthenticatedFixedCostsIdRoute: typeof AuthenticatedFixedCostsIdRoute
   AuthenticatedFixedCostsReportsRoute: typeof AuthenticatedFixedCostsReportsRoute
   AuthenticatedFixedCostsIndexRoute: typeof AuthenticatedFixedCostsIndexRoute
 }
 
 const AuthenticatedFixedCostsRouteChildren: AuthenticatedFixedCostsRouteChildren =
   {
+    AuthenticatedFixedCostsIdRoute: AuthenticatedFixedCostsIdRoute,
     AuthenticatedFixedCostsReportsRoute: AuthenticatedFixedCostsReportsRoute,
     AuthenticatedFixedCostsIndexRoute: AuthenticatedFixedCostsIndexRoute,
   }
