@@ -22,10 +22,9 @@ const DRILL: Record<string, string> = {
 
 interface Props {
   slices: CompositionSlice[];
-  range: { from: string; to: string };
 }
 
-export function CompositionCharts({ slices, range }: Props) {
+export function CompositionCharts({ slices }: Props) {
   const [active, setActive] = useState<string | null>(null);
   const selected = slices.find((s) => s.key === active) ?? null;
 
@@ -114,7 +113,6 @@ export function CompositionCharts({ slices, range }: Props) {
           {selected && (
             <Link
               to={DRILL[selected.key] ?? "/expenses"}
-              search={DRILL[selected.key] === "/expenses" ? { from: range.from, to: range.to } : undefined}
               className="mt-2 flex items-center justify-between gap-2 rounded-md bg-brand-gradient px-3 py-2 text-sm font-medium text-primary-foreground"
             >
               <span>Drill into {selected.name}</span>
