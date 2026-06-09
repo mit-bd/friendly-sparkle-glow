@@ -519,3 +519,74 @@ function EmptyState({ what }: { what: string }) {
     </div>
   );
 }
+
+interface LossRow {
+  id: string;
+  number: string;
+  amount: number;
+  date: string;
+  deleted_at: string | null;
+}
+
+function LossTable({
+  numberLabel,
+  rows,
+  sel,
+  onToggle,
+  onToggleAll,
+  onRestore,
+  onPurge,
+}: {
+  numberLabel: string;
+  rows: LossRow[];
+  sel: Set<string>;
+  onToggle: (id: string) => void;
+  onToggleAll: () => void;
+  onRestore: (r: LossRow) => void;
+  onPurge: (r: LossRow) => void;
+}) {
+  return (
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-10">
+                <Checkbox
+                  checked={sel.size === rows.length && rows.length > 0}
+                  onCheckedChange={onToggleAll}
+                  aria-label="Select all"
+                />
+              </TableHead>
+              <TableHead>{numberLabel}</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Deleted</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((r) => (
+              <TableRow key={r.id}>
+                <TableCell>
+                  <Checkbox
+                    checked={sel.has(r.id)}
+                    onCheckedChange={() => onToggle(r.id)}
+                    aria-label={`Select ${r.number}`}
+                  />
+                </TableCell>
+                <TableCell className="font-medium">{r.number}</TableCell>
+                <TableCell className="tabular-nums">{formatTk(r.amount)}</TableCell>
+                <TableCell className="text-muted-foreground">{formatDate(r.date)}</TableCell>
+                <TableCell className="text-muted-foreground">{formatDateTime(r.deleted_at)}</TableCell>
+                <TableCell className="text-right">
+                  <RowActions onRestore={() => onRestore(r)} onPurge={() => onPurge(r)} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
