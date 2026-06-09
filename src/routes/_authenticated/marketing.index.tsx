@@ -317,8 +317,69 @@ function MarketingOverview() {
               </Card>
             </>
           )}
+
+          <Card>
+            <CardHeader><CardTitle className="text-base">All marketing costs</CardTitle></CardHeader>
+            <CardContent className="p-0">
+              {list.length === 0 ? (
+                <div className="p-6">
+                  <EmptyState icon={Megaphone} title="No marketing costs yet" description="Record your first marketing cost." />
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-10">
+                        <Checkbox
+                          checked={listAllSelected}
+                          onCheckedChange={() => listAllSelected ? bulk.selection.removeMany(list) : bulk.selection.addMany(list)}
+                          aria-label="Select all marketing costs"
+                        />
+                      </TableHead>
+                      <TableHead>Cost No.</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Platform</TableHead>
+                      <TableHead>Campaign</TableHead>
+                      <TableHead className="text-right">Amount (BDT)</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {list.map((r) => (
+                      <TableRow key={r.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={bulk.selection.isSelected(r.id)}
+                            onCheckedChange={() => bulk.selection.toggle(r.id)}
+                            aria-label={`Select ${r.expense_number}`}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">{r.expense_number}</TableCell>
+                        <TableCell className="whitespace-nowrap">{formatDate(r.expense_date)}</TableCell>
+                        <TableCell>{r.platform_id ? platformMap.get(r.platform_id) ?? "—" : "—"}</TableCell>
+                        <TableCell className="max-w-[200px] truncate">{r.campaign_name || "—"}</TableCell>
+                        <TableCell className="text-right tabular-nums">{formatBDT(r.amount)}</TableCell>
+                        <TableCell><StatusBadge status={r.status as never} /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
         </>
       )}
+
+      <BulkActionBar
+        count={bulk.selection.count}
+        canExport={canExport}
+        busy={bulk.busy}
+        onClear={bulk.selection.clear}
+        onPrint={() => runBulk("selected", "print")}
+        onPdf={() => runBulk("selected", "pdf")}
+        onCsv={() => runBulk("selected", "csv")}
+      />
+      {bulk.printNode}
     </div>
   );
 }
