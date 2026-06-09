@@ -330,6 +330,8 @@ function RecycleBinPage() {
 
           {/* CATEGORIES */}
           <TabsContent value="categories" className="mt-4">
+
+          </TabsContent>
             <BulkBar
               count={selCat.size}
               kind="categories"
