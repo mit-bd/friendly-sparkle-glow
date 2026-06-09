@@ -547,6 +547,17 @@ function AuditPage() {
           </ReportDocument>
         </div>
       )}
+
+      <BulkActionBar
+        count={bulk.selection.count}
+        canExport={canExport}
+        busy={bulk.busy}
+        onClear={bulk.selection.clear}
+        onPrint={() => runBulkSelected("print")}
+        onPdf={() => runBulkSelected("pdf")}
+        onCsv={() => runBulkSelected("csv")}
+      />
+      {bulk.printNode}
     </div>
   );
 }
