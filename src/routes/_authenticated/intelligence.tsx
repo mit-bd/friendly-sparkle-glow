@@ -36,6 +36,7 @@ import {
   detectAnomalies,
   buildSeries,
   type Granularity,
+  type IntelDataset,
 } from "@/lib/intelligence";
 import { buildCombinedMonthly, type CombinedMonthly } from "@/lib/loss";
 import { fetchAllPlatforms } from "@/lib/marketing";
@@ -65,7 +66,7 @@ export const Route = createFileRoute("/_authenticated/intelligence")({
   component: IntelligencePage,
 });
 
-const EMPTY_DATASET = { expenses: [], returns: [], damages: [] };
+const EMPTY_DATASET: IntelDataset = { expenses: [], returns: [], damages: [] };
 
 function IntelligencePage() {
   const { canAccessModule, can, profile } = useAuth();
