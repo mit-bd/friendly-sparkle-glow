@@ -26,7 +26,11 @@ export type ActivityAction =
   | "password_change"
   | "enable"
   | "disable"
-  | "generate";
+  | "generate"
+  | "collection_added"
+  | "collection_removed"
+  | "payment_added"
+  | "payment_removed";
 
 export type AuditEntityType =
   | "expense"
@@ -42,7 +46,9 @@ export type AuditEntityType =
   | "return_attachment"
   | "damage_attachment"
   | "notification"
-  | "fixed_cost";
+  | "fixed_cost"
+  | "receivable"
+  | "payable";
 
 export interface ActivityLog {
   id: string;
@@ -88,6 +94,10 @@ export const ACTIVITY_ACTION_LABELS: Record<string, string> = {
   enable: "Enabled",
   disable: "Disabled",
   generate: "Generated",
+  collection_added: "Collection Added",
+  collection_removed: "Collection Removed",
+  payment_added: "Payment Added",
+  payment_removed: "Payment Removed",
 };
 
 export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
@@ -105,6 +115,8 @@ export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
   damage_attachment: "Damage Attachment",
   notification: "Notification",
   fixed_cost: "Fixed Cost",
+  receivable: "Receivable",
+  payable: "Payable",
 };
 
 /** Tailwind tone classes per action (theme-safe semantic tokens). */
@@ -129,6 +141,10 @@ export const ACTIVITY_TONE: Record<string, string> = {
   enable: "bg-chart-2/15 text-chart-2",
   disable: "bg-destructive/15 text-destructive",
   generate: "bg-chart-1/15 text-chart-1",
+  collection_added: "bg-chart-2/15 text-chart-2",
+  collection_removed: "bg-destructive/15 text-destructive",
+  payment_added: "bg-chart-4/15 text-chart-4",
+  payment_removed: "bg-destructive/15 text-destructive",
 };
 
 /** Best-effort client logger for actions that don't hit a tracked table. */
