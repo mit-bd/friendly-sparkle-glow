@@ -48,7 +48,8 @@ export type AuditEntityType =
   | "notification"
   | "fixed_cost"
   | "receivable"
-  | "payable";
+  | "payable"
+  | "budget";
 
 export interface ActivityLog {
   id: string;
@@ -117,6 +118,7 @@ export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
   fixed_cost: "Fixed Cost",
   receivable: "Receivable",
   payable: "Payable",
+  budget: "Budget",
 };
 
 /** Tailwind tone classes per action (theme-safe semantic tokens). */
