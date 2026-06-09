@@ -30,6 +30,7 @@ import { ExpenseMiniTable } from "@/components/analytics/ExpenseMiniTable";
 import { EmptyState } from "@/components/analytics/EmptyState";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { RecentPanels } from "@/components/dashboard/RecentPanels";
+import { BudgetOverviewCard } from "@/components/budgets/BudgetOverviewCard";
 import { readPreferences } from "@/lib/preferences";
 
 export const Route = createFileRoute("/_authenticated/")({
@@ -184,6 +185,8 @@ function Dashboard() {
               </div>
             </div>
           )}
+
+          <BudgetOverviewCard />
 
           <RecentPanels />
         </>
