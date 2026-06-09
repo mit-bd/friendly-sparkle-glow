@@ -409,3 +409,36 @@ export async function softDeleteSubcategory(id: string, actorId: string): Promis
     .eq("id", id);
   if (error) throw error;
 }
+
+/* ---- Deleted fixed-cost templates (soft-deleted via deleted_at) ---- */
+
+export interface DeletedFixedCostTemplate {
+  id: string;
+  name: string;
+  monthly_amount: number;
+  deleted_at: string | null;
+  deleted_by: string | null;
+}
+
+export async function fetchDeletedFixedCostTemplates(): Promise<DeletedFixedCostTemplate[]> {
+  const { data, error } = await db
+    .from("fixed_cost_templates")
+    .select("id, name, monthly_amount, deleted_at, deleted_by")
+    .not("deleted_at", "is", null)
+    .order("deleted_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as DeletedFixedCostTemplate[];
+}
+
+export async function restoreFixedCostTemplate(id: string): Promise<void> {
+  const { error } = await db
+    .from("fixed_cost_templates")
+    .update({ deleted_at: null, deleted_by: null, is_active: true })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function purgeFixedCostTemplate(id: string): Promise<void> {
+  const { error } = await db.from("fixed_cost_templates").delete().eq("id", id);
+  if (error) throw error;
+}
