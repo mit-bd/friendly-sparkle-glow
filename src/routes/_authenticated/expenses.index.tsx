@@ -162,7 +162,8 @@ function ExpensesListPage() {
   // Shared filter+search builder so the on-screen list and bulk exports stay
   // perfectly in sync with the active filters.
   const applyFilters = useCallback(
-    (q: ReturnType<typeof supabase.from>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (q: any) => {
       if (filters.category !== ALL) q = q.eq("category_id", filters.category);
       if (filters.subcategory !== ALL) q = q.eq("subcategory_id", filters.subcategory);
       if (filters.createdBy !== ALL) q = q.eq("created_by", filters.createdBy);
