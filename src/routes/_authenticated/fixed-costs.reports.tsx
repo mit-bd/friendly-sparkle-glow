@@ -37,8 +37,14 @@ import {
   buildMonthlyFixedCost,
   buildTopFixedCosts,
   sumAmount,
+  fetchOutstandingFixedCosts,
+  fetchFixedCostPaymentHistory,
+  remainingOf,
+  settlementOf,
+  SETTLEMENT_STATUS,
   type FixedCostRecord,
   type FixedCostTemplate,
+  type PaymentHistoryRow,
 } from "@/lib/fixed-costs";
 
 export const Route = createFileRoute("/_authenticated/fixed-costs/reports")({
@@ -46,12 +52,14 @@ export const Route = createFileRoute("/_authenticated/fixed-costs/reports")({
   component: FixedCostReports,
 });
 
-type FcReportType = "summary" | "monthly" | "approval";
+type FcReportType = "summary" | "monthly" | "approval" | "outstanding" | "payments";
 
 const REPORT_TYPES: { value: FcReportType; label: string; description: string }[] = [
   { value: "summary", label: "Fixed Cost Summary Report", description: "Approved spend grouped per fixed cost with share of total." },
   { value: "monthly", label: "Monthly Fixed Cost Report", description: "Approved fixed cost totals per month." },
   { value: "approval", label: "Fixed Cost Approval Report", description: "Every generated record in range with its approval status." },
+  { value: "outstanding", label: "Fixed Cost Outstanding Report", description: "Unsettled fixed costs with total, paid, and remaining balance." },
+  { value: "payments", label: "Fixed Cost Payment History", description: "Every payment recorded in range with reference and amount." },
 ];
 
 const th = "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground";
