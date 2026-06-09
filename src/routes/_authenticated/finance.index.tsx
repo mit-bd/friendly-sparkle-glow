@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell, LineChart, Line, Legend } from "recharts";
-import { ArrowDownRight, ArrowUpRight, Banknote, HandCoins, Scale, AlertTriangle, CalendarClock, CalendarDays, Truck, Boxes, Sparkles, FileBarChart } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Banknote, HandCoins, Scale, AlertTriangle, CalendarClock, CalendarDays, Truck, Boxes, Sparkles, FileBarChart, Repeat } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -21,7 +21,6 @@ import {
   fetchOutstandingFixedCosts, fetchTemplates, remainingOf,
   type FixedCostRecord, type FixedCostTemplate,
 } from "@/lib/fixed-costs";
-import { Repeat } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/finance/")({
   head: () => ({ meta: [{ title: "Finance Dashboard — Motion IT BD" }] }),
