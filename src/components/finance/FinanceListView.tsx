@@ -27,7 +27,6 @@ import {
   fetchPayables, fetchReceivables, formatTk, partyTypeLabel, PAYABLE_PARTY_TYPES, RECEIVABLE_PARTY_TYPES,
   type FinanceKind, type Payable, type Receivable,
 } from "@/lib/finance";
-import { ATTACHMENT_BUCKET } from "@/lib/finance";
 
 type Row = (Receivable | Payable) & { number: string; settled: number };
 
