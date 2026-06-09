@@ -34,20 +34,24 @@ export function AppSidebar() {
 
   const visible = NAV_ITEMS.filter((item) => canAccessModule(item.module));
 
+  // Soft hover + a brand-gradient indicator bar on the active item.
+  const navItemClass =
+    "relative h-9 gap-2.5 rounded-lg text-sidebar-foreground/80 transition-colors duration-200 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-1.5 data-[active=true]:before:bottom-1.5 data-[active=true]:before:w-1 data-[active=true]:before:rounded-full data-[active=true]:before:bg-brand-gradient";
+
   return (
     <Sidebar collapsible="offcanvas">
-      <SidebarHeader className="border-b border-sidebar-border px-4 py-3.5">
+      <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
         <CompanyLogo size="sm" showTagline />
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
+      <SidebarContent className="px-2 py-2">
+        <SidebarGroup className="p-0">
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-1">
               {visible.map((item) => {
                 if (!item.children) {
                   return (
                     <SidebarMenuItem key={item.to}>
-                      <SidebarMenuButton asChild isActive={isActive(item.to)}>
+                      <SidebarMenuButton asChild isActive={isActive(item.to)} className={navItemClass}>
                         <Link to={item.to} onClick={() => setOpenMobile(false)}>
                           <item.icon className="h-4 w-4" />
                           <span>{item.label}</span>
@@ -65,17 +69,21 @@ export function AppSidebar() {
                   >
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
-                        <SidebarMenuButton isActive={groupActive}>
+                        <SidebarMenuButton isActive={groupActive} className={navItemClass}>
                           <item.icon className="h-4 w-4" />
                           <span>{item.label}</span>
                           <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <SidebarMenuSub>
+                        <SidebarMenuSub className="mr-0 gap-0.5 border-sidebar-border/70">
                           {item.children.map((child) => (
                             <SidebarMenuSubItem key={child.to}>
-                              <SidebarMenuSubButton asChild isActive={pathname === child.to}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={pathname === child.to}
+                                className="text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent/80 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground"
+                              >
                                 <Link to={child.to} onClick={() => setOpenMobile(false)}>
                                   <span>{child.label}</span>
                                 </Link>
