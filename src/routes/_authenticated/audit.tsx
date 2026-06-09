@@ -38,6 +38,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BulkActionBar } from "@/components/bulk/BulkActionBar";
+import { useBulkExport } from "@/hooks/use-bulk-export";
+import type { BulkExportConfig, BulkScope } from "@/lib/bulk-export";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime } from "@/lib/expenses";
