@@ -11,6 +11,7 @@ import {
   Rocket,
   DatabaseBackup,
   Activity,
+  Repeat,
   type LucideIcon,
 } from "lucide-react";
 
@@ -43,6 +44,7 @@ const GROUPS: { heading: string; items: SettingLink[] }[] = [
     heading: "Modules",
     items: [
       { label: "Marketing Settings", description: "Platforms and currencies for marketing costs.", to: "/settings/marketing", icon: Megaphone },
+      { label: "Fixed Cost Management", description: "Recurring monthly cost templates and auto-generation.", to: "/settings/fixed-costs", icon: Repeat, adminOnly: true },
       { label: "Loss Settings", description: "Return reasons and damage types.", to: "/settings/loss", icon: TrendingDown },
     ],
   },
