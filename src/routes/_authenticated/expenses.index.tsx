@@ -97,7 +97,7 @@ function sanitize(term: string) {
 }
 
 function ExpensesListPage() {
-  const { canAccessModule, can, isAdmin } = useAuth();
+  const { canAccessModule, can, isAdmin, profile } = useAuth();
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
@@ -119,9 +119,17 @@ function ExpensesListPage() {
 
   const canView = canAccessModule("expenses");
   const canCreate = isAdmin || can("expenses", "edit");
+  const canExport = isAdmin || can("expenses", "export");
 
   const catMap = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
   const subMap = useMemo(() => new Map(subs.map((s) => [s.id, s.name])), [subs]);
+
+  // Names cache for created_by — kept current so bulk exports of rows from
+  // other pages still resolve the author's name.
+  const namesRef = useRef<Record<string, string>>({});
+  useEffect(() => {
+    namesRef.current = { ...namesRef.current, ...names };
+  }, [names]);
 
   // Reference data (categories, subcategories, creators)
   useEffect(() => {
