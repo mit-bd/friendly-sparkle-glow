@@ -22,6 +22,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedMarketingRouteImport } from './routes/_authenticated/marketing'
 import { Route as AuthenticatedLossRouteImport } from './routes/_authenticated/loss'
+import { Route as AuthenticatedIntelligenceRouteImport } from './routes/_authenticated/intelligence'
 import { Route as AuthenticatedFixedCostsRouteImport } from './routes/_authenticated/fixed-costs'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
@@ -130,6 +131,12 @@ const AuthenticatedLossRoute = AuthenticatedLossRouteImport.update({
   path: '/loss',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedIntelligenceRoute =
+  AuthenticatedIntelligenceRouteImport.update({
+    id: '/intelligence',
+    path: '/intelligence',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedFixedCostsRoute = AuthenticatedFixedCostsRouteImport.update({
   id: '/fixed-costs',
   path: '/fixed-costs',
@@ -383,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/backup': typeof AuthenticatedBackupRoute
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
+  '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/loss': typeof AuthenticatedLossRoute
   '/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -436,6 +444,7 @@ export interface FileRoutesByTo {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
+  '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -492,6 +501,7 @@ export interface FileRoutesById {
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/_authenticated/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
+  '/_authenticated/intelligence': typeof AuthenticatedIntelligenceRoute
   '/_authenticated/loss': typeof AuthenticatedLossRoute
   '/_authenticated/marketing': typeof AuthenticatedMarketingRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -551,6 +561,7 @@ export interface FileRouteTypes {
     | '/backup'
     | '/damages'
     | '/fixed-costs'
+    | '/intelligence'
     | '/loss'
     | '/marketing'
     | '/notifications'
@@ -604,6 +615,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/audit'
     | '/backup'
+    | '/intelligence'
     | '/loss'
     | '/notifications'
     | '/profile'
@@ -659,6 +671,7 @@ export interface FileRouteTypes {
     | '/_authenticated/backup'
     | '/_authenticated/damages'
     | '/_authenticated/fixed-costs'
+    | '/_authenticated/intelligence'
     | '/_authenticated/loss'
     | '/_authenticated/marketing'
     | '/_authenticated/notifications'
@@ -806,6 +819,13 @@ declare module '@tanstack/react-router' {
       path: '/loss'
       fullPath: '/loss'
       preLoaderRoute: typeof AuthenticatedLossRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/intelligence': {
+      id: '/_authenticated/intelligence'
+      path: '/intelligence'
+      fullPath: '/intelligence'
+      preLoaderRoute: typeof AuthenticatedIntelligenceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/fixed-costs': {
@@ -1189,6 +1209,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
   AuthenticatedFixedCostsRoute: typeof AuthenticatedFixedCostsRouteWithChildren
+  AuthenticatedIntelligenceRoute: typeof AuthenticatedIntelligenceRoute
   AuthenticatedLossRoute: typeof AuthenticatedLossRoute
   AuthenticatedMarketingRoute: typeof AuthenticatedMarketingRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
@@ -1225,6 +1246,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
   AuthenticatedFixedCostsRoute: AuthenticatedFixedCostsRouteWithChildren,
+  AuthenticatedIntelligenceRoute: AuthenticatedIntelligenceRoute,
   AuthenticatedLossRoute: AuthenticatedLossRoute,
   AuthenticatedMarketingRoute: AuthenticatedMarketingRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
