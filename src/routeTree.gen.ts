@@ -68,6 +68,7 @@ import { Route as AuthenticatedDamagesPendingRouteImport } from './routes/_authe
 import { Route as AuthenticatedDamagesAddRouteImport } from './routes/_authenticated/damages.add'
 import { Route as AuthenticatedDamagesIdRouteImport } from './routes/_authenticated/damages.$id'
 import { Route as AuthenticatedBudgetsReportsRouteImport } from './routes/_authenticated/budgets.reports'
+import { Route as AuthenticatedBudgetsCreateRouteImport } from './routes/_authenticated/budgets.create'
 import { Route as AuthenticatedBudgetsIdRouteImport } from './routes/_authenticated/budgets.$id'
 import { Route as AuthenticatedReturnsReasonIdRouteImport } from './routes/_authenticated/returns.reason.$id'
 import { Route as AuthenticatedMarketingPlatformIdRouteImport } from './routes/_authenticated/marketing.platform.$id'
@@ -406,6 +407,12 @@ const AuthenticatedBudgetsReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedBudgetsRoute,
   } as any)
+const AuthenticatedBudgetsCreateRoute =
+  AuthenticatedBudgetsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedBudgetsRoute,
+  } as any)
 const AuthenticatedBudgetsIdRoute = AuthenticatedBudgetsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -476,6 +483,7 @@ export interface FileRoutesByFullPath {
   '/system': typeof AuthenticatedSystemRoute
   '/users': typeof AuthenticatedUsersRoute
   '/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
   '/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
@@ -539,6 +547,7 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
   '/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/budgets/create': typeof AuthenticatedBudgetsCreateRoute
   '/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/damages/add': typeof AuthenticatedDamagesAddRoute
@@ -609,6 +618,7 @@ export interface FileRoutesById {
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/budgets/$id': typeof AuthenticatedBudgetsIdRoute
+  '/_authenticated/budgets/create': typeof AuthenticatedBudgetsCreateRoute
   '/_authenticated/budgets/reports': typeof AuthenticatedBudgetsReportsRoute
   '/_authenticated/damages/$id': typeof AuthenticatedDamagesIdRoute
   '/_authenticated/damages/add': typeof AuthenticatedDamagesAddRoute
@@ -679,6 +689,7 @@ export interface FileRouteTypes {
     | '/system'
     | '/users'
     | '/budgets/$id'
+    | '/budgets/create'
     | '/budgets/reports'
     | '/damages/$id'
     | '/damages/add'
@@ -742,6 +753,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/'
     | '/budgets/$id'
+    | '/budgets/create'
     | '/budgets/reports'
     | '/damages/$id'
     | '/damages/add'
@@ -811,6 +823,7 @@ export interface FileRouteTypes {
     | '/_authenticated/users'
     | '/_authenticated/'
     | '/_authenticated/budgets/$id'
+    | '/_authenticated/budgets/create'
     | '/_authenticated/budgets/reports'
     | '/_authenticated/damages/$id'
     | '/_authenticated/damages/add'
@@ -1280,6 +1293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBudgetsReportsRouteImport
       parentRoute: typeof AuthenticatedBudgetsRoute
     }
+    '/_authenticated/budgets/create': {
+      id: '/_authenticated/budgets/create'
+      path: '/create'
+      fullPath: '/budgets/create'
+      preLoaderRoute: typeof AuthenticatedBudgetsCreateRouteImport
+      parentRoute: typeof AuthenticatedBudgetsRoute
+    }
     '/_authenticated/budgets/$id': {
       id: '/_authenticated/budgets/$id'
       path: '/$id'
@@ -1341,11 +1361,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedBudgetsRouteChildren {
   AuthenticatedBudgetsIdRoute: typeof AuthenticatedBudgetsIdRoute
+  AuthenticatedBudgetsCreateRoute: typeof AuthenticatedBudgetsCreateRoute
   AuthenticatedBudgetsReportsRoute: typeof AuthenticatedBudgetsReportsRoute
 }
 
 const AuthenticatedBudgetsRouteChildren: AuthenticatedBudgetsRouteChildren = {
   AuthenticatedBudgetsIdRoute: AuthenticatedBudgetsIdRoute,
+  AuthenticatedBudgetsCreateRoute: AuthenticatedBudgetsCreateRoute,
   AuthenticatedBudgetsReportsRoute: AuthenticatedBudgetsReportsRoute,
 }
 
