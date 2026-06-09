@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpDown,
   ChevronLeft,
@@ -21,6 +21,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BulkActionBar } from "@/components/bulk/BulkActionBar";
+import { BulkScopeMenu, type BulkKind } from "@/components/bulk/BulkScopeMenu";
+import { useBulkExport } from "@/hooks/use-bulk-export";
+import type { BulkExportConfig, BulkScope } from "@/lib/bulk-export";
 import {
   Collapsible,
   CollapsibleContent,
