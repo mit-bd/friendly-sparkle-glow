@@ -151,6 +151,7 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "User Preferences", to: "/settings/preferences" },
       { label: "System Health", to: "/system" },
       { label: "System Readiness", to: "/readiness" },
+      { label: "QA Validation", to: "/qa" },
       { label: "Backup & Recovery", to: "/backup" },
     ],
   },

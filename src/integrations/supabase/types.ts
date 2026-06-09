@@ -1003,6 +1003,48 @@ export type Database = {
         }
         Relationships: []
       }
+      qa_checklist_items: {
+        Row: {
+          area: string
+          created_at: string
+          created_by: string | null
+          id: string
+          module: string
+          notes: string | null
+          severity: string
+          status: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          area?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          module?: string
+          notes?: string | null
+          severity?: string
+          status?: string
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          area?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          module?: string
+          notes?: string | null
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       report_counters: {
         Row: {
           last_seq: number
