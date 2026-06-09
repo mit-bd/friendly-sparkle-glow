@@ -27,6 +27,7 @@ import { Route as AuthenticatedIntelligenceRouteImport } from './routes/_authent
 import { Route as AuthenticatedFixedCostsRouteImport } from './routes/_authenticated/fixed-costs'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedDamagesRouteImport } from './routes/_authenticated/damages'
+import { Route as AuthenticatedBudgetsRouteImport } from './routes/_authenticated/budgets'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings.index'
@@ -165,6 +166,11 @@ const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
 const AuthenticatedDamagesRoute = AuthenticatedDamagesRouteImport.update({
   id: '/damages',
   path: '/damages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBudgetsRoute = AuthenticatedBudgetsRouteImport.update({
+  id: '/budgets',
+  path: '/budgets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedBackupRoute = AuthenticatedBackupRouteImport.update({
@@ -396,14 +402,14 @@ const AuthenticatedDamagesIdRoute = AuthenticatedDamagesIdRouteImport.update({
 } as any)
 const AuthenticatedBudgetsReportsRoute =
   AuthenticatedBudgetsReportsRouteImport.update({
-    id: '/budgets/reports',
-    path: '/budgets/reports',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedBudgetsRoute,
   } as any)
 const AuthenticatedBudgetsIdRoute = AuthenticatedBudgetsIdRouteImport.update({
-  id: '/budgets/$id',
-  path: '/budgets/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedBudgetsRoute,
 } as any)
 const AuthenticatedReturnsReasonIdRoute =
   AuthenticatedReturnsReasonIdRouteImport.update({
@@ -455,6 +461,7 @@ export interface FileRoutesByFullPath {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
+  '/budgets': typeof AuthenticatedBudgetsRouteWithChildren
   '/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
@@ -521,6 +528,7 @@ export interface FileRoutesByTo {
   '/update-password': typeof UpdatePasswordRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
+  '/budgets': typeof AuthenticatedBudgetsRouteWithChildren
   '/intelligence': typeof AuthenticatedIntelligenceRoute
   '/loss': typeof AuthenticatedLossRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -585,6 +593,7 @@ export interface FileRoutesById {
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
+  '/_authenticated/budgets': typeof AuthenticatedBudgetsRouteWithChildren
   '/_authenticated/damages': typeof AuthenticatedDamagesRouteWithChildren
   '/_authenticated/finance': typeof AuthenticatedFinanceRouteWithChildren
   '/_authenticated/fixed-costs': typeof AuthenticatedFixedCostsRouteWithChildren
@@ -655,6 +664,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/audit'
     | '/backup'
+    | '/budgets'
     | '/damages'
     | '/finance'
     | '/fixed-costs'
@@ -721,6 +731,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/audit'
     | '/backup'
+    | '/budgets'
     | '/intelligence'
     | '/loss'
     | '/notifications'
@@ -784,6 +795,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/_authenticated/audit'
     | '/_authenticated/backup'
+    | '/_authenticated/budgets'
     | '/_authenticated/damages'
     | '/_authenticated/finance'
     | '/_authenticated/fixed-costs'
@@ -979,6 +991,13 @@ declare module '@tanstack/react-router' {
       path: '/damages'
       fullPath: '/damages'
       preLoaderRoute: typeof AuthenticatedDamagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/budgets': {
+      id: '/_authenticated/budgets'
+      path: '/budgets'
+      fullPath: '/budgets'
+      preLoaderRoute: typeof AuthenticatedBudgetsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/backup': {
@@ -1256,17 +1275,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/budgets/reports': {
       id: '/_authenticated/budgets/reports'
-      path: '/budgets/reports'
+      path: '/reports'
       fullPath: '/budgets/reports'
       preLoaderRoute: typeof AuthenticatedBudgetsReportsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedBudgetsRoute
     }
     '/_authenticated/budgets/$id': {
       id: '/_authenticated/budgets/$id'
-      path: '/budgets/$id'
+      path: '/$id'
       fullPath: '/budgets/$id'
       preLoaderRoute: typeof AuthenticatedBudgetsIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedBudgetsRoute
     }
     '/_authenticated/returns/reason/$id': {
       id: '/_authenticated/returns/reason/$id'
@@ -1319,6 +1338,19 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedBudgetsRouteChildren {
+  AuthenticatedBudgetsIdRoute: typeof AuthenticatedBudgetsIdRoute
+  AuthenticatedBudgetsReportsRoute: typeof AuthenticatedBudgetsReportsRoute
+}
+
+const AuthenticatedBudgetsRouteChildren: AuthenticatedBudgetsRouteChildren = {
+  AuthenticatedBudgetsIdRoute: AuthenticatedBudgetsIdRoute,
+  AuthenticatedBudgetsReportsRoute: AuthenticatedBudgetsReportsRoute,
+}
+
+const AuthenticatedBudgetsRouteWithChildren =
+  AuthenticatedBudgetsRoute._addFileChildren(AuthenticatedBudgetsRouteChildren)
 
 interface AuthenticatedDamagesRouteChildren {
   AuthenticatedDamagesIdRoute: typeof AuthenticatedDamagesIdRoute
@@ -1450,6 +1482,7 @@ const AuthenticatedReturnsRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
+  AuthenticatedBudgetsRoute: typeof AuthenticatedBudgetsRouteWithChildren
   AuthenticatedDamagesRoute: typeof AuthenticatedDamagesRouteWithChildren
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRouteWithChildren
   AuthenticatedFixedCostsRoute: typeof AuthenticatedFixedCostsRouteWithChildren
@@ -1464,8 +1497,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSystemRoute: typeof AuthenticatedSystemRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedBudgetsIdRoute: typeof AuthenticatedBudgetsIdRoute
-  AuthenticatedBudgetsReportsRoute: typeof AuthenticatedBudgetsReportsRoute
   AuthenticatedExpensesIdRoute: typeof AuthenticatedExpensesIdRoute
   AuthenticatedExpensesAddRoute: typeof AuthenticatedExpensesAddRoute
   AuthenticatedExpensesCategoriesRoute: typeof AuthenticatedExpensesCategoriesRoute
@@ -1491,6 +1522,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
+  AuthenticatedBudgetsRoute: AuthenticatedBudgetsRouteWithChildren,
   AuthenticatedDamagesRoute: AuthenticatedDamagesRouteWithChildren,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRouteWithChildren,
   AuthenticatedFixedCostsRoute: AuthenticatedFixedCostsRouteWithChildren,
@@ -1505,8 +1537,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSystemRoute: AuthenticatedSystemRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedBudgetsIdRoute: AuthenticatedBudgetsIdRoute,
-  AuthenticatedBudgetsReportsRoute: AuthenticatedBudgetsReportsRoute,
   AuthenticatedExpensesIdRoute: AuthenticatedExpensesIdRoute,
   AuthenticatedExpensesAddRoute: AuthenticatedExpensesAddRoute,
   AuthenticatedExpensesCategoriesRoute: AuthenticatedExpensesCategoriesRoute,
