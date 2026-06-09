@@ -124,7 +124,7 @@ function FixedCostsOverview() {
   const monthly = useMemo(() => buildMonthlyFixedCost(approved), [approved]);
   const top = useMemo(() => buildTopFixedCosts(approved, templateName), [approved, templateName]);
   const growth = useMemo(() => fixedCostGrowth(monthly), [monthly]);
-  const split = useMemo(() => approvedVsPending(list), [list]);
+  const summary = useMemo(() => settlementSummary(list), [list]);
   const totalThisRange = sumAmount(approved);
 
   const months = useMemo(() => {
@@ -136,7 +136,7 @@ function FixedCostsOverview() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return list.filter((r) => {
-      if (statusFilter !== ALL && r.status !== statusFilter) return false;
+      if (statusFilter !== ALL && settlementOf(r) !== statusFilter) return false;
       if (monthFilter !== ALL && (r.period_month ?? r.expense_date).slice(0, 7) !== monthFilter) return false;
       if (q) {
         const hay = `${r.expense_number} ${templateName(r.fixed_cost_template_id)} ${r.description ?? ""}`.toLowerCase();
@@ -149,8 +149,8 @@ function FixedCostsOverview() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageRows = filtered.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
   const splitData = [
-    { name: "Approved", total: split.approved },
-    { name: "Pending", total: split.pending },
+    { name: "Paid", total: summary.paidTotal },
+    { name: "Outstanding", total: summary.outstandingTotal },
   ];
 
   if (!canAccessModule("fixed_costs")) {
