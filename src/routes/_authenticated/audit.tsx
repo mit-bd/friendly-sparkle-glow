@@ -163,6 +163,44 @@ function AuditPage() {
     if (canView) load();
   }, [load, canView]);
 
+  // ---- Bulk selection + export (selected current-page rows) ---------------
+  const resolveActor = (id: string | null) =>
+    !id ? "System" : names[id] ?? nameMap[id] ?? "Unknown";
+  const bulkConfig = useMemo<BulkExportConfig<ActivityLog>>(
+    () => ({
+      module: "audit",
+      moduleLabel: "Activity Logs",
+      documentTitle: "Bulk Activity Log Report",
+      fileBase: "motion-it-bd-audit-logs",
+      numberPrefix: "AUD",
+      recordLabel: (l) =>
+        `${ACTIVITY_ACTION_LABELS[l.action] ?? l.action} · ${l.entity_label ?? ACTIVITY_ENTITY_LABELS[l.entity_type] ?? l.entity_type}`,
+      fields: [
+        { label: "Date & Time", value: (l) => formatDateTime(l.created_at) },
+        { label: "User", value: (l) => resolveActor(l.actor_id) },
+        { label: "Action", value: (l) => ACTIVITY_ACTION_LABELS[l.action] ?? l.action },
+        { label: "Type", value: (l) => ACTIVITY_ENTITY_LABELS[l.entity_type] ?? l.entity_type },
+        { label: "Record", value: (l) => l.entity_label ?? "—" },
+        { label: "Details", value: (l) => JSON.stringify(l.metadata ?? {}) },
+      ],
+    }),
+    [names, nameMap],
+  );
+  const bulk = useBulkExport<ActivityLog>({
+    config: bulkConfig,
+    getId: (l) => l.id,
+    generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+    canExport,
+  });
+  const runBulkSelected = (kind: "print" | "pdf" | "csv") => {
+    const sel = rows.filter((l) => bulk.selection.isSelected(l.id));
+    const scope: BulkScope = "selected";
+    if (kind === "print") bulk.runPrint(sel, scope);
+    else if (kind === "pdf") bulk.runPdf(sel, scope);
+    else bulk.runCsv(sel, scope);
+  };
+  const pageAllSelected = rows.length > 0 && rows.every((l) => bulk.selection.isSelected(l.id));
+
   if (!canView) {
     return (
       <div className="space-y-8">
