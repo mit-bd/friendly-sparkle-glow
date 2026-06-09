@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { FileDown, FileSpreadsheet, Loader2, Printer } from "lucide-react";
 import { toast } from "sonner";
 
@@ -14,7 +14,7 @@ import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
 import { ReportDocument } from "@/components/reports/ReportDocument";
 import { useAuth } from "@/lib/auth-context";
 import { DEFAULT_PRESET, formatRangeLabel, resolveRange, type DateRange, type RangePreset } from "@/lib/analytics";
-import { formatDateTime, formatDate, fetchUserNames } from "@/lib/expenses";
+import { formatDateTime, formatDate } from "@/lib/expenses";
 import { logActivity } from "@/lib/audit";
 import { logReportExport } from "@/lib/reports";
 import { downloadCsv } from "@/lib/report-csv";
@@ -191,7 +191,7 @@ function FinanceReports() {
                   else if (h === "Settlement" || h === "Status") val = String(c).replace(/_/g, " ");
                   return (<TableCell key={j} className={money ? "text-right tabular-nums" : ""}>{val}</TableCell>);
                 })}</TableRow>
-              ))}
+      ))}
             </TableBody>
           </Table>
           <div className="mt-4 flex justify-between border-t border-border pt-3 text-sm font-semibold">
@@ -203,6 +203,3 @@ function FinanceReports() {
     </div>
   );
 }
-
-void fetchUserNames;
-void useMemo;

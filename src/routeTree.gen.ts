@@ -54,6 +54,7 @@ import { Route as AuthenticatedReportsDetailedRouteImport } from './routes/_auth
 import { Route as AuthenticatedMarketingReportsRouteImport } from './routes/_authenticated/marketing.reports'
 import { Route as AuthenticatedMarketingAddRouteImport } from './routes/_authenticated/marketing.add'
 import { Route as AuthenticatedFixedCostsReportsRouteImport } from './routes/_authenticated/fixed-costs.reports'
+import { Route as AuthenticatedFinanceReportsRouteImport } from './routes/_authenticated/finance.reports'
 import { Route as AuthenticatedFinanceReceivablesRouteImport } from './routes/_authenticated/finance.receivables'
 import { Route as AuthenticatedFinancePayablesRouteImport } from './routes/_authenticated/finance.payables'
 import { Route as AuthenticatedExpensesRecycleBinRouteImport } from './routes/_authenticated/expenses.recycle-bin'
@@ -322,6 +323,12 @@ const AuthenticatedFixedCostsReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedFixedCostsRoute,
   } as any)
+const AuthenticatedFinanceReportsRoute =
+  AuthenticatedFinanceReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedFinanceRoute,
+  } as any)
 const AuthenticatedFinanceReceivablesRoute =
   AuthenticatedFinanceReceivablesRouteImport.update({
     id: '/receivables',
@@ -459,6 +466,7 @@ export interface FileRoutesByFullPath {
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
   '/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
   '/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  '/finance/reports': typeof AuthenticatedFinanceReportsRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -518,6 +526,7 @@ export interface FileRoutesByTo {
   '/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
   '/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
   '/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  '/finance/reports': typeof AuthenticatedFinanceReportsRoute
   '/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -584,6 +593,7 @@ export interface FileRoutesById {
   '/_authenticated/expenses/recycle-bin': typeof AuthenticatedExpensesRecycleBinRoute
   '/_authenticated/finance/payables': typeof AuthenticatedFinancePayablesRouteWithChildren
   '/_authenticated/finance/receivables': typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  '/_authenticated/finance/reports': typeof AuthenticatedFinanceReportsRoute
   '/_authenticated/fixed-costs/reports': typeof AuthenticatedFixedCostsReportsRoute
   '/_authenticated/marketing/add': typeof AuthenticatedMarketingAddRoute
   '/_authenticated/marketing/reports': typeof AuthenticatedMarketingReportsRoute
@@ -650,6 +660,7 @@ export interface FileRouteTypes {
     | '/expenses/recycle-bin'
     | '/finance/payables'
     | '/finance/receivables'
+    | '/finance/reports'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -709,6 +720,7 @@ export interface FileRouteTypes {
     | '/expenses/recycle-bin'
     | '/finance/payables'
     | '/finance/receivables'
+    | '/finance/reports'
     | '/fixed-costs/reports'
     | '/marketing/add'
     | '/marketing/reports'
@@ -774,6 +786,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expenses/recycle-bin'
     | '/_authenticated/finance/payables'
     | '/_authenticated/finance/receivables'
+    | '/_authenticated/finance/reports'
     | '/_authenticated/fixed-costs/reports'
     | '/_authenticated/marketing/add'
     | '/_authenticated/marketing/reports'
@@ -1132,6 +1145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFixedCostsReportsRouteImport
       parentRoute: typeof AuthenticatedFixedCostsRoute
     }
+    '/_authenticated/finance/reports': {
+      id: '/_authenticated/finance/reports'
+      path: '/reports'
+      fullPath: '/finance/reports'
+      preLoaderRoute: typeof AuthenticatedFinanceReportsRouteImport
+      parentRoute: typeof AuthenticatedFinanceRoute
+    }
     '/_authenticated/finance/receivables': {
       id: '/_authenticated/finance/receivables'
       path: '/receivables'
@@ -1314,6 +1334,7 @@ const AuthenticatedFinanceReceivablesRouteWithChildren =
 interface AuthenticatedFinanceRouteChildren {
   AuthenticatedFinancePayablesRoute: typeof AuthenticatedFinancePayablesRouteWithChildren
   AuthenticatedFinanceReceivablesRoute: typeof AuthenticatedFinanceReceivablesRouteWithChildren
+  AuthenticatedFinanceReportsRoute: typeof AuthenticatedFinanceReportsRoute
   AuthenticatedFinanceIndexRoute: typeof AuthenticatedFinanceIndexRoute
 }
 
@@ -1322,6 +1343,7 @@ const AuthenticatedFinanceRouteChildren: AuthenticatedFinanceRouteChildren = {
     AuthenticatedFinancePayablesRouteWithChildren,
   AuthenticatedFinanceReceivablesRoute:
     AuthenticatedFinanceReceivablesRouteWithChildren,
+  AuthenticatedFinanceReportsRoute: AuthenticatedFinanceReportsRoute,
   AuthenticatedFinanceIndexRoute: AuthenticatedFinanceIndexRoute,
 }
 
