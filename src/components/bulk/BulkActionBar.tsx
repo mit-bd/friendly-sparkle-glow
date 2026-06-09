@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { FileDown, FileSpreadsheet, Printer, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ interface BulkActionBarProps {
   onPdf: () => void;
   onCsv: () => void;
   /** Optional extra control (e.g. a scope selector) rendered before actions. */
-  extra?: React.ReactNode;
+  extra?: ReactNode;
 }
 
 /**
