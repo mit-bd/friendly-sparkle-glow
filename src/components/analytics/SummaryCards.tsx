@@ -106,23 +106,26 @@ export function SummaryCards({
   ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((c) => (
-        <Card key={c.label} className="relative overflow-hidden">
-          <span className="absolute inset-x-0 top-0 h-1 bg-brand-gradient" aria-hidden />
+        <Card key={c.label} className="transition-shadow hover:shadow-pop">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">{c.label}</CardTitle>
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-gradient-soft text-brand">
-              <c.icon className="h-3.5 w-3.5" />
+            <CardTitle className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {c.label}
+            </CardTitle>
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient-soft text-brand">
+              <c.icon className="h-4 w-4" />
             </span>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-9 w-24" />
             ) : (
-              <div className="text-2xl font-semibold tracking-tight tabular-nums">{c.value}</div>
+              <div className="text-[1.75rem] font-bold leading-tight tracking-tight tabular-nums">
+                {c.value}
+              </div>
             )}
-            <p className="mt-1 text-xs text-muted-foreground">{c.hint}</p>
+            <p className="mt-1.5 text-small text-muted-foreground">{c.hint}</p>
           </CardContent>
         </Card>
       ))}
