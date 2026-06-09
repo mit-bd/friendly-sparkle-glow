@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpDown,
   ChevronLeft,
@@ -21,6 +21,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BulkActionBar } from "@/components/bulk/BulkActionBar";
+import { BulkScopeMenu, type BulkKind } from "@/components/bulk/BulkScopeMenu";
+import { useBulkExport } from "@/hooks/use-bulk-export";
+import type { BulkExportConfig, BulkScope } from "@/lib/bulk-export";
 import {
   Collapsible,
   CollapsibleContent,
@@ -92,7 +97,7 @@ function sanitize(term: string) {
 }
 
 function ExpensesListPage() {
-  const { canAccessModule, can, isAdmin } = useAuth();
+  const { canAccessModule, can, isAdmin, profile } = useAuth();
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
@@ -114,9 +119,17 @@ function ExpensesListPage() {
 
   const canView = canAccessModule("expenses");
   const canCreate = isAdmin || can("expenses", "edit");
+  const canExport = isAdmin || can("expenses", "export");
 
   const catMap = useMemo(() => new Map(categories.map((c) => [c.id, c.name])), [categories]);
   const subMap = useMemo(() => new Map(subs.map((s) => [s.id, s.name])), [subs]);
+
+  // Names cache for created_by — kept current so bulk exports of rows from
+  // other pages still resolve the author's name.
+  const namesRef = useRef<Record<string, string>>({});
+  useEffect(() => {
+    namesRef.current = { ...namesRef.current, ...names };
+  }, [names]);
 
   // Reference data (categories, subcategories, creators)
   useEffect(() => {
@@ -146,41 +159,49 @@ function ExpensesListPage() {
     return () => clearTimeout(t);
   }, [searchInput]);
 
+  // Shared filter+search builder so the on-screen list and bulk exports stay
+  // perfectly in sync with the active filters.
+  const applyFilters = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (q: any) => {
+      if (filters.category !== ALL) q = q.eq("category_id", filters.category);
+      if (filters.subcategory !== ALL) q = q.eq("subcategory_id", filters.subcategory);
+      if (filters.createdBy !== ALL) q = q.eq("created_by", filters.createdBy);
+      if (filters.dateFrom) q = q.gte("expense_date", filters.dateFrom);
+      if (filters.dateTo) q = q.lte("expense_date", filters.dateTo);
+      if (filters.amountMin) q = q.gte("amount", Number(filters.amountMin));
+      if (filters.amountMax) q = q.lte("amount", Number(filters.amountMax));
+
+      if (filters.status !== ALL) {
+        q = q.eq("status", filters.status as ExpenseStatus);
+      } else {
+        q = q.neq("status", "deleted");
+      }
+
+      const s = sanitize(search);
+      if (s) {
+        const like = `%${s}%`;
+        const ors = [
+          `expense_number.ilike.${like}`,
+          `description.ilike.${like}`,
+          `notes.ilike.${like}`,
+        ];
+        const lc = s.toLowerCase();
+        const catIds = categories.filter((c) => c.name.toLowerCase().includes(lc)).map((c) => c.id);
+        const subIds = subs.filter((x) => x.name.toLowerCase().includes(lc)).map((x) => x.id);
+        if (catIds.length) ors.push(`category_id.in.(${catIds.join(",")})`);
+        if (subIds.length) ors.push(`subcategory_id.in.(${subIds.join(",")})`);
+        if (!Number.isNaN(Number(s))) ors.push(`amount.eq.${Number(s)}`);
+        q = q.or(ors.join(","));
+      }
+      return q;
+    },
+    [filters, search, categories, subs],
+  );
+
   const load = useCallback(async () => {
     setLoading(true);
-    let q = supabase.from("expenses").select("*", { count: "exact" });
-
-    if (filters.category !== ALL) q = q.eq("category_id", filters.category);
-    if (filters.subcategory !== ALL) q = q.eq("subcategory_id", filters.subcategory);
-    if (filters.createdBy !== ALL) q = q.eq("created_by", filters.createdBy);
-    if (filters.dateFrom) q = q.gte("expense_date", filters.dateFrom);
-    if (filters.dateTo) q = q.lte("expense_date", filters.dateTo);
-    if (filters.amountMin) q = q.gte("amount", Number(filters.amountMin));
-    if (filters.amountMax) q = q.lte("amount", Number(filters.amountMax));
-
-    if (filters.status !== ALL) {
-      q = q.eq("status", filters.status as ExpenseStatus);
-    } else {
-      q = q.neq("status", "deleted");
-    }
-
-    const s = sanitize(search);
-    if (s) {
-      const like = `%${s}%`;
-      const ors = [
-        `expense_number.ilike.${like}`,
-        `description.ilike.${like}`,
-        `notes.ilike.${like}`,
-      ];
-      const lc = s.toLowerCase();
-      const catIds = categories.filter((c) => c.name.toLowerCase().includes(lc)).map((c) => c.id);
-      const subIds = subs.filter((x) => x.name.toLowerCase().includes(lc)).map((x) => x.id);
-      if (catIds.length) ors.push(`category_id.in.(${catIds.join(",")})`);
-      if (subIds.length) ors.push(`subcategory_id.in.(${subIds.join(",")})`);
-      if (!Number.isNaN(Number(s))) ors.push(`amount.eq.${Number(s)}`);
-      q = q.or(ors.join(","));
-    }
-
+    let q = applyFilters(supabase.from("expenses").select("*", { count: "exact" }));
     q = q.order(sortField, { ascending: sortAsc });
     q = q.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
 
@@ -195,11 +216,85 @@ function ExpensesListPage() {
     setTotal(count ?? 0);
     setNames(await fetchUserNames(list.map((r) => r.created_by ?? "")));
     setLoading(false);
-  }, [filters, search, sortField, sortAsc, page, categories, subs]);
+  }, [applyFilters, sortField, sortAsc, page]);
 
   useEffect(() => {
     if (canView) load();
   }, [load, canView]);
+
+  // ---- Bulk selection + export -------------------------------------------
+  const bulkConfig = useMemo<BulkExportConfig<Expense>>(
+    () => ({
+      module: "expenses",
+      moduleLabel: "Expenses",
+      documentTitle: "Bulk Expense Report",
+      fileBase: "motion-it-bd-expenses",
+      numberPrefix: "EXP",
+      recordLabel: (r) => r.expense_number,
+      fields: [
+        { label: "Category", value: (r) => (r.category_id ? catMap.get(r.category_id) ?? "—" : "—") },
+        { label: "Subcategory", value: (r) => (r.subcategory_id ? subMap.get(r.subcategory_id) ?? "—" : "—") },
+        { label: "Amount", value: (r) => formatCurrency(r.amount) },
+        { label: "Date", value: (r) => formatDate(r.expense_date) },
+        { label: "Status", value: (r) => EXPENSE_STATUS[r.status]?.label ?? r.status },
+        { label: "Created By", value: (r) => (r.created_by ? namesRef.current[r.created_by] ?? "—" : "—") },
+      ],
+    }),
+    [catMap, subMap],
+  );
+
+  const bulk = useBulkExport<Expense>({
+    config: bulkConfig,
+    getId: (r) => r.id,
+    generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+    canExport,
+  });
+
+  const gatherExpenses = useCallback(
+    async (scope: BulkScope): Promise<Expense[]> => {
+      if (scope === "selected") {
+        const ids = [...bulk.selection.ids];
+        if (ids.length === 0) return [];
+        const out: Expense[] = [];
+        for (let i = 0; i < ids.length; i += 200) {
+          const { data } = await supabase
+            .from("expenses")
+            .select("*")
+            .in("id", ids.slice(i, i + 200));
+          out.push(...((data ?? []) as Expense[]));
+        }
+        return out;
+      }
+      // filtered = honour active filters; all = whole table (minus deleted)
+      let q =
+        scope === "filtered"
+          ? applyFilters(supabase.from("expenses").select("*"))
+          : supabase.from("expenses").select("*").neq("status", "deleted");
+      q = q.order("expense_date", { ascending: false }).limit(5000);
+      const { data } = await q;
+      return (data ?? []) as Expense[];
+    },
+    [applyFilters, bulk.selection.ids],
+  );
+
+  const runBulk = useCallback(
+    async (scope: BulkScope, kind: BulkKind) => {
+      bulk.setBusy(true);
+      try {
+        const list = await gatherExpenses(scope);
+        const map = await fetchUserNames(list.map((r) => r.created_by ?? "").filter(Boolean));
+        namesRef.current = { ...namesRef.current, ...map };
+        if (kind === "print") bulk.runPrint(list, scope);
+        else if (kind === "pdf") bulk.runPdf(list, scope);
+        else bulk.runCsv(list, scope);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Bulk export failed.");
+      } finally {
+        bulk.setBusy(false);
+      }
+    },
+    [bulk, gatherExpenses],
+  );
 
   if (!canView) {
     return (
@@ -231,6 +326,9 @@ function ExpensesListPage() {
     (s) => filters.category === ALL || s.category_id === filters.category,
   );
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const pageAllSelected = rows.length > 0 && rows.every((r) => bulk.selection.isSelected(r.id));
+  const togglePageAll = () =>
+    pageAllSelected ? bulk.selection.removeMany(rows) : bulk.selection.addMany(rows);
 
   return (
     <div className="space-y-6">
@@ -238,14 +336,19 @@ function ExpensesListPage() {
         title="All Expenses"
         description="Browse, filter, and manage every recorded expense."
         actions={
-          canCreate && (
-            <Button asChild>
-              <Link to="/expenses/add">
-                <Plus className="h-4 w-4" />
-                Add expense
-              </Link>
-            </Button>
-          )
+          <div className="flex flex-wrap gap-2">
+            {canExport && (
+              <BulkScopeMenu busy={bulk.busy} onAction={runBulk} />
+            )}
+            {canCreate && (
+              <Button asChild>
+                <Link to="/expenses/add">
+                  <Plus className="h-4 w-4" />
+                  Add expense
+                </Link>
+              </Button>
+            )}
+          </div>
         }
       />
 
@@ -375,6 +478,13 @@ function ExpensesListPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={pageAllSelected}
+                      onCheckedChange={togglePageAll}
+                      aria-label="Select all on page"
+                    />
+                  </TableHead>
                   <SortHead label="Expense No." field="expense_number" {...{ sortField, sortAsc, toggleSort }} />
                   <SortHead label="Date" field="expense_date" {...{ sortField, sortAsc, toggleSort }} />
                   <TableHead>Category</TableHead>
@@ -389,14 +499,14 @@ function ExpensesListPage() {
                 {loading ? (
                   Array.from({ length: 6 }).map((_, i) => (
                     <TableRow key={i}>
-                      {Array.from({ length: 8 }).map((__, j) => (
+                      {Array.from({ length: 9 }).map((__, j) => (
                         <TableCell key={j}><Skeleton className="h-5 w-full" /></TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : rows.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8}>
+                    <TableCell colSpan={9}>
                       <div className="flex flex-col items-center justify-center py-16 text-center">
                         <span className="flex h-12 w-12 items-center justify-center rounded-md bg-brand-gradient-soft text-brand-to">
                           <Receipt className="h-6 w-6" />
@@ -415,6 +525,13 @@ function ExpensesListPage() {
                       className="cursor-pointer"
                       onClick={() => navigate({ to: "/expenses/$id", params: { id: r.id } })}
                     >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={bulk.selection.isSelected(r.id)}
+                          onCheckedChange={() => bulk.selection.toggle(r.id)}
+                          aria-label={`Select ${r.expense_number}`}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">{r.expense_number}</TableCell>
                       <TableCell className="text-muted-foreground">{formatDate(r.expense_date)}</TableCell>
                       <TableCell>{r.category_id ? catMap.get(r.category_id) ?? "—" : "—"}</TableCell>
@@ -454,6 +571,17 @@ function ExpensesListPage() {
           </Button>
         </div>
       </div>
+
+      <BulkActionBar
+        count={bulk.selection.count}
+        canExport={canExport}
+        busy={bulk.busy}
+        onClear={bulk.selection.clear}
+        onPrint={() => runBulk("selected", "print")}
+        onPdf={() => runBulk("selected", "pdf")}
+        onCsv={() => runBulk("selected", "csv")}
+      />
+      {bulk.printNode}
     </div>
   );
 }

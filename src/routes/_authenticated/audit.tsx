@@ -38,6 +38,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BulkActionBar } from "@/components/bulk/BulkActionBar";
+import { useBulkExport } from "@/hooks/use-bulk-export";
+import type { BulkExportConfig, BulkScope } from "@/lib/bulk-export";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime } from "@/lib/expenses";
@@ -158,6 +162,44 @@ function AuditPage() {
   useEffect(() => {
     if (canView) load();
   }, [load, canView]);
+
+  // ---- Bulk selection + export (selected current-page rows) ---------------
+  const resolveActor = (id: string | null) =>
+    !id ? "System" : names[id] ?? nameMap[id] ?? "Unknown";
+  const bulkConfig = useMemo<BulkExportConfig<ActivityLog>>(
+    () => ({
+      module: "audit",
+      moduleLabel: "Activity Logs",
+      documentTitle: "Bulk Activity Log Report",
+      fileBase: "motion-it-bd-audit-logs",
+      numberPrefix: "AUD",
+      recordLabel: (l) =>
+        `${ACTIVITY_ACTION_LABELS[l.action] ?? l.action} · ${l.entity_label ?? ACTIVITY_ENTITY_LABELS[l.entity_type] ?? l.entity_type}`,
+      fields: [
+        { label: "Date & Time", value: (l) => formatDateTime(l.created_at) },
+        { label: "User", value: (l) => resolveActor(l.actor_id) },
+        { label: "Action", value: (l) => ACTIVITY_ACTION_LABELS[l.action] ?? l.action },
+        { label: "Type", value: (l) => ACTIVITY_ENTITY_LABELS[l.entity_type] ?? l.entity_type },
+        { label: "Record", value: (l) => l.entity_label ?? "—" },
+        { label: "Details", value: (l) => JSON.stringify(l.metadata ?? {}) },
+      ],
+    }),
+    [names, nameMap],
+  );
+  const bulk = useBulkExport<ActivityLog>({
+    config: bulkConfig,
+    getId: (l) => l.id,
+    generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+    canExport,
+  });
+  const runBulkSelected = (kind: "print" | "pdf" | "csv") => {
+    const sel = rows.filter((l) => bulk.selection.isSelected(l.id));
+    const scope: BulkScope = "selected";
+    if (kind === "print") bulk.runPrint(sel, scope);
+    else if (kind === "pdf") bulk.runPdf(sel, scope);
+    else bulk.runCsv(sel, scope);
+  };
+  const pageAllSelected = rows.length > 0 && rows.every((l) => bulk.selection.isSelected(l.id));
 
   if (!canView) {
     return (
@@ -408,6 +450,15 @@ function AuditPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10 print:hidden">
+                    <Checkbox
+                      checked={pageAllSelected}
+                      onCheckedChange={() =>
+                        pageAllSelected ? bulk.selection.removeMany(rows) : bulk.selection.addMany(rows)
+                      }
+                      aria-label="Select all on page"
+                    />
+                  </TableHead>
                   <TableHead>Date &amp; Time</TableHead>
                   <TableHead>User</TableHead>
                   <TableHead>Action</TableHead>
@@ -418,6 +469,13 @@ function AuditPage() {
               <TableBody>
                 {rows.map((l) => (
                   <TableRow key={l.id}>
+                    <TableCell className="print:hidden">
+                      <Checkbox
+                        checked={bulk.selection.isSelected(l.id)}
+                        onCheckedChange={() => bulk.selection.toggle(l.id)}
+                        aria-label="Select log entry"
+                      />
+                    </TableCell>
                     <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
                       {formatDateTime(l.created_at)}
                     </TableCell>
@@ -489,6 +547,17 @@ function AuditPage() {
           </ReportDocument>
         </div>
       )}
+
+      <BulkActionBar
+        count={bulk.selection.count}
+        canExport={canExport}
+        busy={bulk.busy}
+        onClear={bulk.selection.clear}
+        onPrint={() => runBulkSelected("print")}
+        onPdf={() => runBulkSelected("pdf")}
+        onCsv={() => runBulkSelected("csv")}
+      />
+      {bulk.printNode}
     </div>
   );
 }
