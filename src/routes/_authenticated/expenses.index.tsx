@@ -221,6 +221,80 @@ function ExpensesListPage() {
     if (canView) load();
   }, [load, canView]);
 
+  // ---- Bulk selection + export -------------------------------------------
+  const bulkConfig = useMemo<BulkExportConfig<Expense>>(
+    () => ({
+      module: "expenses",
+      moduleLabel: "Expenses",
+      documentTitle: "Bulk Expense Report",
+      fileBase: "motion-it-bd-expenses",
+      numberPrefix: "EXP",
+      recordLabel: (r) => r.expense_number,
+      fields: [
+        { label: "Category", value: (r) => (r.category_id ? catMap.get(r.category_id) ?? "—" : "—") },
+        { label: "Subcategory", value: (r) => (r.subcategory_id ? subMap.get(r.subcategory_id) ?? "—" : "—") },
+        { label: "Amount", value: (r) => formatCurrency(r.amount) },
+        { label: "Date", value: (r) => formatDate(r.expense_date) },
+        { label: "Status", value: (r) => EXPENSE_STATUS[r.status]?.label ?? r.status },
+        { label: "Created By", value: (r) => (r.created_by ? namesRef.current[r.created_by] ?? "—" : "—") },
+      ],
+    }),
+    [catMap, subMap],
+  );
+
+  const bulk = useBulkExport<Expense>({
+    config: bulkConfig,
+    getId: (r) => r.id,
+    generatedBy: profile?.full_name?.trim() || profile?.email || "—",
+    canExport,
+  });
+
+  const gatherExpenses = useCallback(
+    async (scope: BulkScope): Promise<Expense[]> => {
+      if (scope === "selected") {
+        const ids = [...bulk.selection.ids];
+        if (ids.length === 0) return [];
+        const out: Expense[] = [];
+        for (let i = 0; i < ids.length; i += 200) {
+          const { data } = await supabase
+            .from("expenses")
+            .select("*")
+            .in("id", ids.slice(i, i + 200));
+          out.push(...((data ?? []) as Expense[]));
+        }
+        return out;
+      }
+      // filtered = honour active filters; all = whole table (minus deleted)
+      let q =
+        scope === "filtered"
+          ? applyFilters(supabase.from("expenses").select("*"))
+          : supabase.from("expenses").select("*").neq("status", "deleted");
+      q = q.order("expense_date", { ascending: false }).limit(5000);
+      const { data } = await q;
+      return (data ?? []) as Expense[];
+    },
+    [applyFilters, bulk.selection.ids],
+  );
+
+  const runBulk = useCallback(
+    async (scope: BulkScope, kind: BulkKind) => {
+      bulk.setBusy(true);
+      try {
+        const list = await gatherExpenses(scope);
+        const map = await fetchUserNames(list.map((r) => r.created_by ?? "").filter(Boolean));
+        namesRef.current = { ...namesRef.current, ...map };
+        if (kind === "print") bulk.runPrint(list, scope);
+        else if (kind === "pdf") bulk.runPdf(list, scope);
+        else bulk.runCsv(list, scope);
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Bulk export failed.");
+      } finally {
+        bulk.setBusy(false);
+      }
+    },
+    [bulk, gatherExpenses],
+  );
+
   if (!canView) {
     return (
       <div className="space-y-8">
