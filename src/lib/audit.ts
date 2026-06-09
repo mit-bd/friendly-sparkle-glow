@@ -30,7 +30,9 @@ export type ActivityAction =
   | "collection_added"
   | "collection_removed"
   | "payment_added"
-  | "payment_removed";
+  | "payment_removed"
+  | "partial_approve"
+  | "full_approve";
 
 export type AuditEntityType =
   | "expense"
@@ -99,6 +101,8 @@ export const ACTIVITY_ACTION_LABELS: Record<string, string> = {
   collection_removed: "Collection Removed",
   payment_added: "Payment Added",
   payment_removed: "Payment Removed",
+  partial_approve: "Partial Approval",
+  full_approve: "Full Approval",
 };
 
 export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
@@ -147,6 +151,8 @@ export const ACTIVITY_TONE: Record<string, string> = {
   collection_removed: "bg-destructive/15 text-destructive",
   payment_added: "bg-chart-4/15 text-chart-4",
   payment_removed: "bg-destructive/15 text-destructive",
+  partial_approve: "bg-warning/15 text-warning",
+  full_approve: "bg-chart-2/15 text-chart-2",
 };
 
 /** Best-effort client logger for actions that don't hit a tracked table. */

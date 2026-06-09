@@ -37,8 +37,14 @@ import {
   buildMonthlyFixedCost,
   buildTopFixedCosts,
   sumAmount,
+  fetchOutstandingFixedCosts,
+  fetchFixedCostPaymentHistory,
+  remainingOf,
+  settlementOf,
+  SETTLEMENT_STATUS,
   type FixedCostRecord,
   type FixedCostTemplate,
+  type PaymentHistoryRow,
 } from "@/lib/fixed-costs";
 
 export const Route = createFileRoute("/_authenticated/fixed-costs/reports")({
@@ -46,12 +52,14 @@ export const Route = createFileRoute("/_authenticated/fixed-costs/reports")({
   component: FixedCostReports,
 });
 
-type FcReportType = "summary" | "monthly" | "approval";
+type FcReportType = "summary" | "monthly" | "approval" | "outstanding" | "payments";
 
 const REPORT_TYPES: { value: FcReportType; label: string; description: string }[] = [
   { value: "summary", label: "Fixed Cost Summary Report", description: "Approved spend grouped per fixed cost with share of total." },
   { value: "monthly", label: "Monthly Fixed Cost Report", description: "Approved fixed cost totals per month." },
   { value: "approval", label: "Fixed Cost Approval Report", description: "Every generated record in range with its approval status." },
+  { value: "outstanding", label: "Fixed Cost Outstanding Report", description: "Unsettled fixed costs with total, paid, and remaining balance." },
+  { value: "payments", label: "Fixed Cost Payment History", description: "Every payment recorded in range with reference and amount." },
 ];
 
 const th = "px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground";
@@ -63,6 +71,8 @@ interface Generated {
   approved: FixedCostRecord[];
   all: FixedCostRecord[];
   templates: FixedCostTemplate[];
+  outstanding: FixedCostRecord[];
+  payments: PaymentHistoryRow[];
   reportNumber: string;
   generatedAt: string;
   generatedBy: string;
@@ -95,15 +105,24 @@ function FixedCostReports() {
   async function handleGenerate() {
     setGenerating(true);
     try {
-      const [approved, list, templates] = await Promise.all([
+      const [approved, list, templates, outstanding, payments] = await Promise.all([
         fetchApprovedFixedCosts(range),
         fetchFixedCostRecords(),
         fetchTemplates(),
+        fetchOutstandingFixedCosts(),
+        fetchFixedCostPaymentHistory(range),
       ]);
       const all = list.filter(
         (r) => (r.period_month ?? r.expense_date) >= range.from && (r.period_month ?? r.expense_date) <= range.to,
       );
-      const grand = sumAmount(approved);
+      const grand =
+        type === "outstanding"
+          ? outstanding.reduce((acc, r) => acc + remainingOf(r), 0)
+          : type === "payments"
+            ? payments.reduce((acc, p) => acc + Number(p.amount || 0), 0)
+            : sumAmount(approved);
+      const count =
+        type === "approval" ? all.length : type === "outstanding" ? outstanding.length : type === "payments" ? payments.length : approved.length;
       let reportNumber = "—";
       let createdAt = new Date().toISOString();
       if (canExport) {
@@ -114,7 +133,7 @@ function FixedCostReports() {
             rangeFrom: range.from,
             rangeTo: range.to,
             filters: { module: "fixed_costs", report: type, preset },
-            expenseCount: type === "approval" ? all.length : approved.length,
+            expenseCount: count,
             totalAmount: grand,
           });
           reportNumber = logged.report_number;
@@ -123,7 +142,7 @@ function FixedCostReports() {
             action: "export",
             entityType: "report",
             entityLabel: `${reportNumber} · ${meta.label}`,
-            metadata: { count: approved.length, total: grand },
+            metadata: { count, total: grand },
           });
         } catch {
           /* archive is best-effort */
@@ -134,6 +153,8 @@ function FixedCostReports() {
         approved,
         all,
         templates,
+        outstanding,
+        payments,
         reportNumber,
         generatedAt: formatDateTime(createdAt),
         generatedBy: profile?.full_name?.trim() || profile?.email || "—",
@@ -170,6 +191,31 @@ function FixedCostReports() {
       headers = ["Month", "Total (BDT)"];
       body = monthly.map((m) => [m.label, m.total]);
       body.push(["Grand Total", sumAmount(generated.approved)]);
+    } else if (type === "outstanding") {
+      headers = ["Fixed Cost", "Number", "Month", "Total (BDT)", "Paid (BDT)", "Remaining (BDT)", "Status"];
+      body = generated.outstanding.map((r) => [
+        name(r.fixed_cost_template_id),
+        r.expense_number,
+        (r.period_month ?? r.expense_date).slice(0, 7),
+        r.amount,
+        r.fc_paid_amount,
+        remainingOf(r),
+        SETTLEMENT_STATUS[settlementOf(r)].label,
+      ]);
+      const totOut = generated.outstanding.reduce((a, r) => a + remainingOf(r), 0);
+      body.push(["Grand Total", "", "", "", "", totOut, ""]);
+    } else if (type === "payments") {
+      headers = ["Date", "Fixed Cost", "Number", "Reference", "Amount (BDT)", "Notes"];
+      body = generated.payments.map((p) => [
+        formatDate(p.payment_date),
+        name(p.template_id),
+        p.expense_number,
+        p.reference_number ?? "—",
+        p.amount,
+        p.notes ?? "",
+      ]);
+      const totPay = generated.payments.reduce((a, p) => a + Number(p.amount || 0), 0);
+      body.push(["Grand Total", "", "", "", totPay, ""]);
     } else {
       headers = ["Fixed Cost", "Number", "Month", "Amount (BDT)", "Status", "Created", "Approved"];
       body = generated.all.map((r) => [
@@ -261,7 +307,7 @@ function FixedCostReports() {
 }
 
 function FixedCostReportSwitch({ report }: { report: Generated }) {
-  const { type, approved, all, templates } = report;
+  const { type, approved, all, templates, outstanding, payments } = report;
   const name = useMemo(() => {
     const m = new Map(templates.map((t) => [t.id, t.name]));
     return (id: string | null) => (id ? m.get(id) ?? "Fixed Cost" : "Fixed Cost");
@@ -270,7 +316,92 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
   const monthly = useMemo(() => buildMonthlyFixedCost(approved), [approved]);
   const grand = sumAmount(approved);
 
-  if (type === "approval" ? all.length === 0 : approved.length === 0) return <EmptyReportNote />;
+  const isEmpty =
+    type === "approval"
+      ? all.length === 0
+      : type === "outstanding"
+        ? outstanding.length === 0
+        : type === "payments"
+          ? payments.length === 0
+          : approved.length === 0;
+  if (isEmpty) return <EmptyReportNote />;
+
+  if (type === "outstanding") {
+    const totTotal = outstanding.reduce((a, r) => a + Number(r.amount || 0), 0);
+    const totPaid = outstanding.reduce((a, r) => a + Number(r.fc_paid_amount || 0), 0);
+    const totRemain = outstanding.reduce((a, r) => a + remainingOf(r), 0);
+    return (
+      <table className="report-table w-full border-collapse">
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className={th}>Fixed Cost</th>
+            <th className={th}>Number</th>
+            <th className={th}>Month</th>
+            <th className={th + " text-right"}>Total</th>
+            <th className={th + " text-right"}>Paid</th>
+            <th className={th + " text-right"}>Remaining</th>
+            <th className={th}>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {outstanding.map((r) => (
+            <tr key={r.id} className="border-b border-border break-inside-avoid">
+              <td className={td}>{name(r.fixed_cost_template_id)}</td>
+              <td className={td}>{r.expense_number}</td>
+              <td className={td}>{(r.period_month ?? r.expense_date).slice(0, 7)}</td>
+              <td className={num}>{formatCurrency(r.amount)}</td>
+              <td className={num}>{formatCurrency(r.fc_paid_amount)}</td>
+              <td className={num}>{formatCurrency(remainingOf(r))}</td>
+              <td className={td}>{SETTLEMENT_STATUS[settlementOf(r)].label}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-foreground/70 font-semibold">
+            <td className={td + " font-semibold"} colSpan={3}>Total ({outstanding.length} records)</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totTotal)}</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totPaid)}</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totRemain)}</td>
+            <td className={td} />
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
+
+  if (type === "payments") {
+    const totPay = payments.reduce((a, p) => a + Number(p.amount || 0), 0);
+    return (
+      <table className="report-table w-full border-collapse">
+        <thead>
+          <tr className="border-b-2 border-border">
+            <th className={th}>Date</th>
+            <th className={th}>Fixed Cost</th>
+            <th className={th}>Number</th>
+            <th className={th}>Reference</th>
+            <th className={th + " text-right"}>Amount (BDT)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {payments.map((p) => (
+            <tr key={p.id} className="border-b border-border break-inside-avoid">
+              <td className={td}>{formatDate(p.payment_date)}</td>
+              <td className={td}>{name(p.template_id)}</td>
+              <td className={td}>{p.expense_number}</td>
+              <td className={td}>{p.reference_number ?? "—"}</td>
+              <td className={num}>{formatCurrency(p.amount)}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t-2 border-foreground/70 font-semibold">
+            <td className={td + " font-semibold"} colSpan={4}>Total ({payments.length} payments)</td>
+            <td className={num + " font-semibold"}>{formatCurrency(totPay)}</td>
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
 
   if (type === "summary") {
     return (

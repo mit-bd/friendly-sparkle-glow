@@ -757,6 +757,8 @@ export type Database = {
           exchange_rate: number
           expense_date: string
           expense_number: string
+          fc_paid_amount: number
+          fc_settlement_status: string | null
           fixed_cost_template_id: string | null
           id: string
           is_fixed_cost: boolean
@@ -791,6 +793,8 @@ export type Database = {
           exchange_rate?: number
           expense_date?: string
           expense_number: string
+          fc_paid_amount?: number
+          fc_settlement_status?: string | null
           fixed_cost_template_id?: string | null
           id?: string
           is_fixed_cost?: boolean
@@ -825,6 +829,8 @@ export type Database = {
           exchange_rate?: number
           expense_date?: string
           expense_number?: string
+          fc_paid_amount?: number
+          fc_settlement_status?: string | null
           fixed_cost_template_id?: string | null
           id?: string
           is_fixed_cost?: boolean
@@ -910,6 +916,59 @@ export type Database = {
           old_value?: string | null
         }
         Relationships: []
+      }
+      fixed_cost_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          expense_id: string
+          file_name: string | null
+          file_path: string | null
+          id: string
+          mime_type: string | null
+          notes: string | null
+          payment_date: string
+          reference_number: string | null
+          size_bytes: number | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          expense_id: string
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          payment_date?: string
+          reference_number?: string | null
+          size_bytes?: number | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          expense_id?: string
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          payment_date?: string
+          reference_number?: string | null
+          size_bytes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fixed_cost_payments_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fixed_cost_templates: {
         Row: {

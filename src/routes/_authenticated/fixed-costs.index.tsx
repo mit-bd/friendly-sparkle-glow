@@ -28,7 +28,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { NoAccess } from "@/components/NoAccess";
 import { EmptyState } from "@/components/analytics/EmptyState";
 import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
-import { StatusBadge } from "@/components/StatusBadge";
+import { SettlementBadge } from "@/components/fixed-costs/SettlementBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,17 +50,20 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/lib/auth-context";
 import { DEFAULT_PRESET, resolveRange, type DateRange, type RangePreset } from "@/lib/analytics";
-import { EXPENSE_STATUS, formatCurrency, formatDate, type ExpenseStatus } from "@/lib/expenses";
+import { formatCurrency } from "@/lib/expenses";
 import {
   fetchApprovedFixedCosts,
   fetchFixedCostRecords,
-  fetchFixedCostCounts,
   fetchTemplates,
   buildMonthlyFixedCost,
   buildTopFixedCosts,
   fixedCostGrowth,
-  approvedVsPending,
   sumAmount,
+  settlementSummary,
+  settlementOf,
+  remainingOf,
+  SETTLEMENT_STATUS,
+  type SettlementStatus,
   type FixedCostRecord,
   type FixedCostTemplate,
 } from "@/lib/fixed-costs";
@@ -81,7 +84,6 @@ function FixedCostsOverview() {
   const [approved, setApproved] = useState<FixedCostRecord[]>([]);
   const [list, setList] = useState<FixedCostRecord[]>([]);
   const [templates, setTemplates] = useState<FixedCostTemplate[]>([]);
-  const [counts, setCounts] = useState({ pending: 0, approvedInRange: 0 });
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -96,14 +98,12 @@ function FixedCostsOverview() {
       fetchApprovedFixedCosts(range),
       fetchFixedCostRecords(),
       fetchTemplates(),
-      fetchFixedCostCounts(range),
     ])
-      .then(([a, l, t, c]) => {
+      .then(([a, l, t]) => {
         if (!active) return;
         setApproved(a);
         setList(l);
         setTemplates(t);
-        setCounts(c);
       })
       .catch((e) => toast.error(e instanceof Error ? e.message : "Failed to load fixed costs."))
       .finally(() => active && setLoading(false));
@@ -120,7 +120,7 @@ function FixedCostsOverview() {
   const monthly = useMemo(() => buildMonthlyFixedCost(approved), [approved]);
   const top = useMemo(() => buildTopFixedCosts(approved, templateName), [approved, templateName]);
   const growth = useMemo(() => fixedCostGrowth(monthly), [monthly]);
-  const split = useMemo(() => approvedVsPending(list), [list]);
+  const summary = useMemo(() => settlementSummary(list), [list]);
   const totalThisRange = sumAmount(approved);
 
   const months = useMemo(() => {
@@ -132,7 +132,7 @@ function FixedCostsOverview() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return list.filter((r) => {
-      if (statusFilter !== ALL && r.status !== statusFilter) return false;
+      if (statusFilter !== ALL && settlementOf(r) !== statusFilter) return false;
       if (monthFilter !== ALL && (r.period_month ?? r.expense_date).slice(0, 7) !== monthFilter) return false;
       if (q) {
         const hay = `${r.expense_number} ${templateName(r.fixed_cost_template_id)} ${r.description ?? ""}`.toLowerCase();
@@ -145,8 +145,8 @@ function FixedCostsOverview() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageRows = filtered.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
   const splitData = [
-    { name: "Approved", total: split.approved },
-    { name: "Pending", total: split.pending },
+    { name: "Paid", total: summary.paidTotal },
+    { name: "Outstanding", total: summary.outstandingTotal },
   ];
 
   if (!canAccessModule("fixed_costs")) {
@@ -194,9 +194,9 @@ function FixedCostsOverview() {
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <MetricCard icon={Wallet} label="Fixed cost this month" value={formatCurrency(totalThisRange)} hint={`${approved.length} approved in range`} />
-            <MetricCard icon={Clock} label="Pending fixed costs" value={String(counts.pending)} hint="Awaiting approval" />
-            <MetricCard icon={CheckCircle2} label="Approved fixed costs" value={String(counts.approvedInRange)} hint="Count in range" />
+            <MetricCard icon={Wallet} label="Fixed cost this month" value={formatCurrency(totalThisRange)} hint={`${approved.length} paid in range`} />
+            <MetricCard icon={Clock} label="Outstanding" value={formatCurrency(summary.outstandingTotal)} hint={`${summary.generatedCount + summary.partialCount} unsettled`} />
+            <MetricCard icon={CheckCircle2} label="Settled records" value={String(summary.paidCount)} hint={`${summary.partialCount} partially paid`} />
             <MetricCard
               icon={TrendingUp}
               label="Fixed cost growth"
@@ -226,9 +226,9 @@ function FixedCostsOverview() {
             </Card>
 
             <Card>
-              <CardHeader><CardTitle className="text-base">Approved vs pending</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base">Paid vs outstanding</CardTitle></CardHeader>
               <CardContent>
-                {split.approved === 0 && split.pending === 0 ? (
+                {summary.paidTotal === 0 && summary.outstandingTotal === 0 ? (
                   <EmptyState icon={CheckCircle2} title="Nothing to compare yet" description="Generate fixed costs to see the split." />
                 ) : (
                   <ResponsiveContainer width="100%" height={280}>
@@ -305,11 +305,9 @@ function FixedCostsOverview() {
                   <SelectTrigger className="w-full sm:w-44"><SelectValue placeholder="Status" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value={ALL}>All statuses</SelectItem>
-                    {(Object.keys(EXPENSE_STATUS) as ExpenseStatus[])
-                      .filter((s) => s !== "deleted")
-                      .map((s) => (
-                        <SelectItem key={s} value={s}>{EXPENSE_STATUS[s].label}</SelectItem>
-                      ))}
+                    {(Object.keys(SETTLEMENT_STATUS) as SettlementStatus[]).map((s) => (
+                      <SelectItem key={s} value={s}>{SETTLEMENT_STATUS[s].label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -328,23 +326,27 @@ function FixedCostsOverview() {
                           <TableHead>Number</TableHead>
                           <TableHead>Month</TableHead>
                           <TableHead className="text-right">Amount</TableHead>
+                          <TableHead className="text-right">Paid</TableHead>
+                          <TableHead className="text-right">Remaining</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Created</TableHead>
-                          <TableHead>Approved</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {pageRows.map((r) => (
-                          <TableRow key={r.id}>
-                            <TableCell className="font-medium">{templateName(r.fixed_cost_template_id)}</TableCell>
+                          <TableRow key={r.id} className="cursor-pointer">
+                            <TableCell className="font-medium">
+                              <Link to="/fixed-costs/$id" params={{ id: r.id }} className="hover:text-brand hover:underline">
+                                {templateName(r.fixed_cost_template_id)}
+                              </Link>
+                            </TableCell>
                             <TableCell className="text-muted-foreground">{r.expense_number}</TableCell>
                             <TableCell className="whitespace-nowrap">
                               {(r.period_month ?? r.expense_date).slice(0, 7)}
                             </TableCell>
                             <TableCell className="text-right tabular-nums">{formatCurrency(r.amount)}</TableCell>
-                            <TableCell><StatusBadge status={r.status as ExpenseStatus} /></TableCell>
-                            <TableCell className="whitespace-nowrap">{formatDate(r.created_at)}</TableCell>
-                            <TableCell className="whitespace-nowrap">{r.approved_at ? formatDate(r.approved_at) : "—"}</TableCell>
+                            <TableCell className="text-right tabular-nums">{formatCurrency(r.fc_paid_amount)}</TableCell>
+                            <TableCell className="text-right tabular-nums">{formatCurrency(remainingOf(r))}</TableCell>
+                            <TableCell><SettlementBadge status={r.fc_settlement_status} /></TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
