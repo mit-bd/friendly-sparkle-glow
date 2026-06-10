@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from "@/lib/router";
 import { useEffect, useMemo, useState } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell, LineChart, Line, Legend } from "recharts";
 import { ArrowDownRight, ArrowUpRight, Banknote, HandCoins, Scale, AlertTriangle, CalendarClock, CalendarDays, Truck, Boxes, Sparkles, FileBarChart, Repeat } from "lucide-react";

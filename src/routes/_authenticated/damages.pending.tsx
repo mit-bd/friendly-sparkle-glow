@@ -1,4 +1,5 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from "@/lib/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowUpDown, ChevronLeft, ChevronRight, Clock, Eye, Filter, Search, X } from "lucide-react";
 import { toast } from "sonner";

@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@/lib/router";
 import { FinanceDetailView } from "@/components/finance/FinanceDetailView";
 
 export const Route = createFileRoute("/_authenticated/finance/payables/$id")({

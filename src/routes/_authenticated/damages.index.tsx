@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from "@/lib/router";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, PackageX, TrendingDown, Layers, ChevronRight, FileBarChart, ClipboardList } from "lucide-react";
 import { toast } from "sonner";

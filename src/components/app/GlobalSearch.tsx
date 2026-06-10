@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter } from "@/lib/router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Receipt,

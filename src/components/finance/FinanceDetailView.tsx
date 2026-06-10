@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@/lib/router";
 import { ArrowLeft, Download, Eye, FileText, Loader2, Pencil, Plus, Trash2, Ban, Wallet } from "lucide-react";
 import { toast } from "sonner";
 

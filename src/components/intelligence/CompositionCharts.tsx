@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link } from "@/lib/router";
 import { Cell, Pie, PieChart } from "recharts";
 import { PieChart as PieIcon, ArrowRight } from "lucide-react";
 

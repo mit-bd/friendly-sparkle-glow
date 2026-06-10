@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link } from "@/lib/router";
 import { Plus, Search, Loader2, Wallet, AlertTriangle, CalendarClock, FileBarChart, Filter } from "lucide-react";
 import { toast } from "sonner";
 
