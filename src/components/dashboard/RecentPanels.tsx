@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link } from "@/lib/router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Activity,

@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
+import { createFileRoute } from "@/lib/router";
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, Plus, UserPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -41,7 +40,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { logActivity } from "@/lib/audit";
 import { ROLE_LABELS } from "@/lib/modules";
-import { createUser } from "@/lib/admin-users.functions";
+import { createUser } from "@/lib/admin-users";
 
 export const Route = createFileRoute("/_authenticated/users")({
   head: () => ({ meta: [{ title: "Users & Roles — Motion IT BD" }] }),
@@ -240,7 +239,6 @@ function CreateUserDialog({
   onOpenChange: (v: boolean) => void;
   onCreated: () => void;
 }) {
-  const createUserFn = useServerFn(createUser);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -260,7 +258,7 @@ function CreateUserDialog({
     e.preventDefault();
     setSaving(true);
     try {
-      await createUserFn({ data: { full_name: fullName, email, phone, password, role } });
+      await createUser({ full_name: fullName, email, phone, password, role });
       toast.success("User created.");
       void logActivity({
         action: "user_create",

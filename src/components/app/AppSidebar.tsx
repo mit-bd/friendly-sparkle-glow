@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@/lib/router";
 
 import {
   Collapsible,

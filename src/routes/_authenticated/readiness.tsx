@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@/lib/router";
 import { useQuery } from "@tanstack/react-query";
 import {
   CheckCircle2,

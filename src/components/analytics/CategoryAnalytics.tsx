@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@/lib/router";
 import { ChevronRight, PieChart as PieIcon } from "lucide-react";
 import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 
