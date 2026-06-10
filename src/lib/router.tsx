@@ -170,7 +170,10 @@ export function useNavigate() {
 /* Params / search                                                     */
 /* ------------------------------------------------------------------ */
 
-export function useParams(_opts?: { strict?: boolean }): Record<string, string> {
+export function useParams(_opts?: {
+  strict?: boolean;
+  from?: string;
+}): Record<string, string> {
   return useRRParams() as Record<string, string>;
 }
 
