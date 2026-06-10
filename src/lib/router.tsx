@@ -283,17 +283,23 @@ interface RouteConfig {
   [key: string]: unknown;
 }
 
-export interface RouteObject {
-  options: RouteConfig;
+type SearchResult<C> = C extends {
+  validateSearch: (search: Record<string, unknown>) => infer R;
+}
+  ? R
+  : Record<string, unknown>;
+
+export interface RouteObject<C extends RouteConfig = RouteConfig> {
+  options: C;
   Component: ComponentType;
   useParams: <T = Record<string, string>>() => T;
-  useSearch: <T = Record<string, unknown>>() => T;
+  useSearch: () => SearchResult<C>;
   useNavigate: typeof useNavigate;
   useRouteContext: () => Record<string, unknown>;
   fullPath: string;
 }
 
-function makeRoute(path: string, config: RouteConfig): RouteObject {
+function makeRoute<C extends RouteConfig>(path: string, config: C): RouteObject<C> {
   const Inner = config.component;
 
   function Component() {
@@ -301,10 +307,12 @@ function makeRoute(path: string, config: RouteConfig): RouteObject {
     return Inner ? <Inner /> : <Outlet />;
   }
 
-  const useSearch = <T,>(): T => {
+  const useSearch = (): SearchResult<C> => {
     const [searchParams] = useSearchParams();
     const raw = readSearchObject(searchParams);
-    return (config.validateSearch ? config.validateSearch(raw) : raw) as T;
+    return (
+      config.validateSearch ? config.validateSearch(raw) : raw
+    ) as SearchResult<C>;
   };
 
   return {
@@ -319,15 +327,15 @@ function makeRoute(path: string, config: RouteConfig): RouteObject {
 }
 
 export function createFileRoute(path: string) {
-  return (config: RouteConfig): RouteObject => makeRoute(path, config);
+  return <C extends RouteConfig>(config: C): RouteObject<C> => makeRoute(path, config);
 }
 
-export function createRootRoute(config: RouteConfig): RouteObject {
+export function createRootRoute<C extends RouteConfig>(config: C): RouteObject<C> {
   return makeRoute("/", config);
 }
 
 export function createRootRouteWithContext<_C>() {
-  return (config: RouteConfig): RouteObject => makeRoute("/", config);
+  return <C extends RouteConfig>(config: C): RouteObject<C> => makeRoute("/", config);
 }
 
 /* Re-export a couple of misc symbols used in passing. */
