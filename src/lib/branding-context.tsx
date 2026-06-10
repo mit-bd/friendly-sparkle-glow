@@ -9,6 +9,7 @@ import {
 
 import { supabase } from "@/integrations/supabase/client";
 import { getSignedUrl } from "./storage";
+import { applyFavicon } from "./favicon";
 
 export interface CompanyProfile {
   id: string;
@@ -69,7 +70,11 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     }
 
     setCompany(comp);
-    setLogoUrl(await getSignedUrl("logos", comp?.logo_url));
+    const signedLogo = await getSignedUrl("logos", comp?.logo_url);
+    setLogoUrl(signedLogo);
+    // Keep the browser-tab favicon in sync with the active company logo so an
+    // admin changing the logo updates the favicon instantly (no redeploy).
+    applyFavicon(signedLogo);
     setLoading(false);
   }, []);
 

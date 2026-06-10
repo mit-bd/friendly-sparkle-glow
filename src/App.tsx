@@ -8,6 +8,7 @@ import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { AuthProvider, useAuth } from "@/lib/auth-context";
 import { BrandingProvider } from "@/lib/branding-context";
 import { AppShell } from "@/components/app/AppShell";
+import { DynamicFavicon } from "@/components/app/DynamicFavicon";
 import { Link } from "@/lib/router";
 import { Loader2 } from "lucide-react";
 
@@ -220,6 +221,7 @@ export function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <BrowserRouter>
+            <DynamicFavicon />
             <Routes>
               {/* Public */}
               <Route path="/auth" element={<AuthRoute.Component />} />
