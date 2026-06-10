@@ -47,11 +47,11 @@ export function CompanyLogo({
       </div>
       {showName && (
         <div className="min-w-0 leading-tight">
-          <span className="block truncate text-sm font-semibold tracking-tight text-foreground">
+          <span className="block truncate text-sm font-semibold tracking-tight text-sidebar-foreground">
             {name}
           </span>
           {showTagline && (
-            <span className="block truncate text-xs text-muted-foreground">{APP_TAGLINE}</span>
+            <span className="block truncate text-xs text-sidebar-foreground/60">{APP_TAGLINE}</span>
           )}
         </div>
       )}
