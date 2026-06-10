@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { createFileRoute } from "@/lib/router";
 import { PackageX } from "lucide-react";
 

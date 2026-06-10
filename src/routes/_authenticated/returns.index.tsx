@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { createFileRoute, Link } from "@/lib/router";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Undo2, TrendingDown, Coins, Wallet, ChevronRight, FileBarChart, ClipboardList } from "lucide-react";

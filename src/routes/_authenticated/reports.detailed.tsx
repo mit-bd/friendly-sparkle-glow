@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { createFileRoute, redirect } from "@/lib/router";
 
 // The former "Detailed Reports" placeholder is superseded by the Reports Center,

@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { createFileRoute, Outlet, redirect } from "@/lib/router";
 
 import { supabase } from "@/integrations/supabase/client";
