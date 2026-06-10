@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate, Link } from "@/lib/router";
+import { createFileRoute, useNavigate, Link } from "@/lib/router";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -10,18 +10,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { getPublicBranding } from "@/lib/branding.functions";
+import { getPublicBranding } from "@/lib/branding";
 import { logActivity } from "@/lib/audit";
 import { BrandMark } from "@/components/BrandMark";
 import { APP_NAME, APP_TAGLINE } from "@/lib/modules";
 import brandBg from "@/assets/brand/brand-bg.jpg";
 
 export const Route = createFileRoute("/auth")({
-  ssr: false,
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (data.user) throw redirect({ to: "/" });
-  },
   head: () => ({
     meta: [
       { title: "Sign in — Motion IT BD" },
@@ -39,7 +34,12 @@ function AuthPage() {
   });
 
   useEffect(() => {
+    // If already signed in, send them straight to the app.
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) navigate({ to: "/" });
+    });
     getPublicBranding().then(setBranding).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const companyName = branding.name.trim() || APP_NAME;
