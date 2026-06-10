@@ -239,7 +239,6 @@ function CreateUserDialog({
   onOpenChange: (v: boolean) => void;
   onCreated: () => void;
 }) {
-  const createUserFn = useServerFn(createUser);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -259,7 +258,7 @@ function CreateUserDialog({
     e.preventDefault();
     setSaving(true);
     try {
-      await createUserFn({ data: { full_name: fullName, email, phone, password, role } });
+      await createUser({ full_name: fullName, email, phone, password, role });
       toast.success("User created.");
       void logActivity({
         action: "user_create",
