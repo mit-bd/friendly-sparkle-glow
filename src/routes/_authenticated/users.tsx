@@ -1,5 +1,4 @@
 import { createFileRoute } from "@/lib/router";
-import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, Plus, UserPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -41,7 +40,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { logActivity } from "@/lib/audit";
 import { ROLE_LABELS } from "@/lib/modules";
-import { createUser } from "@/lib/admin-users.functions";
+import { createUser } from "@/lib/admin-users";
 
 export const Route = createFileRoute("/_authenticated/users")({
   head: () => ({ meta: [{ title: "Users & Roles — Motion IT BD" }] }),
