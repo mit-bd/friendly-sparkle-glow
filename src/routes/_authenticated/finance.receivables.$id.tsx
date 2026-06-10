@@ -1,4 +1,3 @@
-import { createFileRoute } from "@/lib/router"
 import { createFileRoute } from "@/lib/router";
 import { FinanceDetailView } from "@/components/finance/FinanceDetailView";
 
