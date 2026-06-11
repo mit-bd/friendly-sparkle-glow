@@ -14,6 +14,10 @@ import {
   LineChart,
   Landmark,
   Wallet,
+  Crown,
+  Building2,
+  UserCheck,
+  ShieldAlert,
   type LucideIcon,
 } from "lucide-react";
 
@@ -185,11 +189,31 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 export const ROLE_LABELS: Record<string, string> = {
+  owner: "Owner",
   admin: "Admin",
   manager: "Manager",
   accountant: "Accountant",
   viewer: "Viewer",
 };
+
+/**
+ * Owner governance navigation. Rendered as a separate, Owner-only group in the
+ * sidebar — these routes are gated by the `owner` role, not module permissions.
+ */
+export interface OwnerNavItem {
+  label: string;
+  to: string;
+  icon: LucideIcon;
+}
+
+export const OWNER_NAV_ITEMS: OwnerNavItem[] = [
+  { label: "Owner Dashboard", to: "/owner", icon: Crown },
+  { label: "Registration Requests", to: "/owner/registrations", icon: UserCheck },
+  { label: "Companies", to: "/owner/companies", icon: Building2 },
+  { label: "All Users", to: "/owner/users", icon: Users },
+  { label: "Owner Audit Center", to: "/owner/audit", icon: History },
+  { label: "Security Center", to: "/owner/security", icon: ShieldAlert },
+];
 
 export const MODULE_LABELS: Record<ModuleKey, string> = {
   dashboard: "Dashboard",
