@@ -32,7 +32,22 @@ export type ActivityAction =
   | "payment_added"
   | "payment_removed"
   | "partial_approve"
-  | "full_approve";
+  | "full_approve"
+  | "register"
+  | "request_info"
+  | "bootstrap"
+  | "user_suspend"
+  | "user_lock"
+  | "user_unlock"
+  | "user_reactivate"
+  | "password_reset_link"
+  | "temp_password"
+  | "require_password_change"
+  | "company_create"
+  | "company_update"
+  | "company_suspend"
+  | "company_reactivate"
+  | "company_delete";
 
 export type AuditEntityType =
   | "expense"
@@ -51,7 +66,10 @@ export type AuditEntityType =
   | "fixed_cost"
   | "receivable"
   | "payable"
-  | "budget";
+  | "budget"
+  | "company"
+  | "registration_request"
+  | "owner";
 
 export interface ActivityLog {
   id: string;
@@ -103,6 +121,21 @@ export const ACTIVITY_ACTION_LABELS: Record<string, string> = {
   payment_removed: "Payment Removed",
   partial_approve: "Partial Approval",
   full_approve: "Full Approval",
+  register: "Registration Submitted",
+  request_info: "Information Requested",
+  bootstrap: "Owner Bootstrapped",
+  user_suspend: "User Suspended",
+  user_lock: "User Locked",
+  user_unlock: "User Unlocked",
+  user_reactivate: "User Reactivated",
+  password_reset_link: "Password Reset Link Sent",
+  temp_password: "Temporary Password Issued",
+  require_password_change: "Password Change Required",
+  company_create: "Company Created",
+  company_update: "Company Updated",
+  company_suspend: "Company Suspended",
+  company_reactivate: "Company Reactivated",
+  company_delete: "Company Deleted",
 };
 
 export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
@@ -123,6 +156,9 @@ export const ACTIVITY_ENTITY_LABELS: Record<string, string> = {
   receivable: "Receivable",
   payable: "Payable",
   budget: "Budget",
+  company: "Company",
+  registration_request: "Registration Request",
+  owner: "Owner",
 };
 
 /** Tailwind tone classes per action (theme-safe semantic tokens). */
@@ -153,6 +189,21 @@ export const ACTIVITY_TONE: Record<string, string> = {
   payment_removed: "bg-destructive/15 text-destructive",
   partial_approve: "bg-warning/15 text-warning",
   full_approve: "bg-chart-2/15 text-chart-2",
+  register: "bg-chart-1/15 text-chart-1",
+  request_info: "bg-warning/15 text-warning",
+  bootstrap: "bg-chart-4/15 text-chart-4",
+  user_suspend: "bg-destructive/15 text-destructive",
+  user_lock: "bg-destructive/15 text-destructive",
+  user_unlock: "bg-chart-2/15 text-chart-2",
+  user_reactivate: "bg-chart-2/15 text-chart-2",
+  password_reset_link: "bg-warning/15 text-warning",
+  temp_password: "bg-warning/15 text-warning",
+  require_password_change: "bg-warning/15 text-warning",
+  company_create: "bg-chart-2/15 text-chart-2",
+  company_update: "bg-chart-1/15 text-chart-1",
+  company_suspend: "bg-destructive/15 text-destructive",
+  company_reactivate: "bg-chart-2/15 text-chart-2",
+  company_delete: "bg-destructive/15 text-destructive",
 };
 
 /** Best-effort client logger for actions that don't hit a tracked table. */
