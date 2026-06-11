@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_authenticated/owner")({
   component: OwnerDashboard,
 });
 
-const PIE_COLORS = ["hsl(var(--chart-2))", "hsl(var(--warning))", "hsl(var(--destructive))"];
+const PIE_COLORS = ["var(--chart-2)", "var(--warning)", "var(--destructive)"];
 
 function StatCard({
   label,
@@ -161,18 +161,18 @@ function OwnerDashboard() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={regTrend}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                    <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis allowDecimals={false} stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} width={28} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis allowDecimals={false} stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} width={28} />
                     <Tooltip
                       contentStyle={{
-                        background: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
+                        background: "var(--popover)",
+                        border: "1px solid var(--border)",
                         borderRadius: 8,
                         fontSize: 12,
                       }}
                     />
-                    <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="hsl(var(--chart-1))" />
+                    <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="var(--chart-1)" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -195,8 +195,8 @@ function OwnerDashboard() {
                       </Pie>
                       <Tooltip
                         contentStyle={{
-                          background: "hsl(var(--popover))",
-                          border: "1px solid hsl(var(--border))",
+                          background: "var(--popover)",
+                          border: "1px solid var(--border)",
                           borderRadius: 8,
                           fontSize: 12,
                         }}
