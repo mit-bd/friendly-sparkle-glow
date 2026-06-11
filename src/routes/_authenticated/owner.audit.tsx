@@ -58,7 +58,7 @@ function OwnerAuditPage() {
       PAGE_SIZE,
     )
       .then(({ rows, count }) => {
-        setRows(count === 0 && entityType === "all" && !search ? rows : rows);
+        setRows(rows);
         setCount(count);
       })
       .catch((e) => toast.error(e.message))
