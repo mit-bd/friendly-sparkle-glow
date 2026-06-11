@@ -43,7 +43,7 @@ export function ReportDocument({
   return (
     <div
       className={cn(
-        "report-print-area mx-auto w-full max-w-[210mm] rounded-lg border border-border bg-card p-8 text-foreground shadow-sm",
+        "report-print-area mx-auto w-full max-w-[210mm] rounded-lg border border-border bg-card p-4 text-foreground shadow-sm sm:p-8",
         className,
       )}
     >
