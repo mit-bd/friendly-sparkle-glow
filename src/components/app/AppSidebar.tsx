@@ -21,12 +21,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { CompanyLogo } from "./CompanyLogo";
-import { NAV_ITEMS } from "@/lib/modules";
+import { NAV_ITEMS, OWNER_NAV_ITEMS } from "@/lib/modules";
 import { useAuth } from "@/lib/auth-context";
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { canAccessModule } = useAuth();
+  const { canAccessModule, isOwner } = useAuth();
   const { setOpenMobile } = useSidebar();
 
   const isActive = (to: string) =>
@@ -44,6 +44,27 @@ export function AppSidebar() {
         <CompanyLogo size="sm" showTagline />
       </SidebarHeader>
       <SidebarContent className="px-2 py-2">
+        {isOwner && (
+          <SidebarGroup className="p-0">
+            <SidebarGroupLabel className="px-3 text-xs font-semibold uppercase tracking-wide text-sidebar-foreground/50">
+              Platform Owner
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="gap-1">
+                {OWNER_NAV_ITEMS.map((item) => (
+                  <SidebarMenuItem key={item.to}>
+                    <SidebarMenuButton asChild isActive={isActive(item.to)} className={navItemClass}>
+                      <Link to={item.to} onClick={() => setOpenMobile(false)}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
