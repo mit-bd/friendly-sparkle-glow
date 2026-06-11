@@ -190,6 +190,69 @@ export type Database = {
           },
         ]
       }
+      companies: {
+        Row: {
+          address: string | null
+          admin_user_id: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          email: string | null
+          id: string
+          is_primary: boolean
+          legal_name: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          status: Database["public"]["Enums"]["company_status"]
+          suspended_at: string | null
+          suspended_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          admin_user_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          email?: string | null
+          id?: string
+          is_primary?: boolean
+          legal_name?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          status?: Database["public"]["Enums"]["company_status"]
+          suspended_at?: string | null
+          suspended_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          admin_user_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          email?: string | null
+          id?: string
+          is_primary?: boolean
+          legal_name?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          status?: Database["public"]["Enums"]["company_status"]
+          suspended_at?: string | null
+          suspended_by?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       company_profile: {
         Row: {
           address: string | null
@@ -1042,6 +1105,39 @@ export type Database = {
           },
         ]
       }
+      login_history: {
+        Row: {
+          created_at: string
+          email: string | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          success: boolean
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       marketing_platforms: {
         Row: {
           created_at: string
@@ -1432,41 +1528,61 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          company_id: string | null
           created_at: string
           created_by: string | null
           email: string
           full_name: string
           id: string
+          locked_at: string | null
           phone: string | null
+          require_password_change: boolean
           status: Database["public"]["Enums"]["user_status"]
+          suspended_at: string | null
           updated_at: string
           updated_by: string | null
         }
         Insert: {
           avatar_url?: string | null
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           email?: string
           full_name?: string
           id: string
+          locked_at?: string | null
           phone?: string | null
+          require_password_change?: boolean
           status?: Database["public"]["Enums"]["user_status"]
+          suspended_at?: string | null
           updated_at?: string
           updated_by?: string | null
         }
         Update: {
           avatar_url?: string | null
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           email?: string
           full_name?: string
           id?: string
+          locked_at?: string | null
           phone?: string | null
+          require_password_change?: boolean
           status?: Database["public"]["Enums"]["user_status"]
+          suspended_at?: string | null
           updated_at?: string
           updated_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       qa_checklist_items: {
         Row: {
@@ -1752,6 +1868,68 @@ export type Database = {
           updated_by?: string | null
         }
         Relationships: []
+      }
+      registration_requests: {
+        Row: {
+          address: string | null
+          company_name: string
+          contact_name: string
+          created_at: string
+          created_company_id: string | null
+          created_user_id: string | null
+          email: string
+          id: string
+          info_request_note: string | null
+          message: string | null
+          phone: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["registration_status"]
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          company_name: string
+          contact_name: string
+          created_at?: string
+          created_company_id?: string | null
+          created_user_id?: string | null
+          email: string
+          id?: string
+          info_request_note?: string | null
+          message?: string | null
+          phone?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["registration_status"]
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          contact_name?: string
+          created_at?: string
+          created_company_id?: string | null
+          created_user_id?: string | null
+          email?: string
+          id?: string
+          info_request_note?: string | null
+          message?: string | null
+          phone?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["registration_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registration_requests_created_company_id_fkey"
+            columns: ["created_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       report_counters: {
         Row: {
@@ -2090,6 +2268,39 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          created_at: string
+          details: Json
+          email: string | null
+          id: string
+          ip_address: string | null
+          severity: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          email?: string | null
+          id?: string
+          ip_address?: string | null
+          severity?: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          email?: string | null
+          id?: string
+          ip_address?: string | null
+          severity?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       signatories: {
         Row: {
           created_at: string
@@ -2186,6 +2397,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_owner: { Args: { _user_id: string }; Returns: boolean }
       list_directory: {
         Args: never
         Returns: {
@@ -2243,9 +2455,14 @@ export type Database = {
       next_receivable_number: { Args: never; Returns: string }
       next_report_number: { Args: never; Returns: string }
       next_return_number: { Args: never; Returns: string }
+      notify_owners: {
+        Args: { _body: string; _title: string; _type: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "manager" | "accountant" | "viewer" | "owner"
+      company_status: "active" | "suspended" | "deleted"
       expense_status:
         | "draft"
         | "submitted"
@@ -2254,7 +2471,13 @@ export type Database = {
         | "rejected"
         | "deleted"
         | "revision_requested"
+      registration_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "info_requested"
       signatory_type: "accountant" | "manager" | "ceo"
+      subscription_plan: "free" | "starter" | "pro" | "enterprise"
       user_status: "active" | "inactive" | "pending" | "suspended" | "locked"
     }
     CompositeTypes: {
@@ -2384,6 +2607,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "manager", "accountant", "viewer", "owner"],
+      company_status: ["active", "suspended", "deleted"],
       expense_status: [
         "draft",
         "submitted",
@@ -2393,7 +2617,14 @@ export const Constants = {
         "deleted",
         "revision_requested",
       ],
+      registration_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "info_requested",
+      ],
       signatory_type: ["accountant", "manager", "ceo"],
+      subscription_plan: ["free", "starter", "pro", "enterprise"],
       user_status: ["active", "inactive", "pending", "suspended", "locked"],
     },
   },
