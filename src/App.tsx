@@ -10,7 +10,7 @@ import { BrandingProvider } from "@/lib/branding-context";
 import { AppShell } from "@/components/app/AppShell";
 import { DynamicFavicon } from "@/components/app/DynamicFavicon";
 import { Link } from "@/lib/router";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldX } from "lucide-react";
 
 /* ---------------- Public routes ---------------- */
 import { Route as AuthRoute } from "@/routes/auth";
@@ -29,6 +29,15 @@ import { Route as QaRoute } from "@/routes/_authenticated/qa";
 import { Route as ReadinessRoute } from "@/routes/_authenticated/readiness";
 import { Route as SystemRoute } from "@/routes/_authenticated/system";
 import { Route as UsersRoute } from "@/routes/_authenticated/users";
+
+/* owner governance */
+import { Route as OwnerDashboardRoute } from "@/routes/_authenticated/owner";
+import { Route as OwnerRegistrationsRoute } from "@/routes/_authenticated/owner.registrations";
+import { Route as OwnerCompaniesRoute } from "@/routes/_authenticated/owner.companies";
+import { Route as OwnerCompanyDetailRoute } from "@/routes/_authenticated/owner.companies.$id";
+import { Route as OwnerUsersRoute } from "@/routes/_authenticated/owner.users";
+import { Route as OwnerAuditRoute } from "@/routes/_authenticated/owner.audit";
+import { Route as OwnerSecurityRoute } from "@/routes/_authenticated/owner.security";
 
 /* budgets */
 import { Route as BudgetsLayout } from "@/routes/_authenticated/budgets";
@@ -120,10 +129,54 @@ function FullScreenLoader() {
 }
 
 function AuthGate({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, profile, signOut } = useAuth();
   if (loading) return <FullScreenLoader />;
   if (!user) return <Navigate to="/auth" replace />;
+  const status = profile?.status;
+  if (status === "suspended" || status === "locked" || status === "pending") {
+    return <AccountBlocked status={status} onSignOut={signOut} />;
+  }
   return <>{children}</>;
+}
+
+function AccountBlocked({
+  status,
+  onSignOut,
+}: {
+  status: "suspended" | "locked" | "pending";
+  onSignOut: () => void;
+}) {
+  const copy = {
+    pending: {
+      title: "Awaiting approval",
+      body: "Your account is pending approval by the platform owner. You'll be able to sign in once it's approved.",
+    },
+    suspended: {
+      title: "Account suspended",
+      body: "Your account has been suspended. Please contact the platform owner for assistance.",
+    },
+    locked: {
+      title: "Account locked",
+      body: "Your account has been locked. Please contact the platform owner to regain access.",
+    },
+  }[status];
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="max-w-md text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-md bg-destructive/10 text-destructive">
+          <ShieldX className="h-7 w-7" />
+        </div>
+        <h1 className="mt-5 text-xl font-semibold text-foreground">{copy.title}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{copy.body}</p>
+        <button
+          onClick={onSignOut}
+          className="mt-6 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          Sign out
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function AuthenticatedLayout() {
@@ -242,6 +295,15 @@ export function App() {
                 <Route path="readiness" element={<ReadinessRoute.Component />} />
                 <Route path="system" element={<SystemRoute.Component />} />
                 <Route path="users" element={<UsersRoute.Component />} />
+
+                {/* Owner governance */}
+                <Route path="owner" element={<OwnerDashboardRoute.Component />} />
+                <Route path="owner/registrations" element={<OwnerRegistrationsRoute.Component />} />
+                <Route path="owner/companies" element={<OwnerCompaniesRoute.Component />} />
+                <Route path="owner/companies/:id" element={<OwnerCompanyDetailRoute.Component />} />
+                <Route path="owner/users" element={<OwnerUsersRoute.Component />} />
+                <Route path="owner/audit" element={<OwnerAuditRoute.Component />} />
+                <Route path="owner/security" element={<OwnerSecurityRoute.Component />} />
 
                 {/* Budgets */}
                 <Route path="budgets" element={<BudgetsLayout.Component />}>
