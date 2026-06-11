@@ -299,6 +299,18 @@ export async function fetchCompanyUsers(companyId: string): Promise<OwnerUserRow
   return all.filter((u) => u.company_id === companyId);
 }
 
+/** Activity rows tied to a specific entity (e.g. a company id). Owner-only. */
+export async function fetchEntityActivity(entityId: string, limit = 50): Promise<any[]> {
+  const { data, error } = await db
+    .from("activity_logs")
+    .select("*")
+    .eq("entity_id", entityId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data ?? [];
+}
+
 /** Best-effort: record a login attempt (captures IP server-side). */
 export async function recordLogin(email: string, success: boolean, userId?: string): Promise<void> {
   try {
