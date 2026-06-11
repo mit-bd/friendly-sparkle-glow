@@ -58,7 +58,7 @@ export function ReportFooter({ reportNumber, printDate }: ReportFooterProps = {}
 
   return (
     <div className="report-footer mt-10 pt-4">
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-3 gap-3 sm:gap-8">
         {SIGNATORY_ORDER.map((type) => (
           <SignatureBlock key={type} type={type} row={byType.get(type)} />
         ))}
