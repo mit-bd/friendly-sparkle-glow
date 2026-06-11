@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { getPublicBranding } from "@/lib/branding";
 import { logActivity } from "@/lib/audit";
+import { recordLogin } from "@/lib/owner";
 import { BrandMark } from "@/components/BrandMark";
 import { APP_NAME, APP_TAGLINE } from "@/lib/modules";
 import brandBg from "@/assets/brand/brand-bg.jpg";
@@ -75,13 +77,13 @@ function AuthPage() {
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign in</TabsTrigger>
-              <TabsTrigger value="signup">Create account</TabsTrigger>
+              <TabsTrigger value="request">Request access</TabsTrigger>
             </TabsList>
             <TabsContent value="signin">
               <SignInForm onSuccess={() => navigate({ to: "/" })} />
             </TabsContent>
-            <TabsContent value="signup">
-              <SignUpForm onSuccess={() => navigate({ to: "/" })} />
+            <TabsContent value="request">
+              <RequestAccessForm />
             </TabsContent>
           </Tabs>
         </div>
@@ -115,12 +117,14 @@ function SignInForm({ onSuccess }: { onSuccess: () => void }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
+      void recordLogin(email, false);
       toast.error(error.message);
       return;
     }
+    void recordLogin(email, true, data.user?.id);
     void logActivity({ action: "login", entityType: "session", entityLabel: email });
     onSuccess();
   }
@@ -167,81 +171,79 @@ function SignInForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-function SignUpForm({ onSuccess }: { onSuccess: () => void }) {
-  const [fullName, setFullName] = useState("");
+function RequestAccessForm() {
+  const [companyName, setCompanyName] = useState("");
+  const [contactName, setContactName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters.");
-      return;
-    }
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: { full_name: fullName },
-      },
-    });
+    const { error } = await (supabase as unknown as { from: (t: string) => any })
+      .from("registration_requests")
+      .insert({
+        company_name: companyName.trim(),
+        contact_name: contactName.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim() || null,
+        message: message.trim() || null,
+        status: "pending",
+      });
     setLoading(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    if (data.session) {
-      toast.success("Account created.");
-      onSuccess();
-    } else {
-      toast.success("Account created. Please check your email to confirm, then sign in.");
-    }
+    setSubmitted(true);
+    toast.success("Request submitted. The platform owner will review it shortly.");
+  }
+
+  if (submitted) {
+    return (
+      <div className="mt-6 rounded-lg border border-border bg-muted/30 p-5 text-center">
+        <p className="text-sm font-medium text-foreground">Request received</p>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          Your access request has been sent to the platform owner for approval. You'll be contacted
+          at <strong>{email}</strong> once it's reviewed.
+        </p>
+      </div>
+    );
   }
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="signup-name">Full name</Label>
-        <Input
-          id="signup-name"
-          required
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Jane Doe"
-        />
+        <Label htmlFor="req-company">Company name</Label>
+        <Input id="req-company" required value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Acme Ltd." />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="signup-email">Email</Label>
-        <Input
-          id="signup-email"
-          type="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@company.com"
-        />
+        <Label htmlFor="req-contact">Your name</Label>
+        <Input id="req-contact" required value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Jane Doe" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="req-email">Email</Label>
+          <Input id="req-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="req-phone">Phone</Label>
+          <Input id="req-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Optional" />
+        </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="signup-password">Password</Label>
-        <PasswordInput
-          id="signup-password"
-          autoComplete="new-password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="At least 8 characters"
-        />
+        <Label htmlFor="req-message">Message</Label>
+        <Textarea id="req-message" value={message} onChange={(e) => setMessage(e.target.value)} rows={3} placeholder="Tell us about your company (optional)" />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-        Create account
+        Submit request
       </Button>
       <p className="text-center text-xs text-muted-foreground">
-        The first account created becomes the workspace Admin.
+        Access is granted by the platform owner after review.
       </p>
     </form>
   );
