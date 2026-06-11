@@ -13,15 +13,19 @@ import { supabase } from "@/integrations/supabase/client";
 import type { ModuleKey, PermissionAction } from "./modules";
 import { logActivity } from "./audit";
 
-export type AppRole = "admin" | "manager" | "accountant" | "viewer";
+export type AppRole = "owner" | "admin" | "manager" | "accountant" | "viewer";
+
+export type AccountStatus = "active" | "inactive" | "pending" | "suspended" | "locked";
 
 export interface Profile {
   id: string;
   full_name: string;
   email: string;
   phone: string | null;
-  status: "active" | "inactive";
+  status: AccountStatus;
   avatar_url: string | null;
+  company_id?: string | null;
+  require_password_change?: boolean;
 }
 
 interface PermissionRow {
@@ -39,6 +43,7 @@ interface AuthContextValue {
   roles: AppRole[];
   loading: boolean;
   isAdmin: boolean;
+  isOwner: boolean;
   primaryRole: AppRole | null;
   can: (module: ModuleKey, action: PermissionAction) => boolean;
   canAccessModule: (module: ModuleKey) => boolean;
@@ -48,7 +53,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const ROLE_PRIORITY: AppRole[] = ["admin", "manager", "accountant", "viewer"];
+const ROLE_PRIORITY: AppRole[] = ["owner", "admin", "manager", "accountant", "viewer"];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -127,11 +132,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [loadUserData]);
 
+  const isOwner = roles.includes("owner");
   const isAdmin = roles.includes("admin");
 
   const can = useCallback(
     (module: ModuleKey, action: PermissionAction) => {
-      if (isAdmin) return true;
+      if (isOwner || isAdmin) return true;
       const row = permissions[module];
       if (!row) return false;
       return action === "view"
@@ -142,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             ? row.can_approve
             : row.can_export;
     },
-    [permissions, isAdmin],
+    [permissions, isAdmin, isOwner],
   );
 
   const primaryRole = useMemo(
@@ -155,11 +161,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // but not view-all — still open the module while RLS scopes their data.
   const canAccessModule = useCallback(
     (module: ModuleKey) =>
+      isOwner ||
       isAdmin ||
       (["view", "edit", "approve", "export"] as PermissionAction[]).some((a) =>
         can(module, a),
       ),
-    [can, isAdmin],
+    [can, isAdmin, isOwner],
   );
 
   const signOut = useCallback(async () => {
@@ -177,6 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     roles,
     loading,
     isAdmin,
+    isOwner,
     primaryRole,
     can,
     canAccessModule,
