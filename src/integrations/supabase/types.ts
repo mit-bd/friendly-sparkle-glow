@@ -2245,7 +2245,7 @@ export type Database = {
       next_return_number: { Args: never; Returns: string }
     }
     Enums: {
-      app_role: "admin" | "manager" | "accountant" | "viewer"
+      app_role: "admin" | "manager" | "accountant" | "viewer" | "owner"
       expense_status:
         | "draft"
         | "submitted"
@@ -2255,7 +2255,7 @@ export type Database = {
         | "deleted"
         | "revision_requested"
       signatory_type: "accountant" | "manager" | "ceo"
-      user_status: "active" | "inactive"
+      user_status: "active" | "inactive" | "pending" | "suspended" | "locked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2383,7 +2383,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "manager", "accountant", "viewer"],
+      app_role: ["admin", "manager", "accountant", "viewer", "owner"],
       expense_status: [
         "draft",
         "submitted",
@@ -2394,7 +2394,7 @@ export const Constants = {
         "revision_requested",
       ],
       signatory_type: ["accountant", "manager", "ceo"],
-      user_status: ["active", "inactive"],
+      user_status: ["active", "inactive", "pending", "suspended", "locked"],
     },
   },
 } as const
