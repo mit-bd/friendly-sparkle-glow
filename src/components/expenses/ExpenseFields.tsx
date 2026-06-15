@@ -34,6 +34,8 @@ interface ExpenseFieldsProps {
   /** When editing, allow showing the current (possibly approval) status as read context. */
   extraStatuses?: ExpenseStatus[];
   disabled?: boolean;
+  /** Optional content rendered directly beneath the primary description field (e.g. AI suggestions). */
+  afterDescription?: React.ReactNode;
 }
 
 export function ExpenseFields({
@@ -43,12 +45,27 @@ export function ExpenseFields({
   subcategories,
   extraStatuses = [],
   disabled,
+  afterDescription,
 }: ExpenseFieldsProps) {
   const availableSubs = subcategories.filter((s) => s.category_id === value.category_id);
   const statusOptions = [...new Set([...SUBMITTABLE_STATUSES, ...extraStatuses])];
 
   return (
     <div className="space-y-5">
+      <div className="space-y-2">
+        <Label htmlFor="exp-description">Expense description</Label>
+        <Textarea
+          id="exp-description"
+          rows={2}
+          maxLength={1000}
+          disabled={disabled}
+          value={value.description}
+          onChange={(e) => onChange({ description: e.target.value })}
+          placeholder="e.g. Facebook Ads June Campaign, Carton Purchase, Office Internet Bill"
+        />
+        {afterDescription}
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="exp-date">Expense date</Label>
@@ -148,19 +165,6 @@ export function ExpenseFields({
         <p className="text-xs text-muted-foreground">
           Submissions stay out of financial totals until an approver marks them Approved.
         </p>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="exp-description">Description</Label>
-        <Textarea
-          id="exp-description"
-          rows={3}
-          maxLength={1000}
-          disabled={disabled}
-          value={value.description}
-          onChange={(e) => onChange({ description: e.target.value })}
-          placeholder="What was this expense for?"
-        />
       </div>
 
       <div className="space-y-2">
