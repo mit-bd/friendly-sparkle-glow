@@ -269,6 +269,17 @@ function AddExpensePage() {
                   onChange={patch}
                   categories={categories}
                   subcategories={subs}
+                  afterDescription={
+                    <AiClassificationPanel
+                      description={form.description}
+                      categories={categories}
+                      subcategories={subs}
+                      history={history}
+                      currentCategoryId={form.category_id}
+                      currentSubcategoryId={form.subcategory_id}
+                      onApply={applySuggestion}
+                    />
+                  }
                 />
               </CardContent>
             </Card>
