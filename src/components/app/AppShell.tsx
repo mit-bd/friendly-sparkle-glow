@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { AppTopbar } from "./AppTopbar";
 import { NotificationListener } from "./NotificationListener";
+import { AiAssistant } from "./AiAssistant";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -21,6 +22,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </p>
         </footer>
       </SidebarInset>
+      <AiAssistant />
     </SidebarProvider>
   );
 }
