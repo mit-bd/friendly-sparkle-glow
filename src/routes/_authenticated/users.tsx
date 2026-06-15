@@ -156,6 +156,41 @@ function UsersPage() {
       ) : (
         <Card>
           <CardContent className="p-0">
+            <div className="space-y-3 p-4 md:hidden">
+              {rows.map((row) => {
+                const isSelf = row.id === currentUser?.id;
+                return (
+                  <MobileRecordCard
+                    key={row.id}
+                    title={<>{row.full_name || "—"}{isSelf && <span className="ml-2 text-xs text-muted-foreground">(you)</span>}</>}
+                    subtitle={row.email}
+                    footer={
+                      <>
+                        <Select value={row.role ?? undefined} onValueChange={(v) => changeRole(row, v as Role)} disabled={isSelf}>
+                          <SelectTrigger className="h-9 w-[150px]"><SelectValue placeholder="No role" /></SelectTrigger>
+                          <SelectContent>
+                            {ROLES.map((r) => (<SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>))}
+                          </SelectContent>
+                        </Select>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground">{row.status === "active" ? "Active" : "Inactive"}</span>
+                          <Switch checked={row.status === "active"} disabled={isSelf} onCheckedChange={(v) => toggleStatus(row, v)} />
+                        </div>
+                      </>
+                    }
+                    details={[
+                      { label: "Phone", value: row.phone || "—" },
+                      { label: "Status", value: (
+                        <Badge variant="outline" className={row.status === "active" ? "border-transparent bg-chart-2/15 text-chart-2" : "border-transparent bg-muted text-muted-foreground"}>
+                          {row.status === "active" ? "Active" : "Inactive"}
+                        </Badge>
+                      ) },
+                    ]}
+                  />
+                );
+              })}
+            </div>
+            <div className="hidden md:block">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -222,6 +257,7 @@ function UsersPage() {
                 })}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
       )}
