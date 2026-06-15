@@ -43,14 +43,17 @@ export function DateRangeFilter({ preset, range, onChange }: DateRangeFilterProp
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <div className="flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card p-1">
+    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="-mx-4 flex items-center gap-1 overflow-x-auto px-4 hide-scrollbar sm:mx-0 sm:flex-wrap sm:overflow-visible sm:rounded-lg sm:border sm:border-border sm:bg-card sm:px-1 sm:py-1">
         {RANGE_PRESETS.filter((p) => p.value !== "custom").map((p) => (
           <Button
             key={p.value}
             size="sm"
             variant={preset === p.value ? "default" : "ghost"}
-            className={cn("h-8 px-3 text-xs", preset === p.value && "bg-brand-gradient text-primary-foreground")}
+            className={cn(
+              "h-9 shrink-0 rounded-full border border-border px-4 text-xs sm:h-8 sm:rounded-md sm:border-0 sm:px-3",
+              preset === p.value && "bg-brand-gradient text-primary-foreground",
+            )}
             onClick={() => onChange(p.value, resolveRange(p.value))}
           >
             {p.label}
@@ -62,7 +65,7 @@ export function DateRangeFilter({ preset, range, onChange }: DateRangeFilterProp
               size="sm"
               variant={preset === "custom" ? "default" : "ghost"}
               className={cn(
-                "h-8 gap-1.5 px-3 text-xs",
+                "h-9 shrink-0 gap-1.5 rounded-full border border-border px-4 text-xs sm:h-8 sm:rounded-md sm:border-0 sm:px-3",
                 preset === "custom" && "bg-brand-gradient text-primary-foreground",
               )}
             >
@@ -92,7 +95,7 @@ export function DateRangeFilter({ preset, range, onChange }: DateRangeFilterProp
           </PopoverContent>
         </Popover>
       </div>
-      <span className="text-xs text-muted-foreground">{formatRangeLabel(range)}</span>
+      <span className="px-0.5 text-xs text-muted-foreground">{formatRangeLabel(range)}</span>
     </div>
   );
 }
