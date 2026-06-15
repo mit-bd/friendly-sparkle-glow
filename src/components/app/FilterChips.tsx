@@ -15,7 +15,7 @@ export function FilterChips({
   return (
     <div
       className={cn(
-        "hide-scrollbar sticky top-0 z-20 -mx-4 flex gap-2 overflow-x-auto bg-background/85 px-4 py-2 backdrop-blur md:hidden",
+        "hide-scrollbar sticky top-16 z-20 -mx-4 flex gap-2 overflow-x-auto bg-background/85 px-4 py-2 backdrop-blur md:hidden",
         className,
       )}
     >
