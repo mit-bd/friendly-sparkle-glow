@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { NoAccess } from "@/components/NoAccess";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
