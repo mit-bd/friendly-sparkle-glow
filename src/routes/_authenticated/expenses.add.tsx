@@ -22,6 +22,10 @@ import {
   type Suggestion,
 } from "@/lib/ai-classify";
 import { AiClassificationPanel } from "@/components/expenses/AiClassificationPanel";
+import { SmartParsePanel } from "@/components/expenses/SmartParsePanel";
+import { VoiceButton } from "@/components/voice/VoiceButton";
+import { parseTransaction, type ParsedTransaction } from "@/lib/assistant";
+import { createReceivable, createPayable } from "@/lib/finance";
 import {
   fetchCategories,
   fetchSubcategories,
@@ -53,6 +57,10 @@ function AddExpensePage() {
   const [pendingNewSub, setPendingNewSub] = useState<{ categoryId: string; name: string } | null>(null);
   /** The suggestion the user last accepted, kept for audit + learning. */
   const [acceptedSuggestion, setAcceptedSuggestion] = useState<Suggestion | null>(null);
+  /** Voice / AI smart-parse state. */
+  const [parsing, setParsing] = useState(false);
+  const [parsed, setParsed] = useState<ParsedTransaction | null>(null);
+  const [routing, setRouting] = useState(false);
 
   const [form, setForm] = useState<ExpenseFormValues>({
     expense_date: todayISO(),
@@ -103,6 +111,77 @@ function AddExpensePage() {
       setPendingNewSub({ categoryId: s.categoryId, name: s.proposeSubcategoryName });
     } else {
       setPendingNewSub(null);
+    }
+  }
+
+  async function runVoiceParse(text: string) {
+    setForm((f) => ({ ...f, description: text }));
+    setParsing(true);
+    setParsed(null);
+    try {
+      const result = await parseTransaction(text, {
+        categories: categories.map((c) => c.name),
+      });
+      setParsed(result);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not understand the voice input.");
+    } finally {
+      setParsing(false);
+    }
+  }
+
+  function applyParsedExpense() {
+    if (!parsed) return;
+    const match = categories.find(
+      (c) => c.name.toLowerCase() === (parsed.category_name || "").toLowerCase(),
+    );
+    setForm((f) => ({
+      ...f,
+      description: parsed.description?.trim() || f.description,
+      amount: parsed.amount != null ? String(parsed.amount) : f.amount,
+      expense_date: parsed.date || f.expense_date,
+      notes: parsed.notes?.trim() || f.notes,
+      category_id: match?.id ?? f.category_id,
+      subcategory_id: match ? "" : f.subcategory_id,
+    }));
+    setParsed(null);
+    toast.success("Form filled from your input.");
+  }
+
+  async function routeParsedLoan() {
+    if (!parsed || !user) return;
+    const amount = Number(parsed.amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast.error("Could not detect a valid amount.");
+      return;
+    }
+    setRouting(true);
+    try {
+      const lend = parsed.intent === "receivable" || parsed.intent === "collection";
+      const base = {
+        party_name: parsed.person_name?.trim() || parsed.description || "Unknown",
+        party_type: parsed.party_type?.trim() || "other",
+        contact_person: null,
+        mobile: null,
+        email: null,
+        reference_number: null,
+        amount,
+        due_date: parsed.due_date || null,
+        notes: parsed.notes || parsed.description || null,
+      };
+      if (lend) {
+        const rec = await createReceivable({ ...base, collected_amount: 0 }, user.id);
+        toast.success(`Receivable ${rec.receivable_number} created.`);
+        navigate({ to: "/finance/receivables/$id", params: { id: rec.id } });
+      } else {
+        const pay = await createPayable({ ...base, paid_amount: 0 }, user.id);
+        toast.success(`Payable ${pay.payable_number} created.`);
+        navigate({ to: "/finance/payables/$id", params: { id: pay.id } });
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not create the record.");
+    } finally {
+      setRouting(false);
     }
   }
 
@@ -269,16 +348,28 @@ function AddExpensePage() {
                   onChange={patch}
                   categories={categories}
                   subcategories={subs}
+                  descriptionVoice={
+                    <VoiceButton onResult={runVoiceParse} busy={parsing} />
+                  }
                   afterDescription={
-                    <AiClassificationPanel
-                      description={form.description}
-                      categories={categories}
-                      subcategories={subs}
-                      history={history}
-                      currentCategoryId={form.category_id}
-                      currentSubcategoryId={form.subcategory_id}
-                      onApply={applySuggestion}
-                    />
+                    <>
+                      <SmartParsePanel
+                        parsed={parsed}
+                        parsing={parsing}
+                        onApplyExpense={applyParsedExpense}
+                        onRoute={routeParsedLoan}
+                        routing={routing}
+                      />
+                      <AiClassificationPanel
+                        description={form.description}
+                        categories={categories}
+                        subcategories={subs}
+                        history={history}
+                        currentCategoryId={form.category_id}
+                        currentSubcategoryId={form.subcategory_id}
+                        onApply={applySuggestion}
+                      />
+                    </>
                   }
                 />
               </CardContent>
