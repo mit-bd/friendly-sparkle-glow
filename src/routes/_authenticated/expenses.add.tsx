@@ -23,7 +23,6 @@ import {
 } from "@/lib/ai-classify";
 import { AiClassificationPanel } from "@/components/expenses/AiClassificationPanel";
 import { SmartParsePanel } from "@/components/expenses/SmartParsePanel";
-import { VoiceButton } from "@/components/voice/VoiceButton";
 import { parseTransaction, type ParsedTransaction } from "@/lib/assistant";
 import { createReceivable, createPayable } from "@/lib/finance";
 import {
@@ -114,8 +113,11 @@ function AddExpensePage() {
     }
   }
 
-  async function runVoiceParse(text: string) {
-    setForm((f) => ({ ...f, description: text }));
+  // Live dictation already streams text straight into the description field, so
+  // here we only run the AI smart-parse on the final transcript (intent /
+  // receivable-payable detection). The description is left untouched.
+  async function onVoiceFinal(text: string) {
+    if (!text.trim()) return;
     setParsing(true);
     setParsed(null);
     try {
@@ -348,9 +350,7 @@ function AddExpensePage() {
                   onChange={patch}
                   categories={categories}
                   subcategories={subs}
-                  descriptionVoice={
-                    <VoiceButton onResult={runVoiceParse} busy={parsing} />
-                  }
+                  descriptionDictation={{ onFinal: onVoiceFinal, busy: parsing }}
                   afterDescription={
                     <>
                       <SmartParsePanel

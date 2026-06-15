@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,6 +16,7 @@ import {
   type ExpenseStatus,
   type ExpenseSubcategory,
 } from "@/lib/expenses";
+import { DictationButton } from "@/components/voice/DictationButton";
 
 export interface ExpenseFormValues {
   expense_date: string;
@@ -38,6 +40,11 @@ interface ExpenseFieldsProps {
   afterDescription?: React.ReactNode;
   /** Optional control rendered on the description label row (e.g. a voice mic button). */
   descriptionVoice?: React.ReactNode;
+  /** Enable live voice dictation into the description field. */
+  descriptionDictation?: {
+    onFinal?: (text: string) => void;
+    busy?: boolean;
+  };
 }
 
 export function ExpenseFields({
@@ -49,24 +56,48 @@ export function ExpenseFields({
   disabled,
   afterDescription,
   descriptionVoice,
+  descriptionDictation,
 }: ExpenseFieldsProps) {
   const availableSubs = subcategories.filter((s) => s.category_id === value.category_id);
   const statusOptions = [...new Set([...SUBMITTABLE_STATUSES, ...extraStatuses])];
+  const descRef = useRef<HTMLTextAreaElement>(null);
+  const selRef = useRef<{ start: number; end: number } | null>(null);
+
+  function trackCaret(e: React.SyntheticEvent<HTMLTextAreaElement>) {
+    const t = e.currentTarget;
+    selRef.current = { start: t.selectionStart, end: t.selectionEnd };
+  }
 
   return (
     <div className="space-y-5">
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="exp-description">Expense description</Label>
-          {descriptionVoice}
+          {descriptionDictation ? (
+            <DictationButton
+              targetRef={descRef}
+              selectionRef={selRef}
+              value={value.description}
+              onChange={(v) => onChange({ description: v })}
+              onFinal={descriptionDictation.onFinal}
+              busy={descriptionDictation.busy}
+            />
+          ) : (
+            descriptionVoice
+          )}
         </div>
         <Textarea
           id="exp-description"
+          ref={descRef}
           rows={2}
           maxLength={1000}
           disabled={disabled}
           value={value.description}
           onChange={(e) => onChange({ description: e.target.value })}
+          onSelect={trackCaret}
+          onKeyUp={trackCaret}
+          onClick={trackCaret}
+          onBlur={trackCaret}
           placeholder="e.g. Facebook Ads June Campaign, Carton Purchase, Office Internet Bill"
         />
         {afterDescription}
