@@ -16,6 +16,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { NoAccess } from "@/components/NoAccess";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ApprovalPanel } from "@/components/expenses/ApprovalPanel";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
+import { FilterChips, FilterChip } from "@/components/app/FilterChips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
