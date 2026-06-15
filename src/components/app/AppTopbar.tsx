@@ -49,7 +49,7 @@ export function AppTopbar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 bg-background/80 px-3 pt-safe shadow-soft backdrop-blur-xl sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 bg-background/80 px-3 pt-safe shadow-soft backdrop-blur-xl sm:px-6 md:h-16">
       <SidebarTrigger className="-ml-1" />
       <div className="md:hidden">
         <CompanyLogo size="sm" />
@@ -68,7 +68,10 @@ export function AppTopbar() {
           )}
         </Link>
       </Button>
-      <ThemeToggle />
+      {/* Theme toggle stays on desktop; mobile header keeps only logo, search, notifications, profile */}
+      <div className="hidden md:block">
+        <ThemeToggle />
+      </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
