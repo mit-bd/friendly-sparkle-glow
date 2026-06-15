@@ -123,7 +123,10 @@ function BudgetDashboard() {
           <Card>
             <CardHeader><CardTitle className="text-base">Category utilization</CardTitle></CardHeader>
             <CardContent className="p-0">
-              <Table>
+              <div className="space-y-3 p-4 md:hidden">
+                {sorted.map((e) => <BudgetCard key={e.budget.id} e={e} />)}
+              </div>
+              <Table className="hidden md:table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Budget</TableHead><TableHead>Target</TableHead><TableHead>Period</TableHead>
