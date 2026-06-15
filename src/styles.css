@@ -234,6 +234,10 @@
   scrollbar-width: none;
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /*
  * Typography scale (WA Suite-inspired hierarchy).
  * Page Title 32/700 · Section 24/600 · Card 16/600 · Body 14/400 · Small 13/400
