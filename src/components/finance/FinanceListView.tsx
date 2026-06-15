@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "@/lib/router";
-import { Plus, Search, Loader2, Wallet, AlertTriangle, CalendarClock, FileBarChart, Filter } from "lucide-react";
+import { Plus, Search, Loader2, Wallet, AlertTriangle, CalendarClock, FileBarChart, Filter, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -204,6 +204,8 @@ export function FinanceListView({ kind }: { kind: FinanceKind }) {
                   trailing={formatTk(r.amount)}
                   subtitle={r.party_name}
                   footer={<><SettlementBadge kind={kind} status={r.status} /><StatusBadge status={asExpenseStatus(r.approval_status)} /></>}
+                  onClick={() => navigate({ to: detailTo, params: { id: r.id } })}
+                  swipeActions={[{ label: "View", icon: Eye, tone: "brand", onClick: () => navigate({ to: detailTo, params: { id: r.id } }) }]}
                   details={[
                     { label: "Type", value: partyTypeLabel(kind, r.party_type) },
                     { label: "Due amount", value: formatTk(r.due_amount) },
