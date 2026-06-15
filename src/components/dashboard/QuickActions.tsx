@@ -42,12 +42,12 @@ export function QuickActions() {
         <CardTitle className="text-base">Quick Actions</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+        <div className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 hide-scrollbar sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-4 xl:grid-cols-7">
           {visible.map((a) => (
             <Link
               key={a.label}
               to={a.to}
-              className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-3 text-center transition-colors hover:border-brand/40 hover:bg-accent"
+              className="group flex min-w-[28%] shrink-0 snap-start flex-col items-center gap-2 rounded-lg border border-border bg-card p-3 text-center transition-colors hover:border-brand/40 hover:bg-accent active:bg-accent sm:min-w-0 sm:shrink"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-md bg-brand-gradient text-brand-foreground shadow-sm transition-transform group-hover:scale-105">
                 <a.icon className="h-5 w-5" />
