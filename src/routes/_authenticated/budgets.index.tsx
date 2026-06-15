@@ -167,6 +167,29 @@ function BudgetRow({ e }: { e: BudgetEvaluation }) {
   );
 }
 
+function BudgetCard({ e }: { e: BudgetEvaluation }) {
+  return (
+    <MobileRecordCard
+      title={<Link to="/budgets/$id" params={{ id: e.budget.id }} className="hover:text-brand">{e.budget.name}</Link>}
+      trailing={`${e.utilization.toFixed(0)}%`}
+      subtitle={`${BUDGET_TARGET_LABELS[e.budget.target_type]} · ${budgetPeriodLabel(e.budget)}`}
+      footer={
+        <>
+          <BudgetStatusBadge status={e.status} />
+          <div className="flex w-32 items-center gap-2">
+            <BudgetUtilizationBar utilization={e.utilization} status={e.status} />
+          </div>
+        </>
+      }
+      details={[
+        { label: "Budget", value: formatTk(e.budget.amount) },
+        { label: "Used", value: formatTk(e.used) },
+        { label: "Remaining", value: <span className={e.remaining < 0 ? "text-destructive" : ""}>{formatTk(e.remaining)}</span> },
+      ]}
+    />
+  );
+}
+
 function KpiCard({ icon: Icon, label, value, hint, tone = "neutral" }: { icon: typeof Wallet; label: string; value: string; hint: string; tone?: "neutral" | "negative" }) {
   return (
     <Card>
