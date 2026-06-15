@@ -346,6 +346,15 @@
     display: none !important;
   }
 
+  /* Reports: always print the desktop table, never the mobile card view,
+     regardless of the device width the print was triggered from. */
+  .report-mobile-cards {
+    display: none !important;
+  }
+  .report-desktop-table {
+    display: block !important;
+  }
+
   /* Content that should appear ONLY when printing (e.g. a dedicated print
      sheet rendered alongside an on-screen interactive view). */
   .print-only {
