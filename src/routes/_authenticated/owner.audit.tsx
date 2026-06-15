@@ -108,7 +108,19 @@ function OwnerAuditPage() {
       ) : (
         <Card>
           <CardContent className="p-0">
-            <Table>
+            <div className="space-y-3 p-4 md:hidden">
+              {rows.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">No activity found.</p>
+              ) : (
+                rows.map((r) => (
+                  <MobileRecordCard key={r.id}
+                    title={r.entity_label || "—"}
+                    subtitle={ACTIVITY_ENTITY_LABELS[r.entity_type] ?? r.entity_type}
+                    footer={<><Badge variant="outline" className={`border-transparent ${ACTIVITY_TONE[r.action] ?? "bg-muted text-muted-foreground"}`}>{ACTIVITY_ACTION_LABELS[r.action] ?? r.action}</Badge><span className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString()}</span></>} />
+                ))
+              )}
+            </div>
+            <Table className="hidden md:table">
               <TableHeader>
                 <TableRow>
                   <TableHead>Action</TableHead>
