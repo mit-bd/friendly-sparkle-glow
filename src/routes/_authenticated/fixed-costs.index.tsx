@@ -319,7 +319,23 @@ function FixedCostsOverview() {
                 </div>
               ) : (
                 <>
-                  <div className="overflow-x-auto">
+                  <div className="space-y-3 md:hidden">
+                    {pageRows.map((r) => (
+                      <MobileRecordCard
+                        key={r.id}
+                        title={<Link to="/fixed-costs/$id" params={{ id: r.id }} className="hover:text-brand hover:underline">{templateName(r.fixed_cost_template_id)}</Link>}
+                        trailing={formatCurrency(r.amount)}
+                        subtitle={`${r.expense_number} · ${(r.period_month ?? r.expense_date).slice(0, 7)}`}
+                        footer={<><SettlementBadge status={r.fc_settlement_status} /><span className="text-xs text-muted-foreground">Remaining {formatCurrency(remainingOf(r))}</span></>}
+                        details={[
+                          { label: "Amount", value: formatCurrency(r.amount) },
+                          { label: "Paid", value: formatCurrency(r.fc_paid_amount) },
+                          { label: "Remaining", value: formatCurrency(remainingOf(r)) },
+                        ]}
+                      />
+                    ))}
+                  </div>
+                  <div className="hidden overflow-x-auto md:block">
                     <Table>
                       <TableHeader>
                         <TableRow>
