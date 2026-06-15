@@ -423,6 +423,9 @@ function AddExpensePage() {
             </Button>
           </div>
 
+          {/* Spacer so the fixed mobile save bar never covers the last field. */}
+          <div className="h-16 md:hidden" aria-hidden />
+
           {/* Mobile sticky save bar — always within thumb reach above the bottom nav. */}
           <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-xl md:hidden">
             <Button type="submit" size="lg" className="h-12 w-full text-base" disabled={saving}>
