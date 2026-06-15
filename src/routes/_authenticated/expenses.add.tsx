@@ -413,11 +413,23 @@ function AddExpensePage() {
               </CardContent>
             </Card>
 
-            <Button type="submit" className="w-full" disabled={saving}>
+            <Button type="submit" className="hidden w-full md:inline-flex" disabled={saving}>
               {saving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <FilePlus2 className="h-4 w-4" />
+              )}
+              Submit expense
+            </Button>
+          </div>
+
+          {/* Mobile sticky save bar — always within thumb reach above the bottom nav. */}
+          <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-xl md:hidden">
+            <Button type="submit" size="lg" className="h-12 w-full text-base" disabled={saving}>
+              {saving ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <FilePlus2 className="h-5 w-5" />
               )}
               Submit expense
             </Button>
