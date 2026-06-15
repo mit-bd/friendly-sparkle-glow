@@ -473,7 +473,74 @@ function ExpensesListPage() {
         </CollapsibleContent>
       </Collapsible>
 
-      <Card>
+      {/* Mobile: card list (desktop table is hidden below the md breakpoint). */}
+      <div className="space-y-3 md:hidden">
+        {loading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="space-y-3 p-4">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-24" />
+              </CardContent>
+            </Card>
+          ))
+        ) : rows.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-14 text-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-md bg-brand-gradient-soft text-brand-to">
+                <Receipt className="h-6 w-6" />
+              </span>
+              <p className="mt-4 font-medium text-foreground">No expenses found</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {search || activeFilterCount
+                  ? "Try adjusting your search or filters."
+                  : "Submit your first expense to get started."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          rows.map((r) => (
+            <Card
+              key={r.id}
+              className="cursor-pointer transition-colors active:bg-accent"
+              onClick={() => navigate({ to: "/expenses/$id", params: { id: r.id } })}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    className="mt-0.5"
+                    checked={bulk.selection.isSelected(r.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    onCheckedChange={() => bulk.selection.toggle(r.id)}
+                    aria-label={`Select ${r.expense_number}`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="truncate font-semibold">{r.expense_number}</p>
+                      <span className="shrink-0 text-base font-bold tabular-nums">
+                        {formatCurrency(r.amount)}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                      {r.category_id ? catMap.get(r.category_id) ?? "—" : "—"}
+                      {r.subcategory_id ? ` · ${subMap.get(r.subcategory_id) ?? ""}` : ""}
+                    </p>
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <StatusBadge status={r.status} />
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(r.expense_date)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
