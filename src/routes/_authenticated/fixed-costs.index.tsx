@@ -29,6 +29,7 @@ import { NoAccess } from "@/components/NoAccess";
 import { EmptyState } from "@/components/analytics/EmptyState";
 import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
 import { SettlementBadge } from "@/components/fixed-costs/SettlementBadge";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
