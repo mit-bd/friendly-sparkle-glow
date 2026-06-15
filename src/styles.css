@@ -361,6 +361,10 @@
   .report-desktop-table {
     display: block !important;
   }
+  /* Never clip scroll-wrapped report tables when printing. */
+  .report-scroll {
+    overflow: visible !important;
+  }
 
   /* Content that should appear ONLY when printing (e.g. a dedicated print
      sheet rendered alongside an on-screen interactive view). */
