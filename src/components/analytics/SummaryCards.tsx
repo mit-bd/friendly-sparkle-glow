@@ -106,9 +106,12 @@ export function SummaryCards({
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 hide-scrollbar sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4">
       {cards.map((c) => (
-        <Card key={c.label} className="transition-shadow hover:shadow-pop">
+        <Card
+          key={c.label}
+          className="min-w-[72%] shrink-0 snap-start transition-shadow hover:shadow-pop sm:min-w-0 sm:shrink"
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {c.label}
