@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import {
   Table,
   TableBody,
@@ -156,7 +157,38 @@ function OwnerUsersPage() {
       ) : (
         <Card>
           <CardContent className="p-0">
-            <Table>
+            <div className="space-y-3 p-4 md:hidden">
+              {filtered.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">No users match these filters.</p>
+              ) : (
+                filtered.map((row) => {
+                  const isSelf = row.id === user?.id;
+                  const isOwnerRow = row.role === "owner";
+                  return (
+                    <MobileRecordCard key={row.id}
+                      title={<>{row.full_name || "—"}{isSelf && <span className="ml-2 text-xs text-muted-foreground">(you)</span>}{row.require_password_change && <Badge variant="outline" className="ml-2 text-[10px] text-warning">Must reset</Badge>}</>}
+                      subtitle={row.email}
+                      footer={
+                        <>
+                          <Badge variant="outline" className={`border-transparent ${STATUS_TONE[row.status]}`}>{ACCOUNT_STATUS_LABELS[row.status]}</Badge>
+                          {isOwnerRow || isSelf ? <span className="text-xs text-muted-foreground">—</span> : <UserActionsMenu row={row} act={act} />}
+                        </>
+                      }
+                      details={[
+                        { label: "Role", value: isOwnerRow || isSelf ? (
+                          <Badge variant="outline" className="capitalize">{row.role ? ROLE_LABELS[row.role] : "—"}</Badge>
+                        ) : (
+                          <Select value={row.role ?? undefined} onValueChange={(v) => act(row, "set_role", { role: v }, `Role set to ${ROLE_LABELS[v]}.`)}>
+                            <SelectTrigger className="h-9 w-[140px]"><SelectValue placeholder="No role" /></SelectTrigger>
+                            <SelectContent>{ASSIGNABLE_ROLES.map((r) => <SelectItem key={r} value={r}>{ROLE_LABELS[r]}</SelectItem>)}</SelectContent>
+                          </Select>
+                        ) },
+                      ]} />
+                  );
+                })
+              )}
+            </div>
+            <Table className="hidden md:table">
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>

@@ -31,6 +31,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/StatusBadge";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { BulkActionBar } from "@/components/bulk/BulkActionBar";
 import { BulkScopeMenu } from "@/components/bulk/BulkScopeMenu";
 import { useBulkExport } from "@/hooks/use-bulk-export";
@@ -260,7 +261,20 @@ function MarketingOverview() {
                   <CardTitle className="text-base">Platform breakdown</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <Table>
+                  <div className="space-y-3 p-4 md:hidden">
+                    {platformSummary.rows.map((p) => (
+                      <MobileRecordCard key={p.id ?? "none"}
+                        title={p.id ? (<Link to="/marketing/platform/$id" params={{ id: p.id }} search={{ from: range.from, to: range.to }} className="hover:text-brand-to hover:underline">{p.name}</Link>) : p.name}
+                        trailing={formatBDT(p.total)}
+                        subtitle={`${p.count} cost${p.count === 1 ? "" : "s"} · ${p.percentage.toFixed(1)}% of total`}
+                        footer={<div className="flex flex-wrap gap-1">{p.currencies.map((c) => (<Badge key={c} variant="secondary" className="text-[10px]">{c}</Badge>))}</div>}
+                        details={[
+                          { label: "Converted BDT", value: formatBDT(p.total) },
+                          { label: "% of total", value: `${p.percentage.toFixed(1)}%` },
+                        ]} />
+                    ))}
+                  </div>
+                  <Table className="hidden md:table">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Platform</TableHead>
@@ -326,7 +340,22 @@ function MarketingOverview() {
                   <EmptyState icon={Megaphone} title="No marketing costs yet" description="Record your first marketing cost." />
                 </div>
               ) : (
-                <Table>
+                <>
+                <div className="space-y-3 p-4 md:hidden">
+                  {list.map((r) => (
+                    <MobileRecordCard key={r.id}
+                      leading={<Checkbox className="mt-0.5" checked={bulk.selection.isSelected(r.id)} onCheckedChange={() => bulk.selection.toggle(r.id)} aria-label={`Select ${r.expense_number}`} />}
+                      title={r.expense_number}
+                      trailing={formatBDT(r.amount)}
+                      subtitle={r.platform_id ? platformMap.get(r.platform_id) ?? "—" : "—"}
+                      footer={<><StatusBadge status={r.status as never} /><span className="text-xs text-muted-foreground">{formatDate(r.expense_date)}</span></>}
+                      details={[
+                        { label: "Campaign", value: r.campaign_name || "—" },
+                        { label: "Date", value: formatDate(r.expense_date) },
+                      ]} />
+                  ))}
+                </div>
+                <Table className="hidden md:table">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-10">
@@ -364,6 +393,7 @@ function MarketingOverview() {
                     ))}
                   </TableBody>
                 </Table>
+                </>
               )}
             </CardContent>
           </Card>

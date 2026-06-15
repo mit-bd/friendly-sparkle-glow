@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BudgetStatusBadge, BudgetUtilizationBar } from "@/components/budgets/BudgetStatusBadge";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { useAuth } from "@/lib/auth-context";
 import { budgetInsights, budgetPeriodLabel, evaluateAll, fetchBudgetDataset, fetchBudgets, formatTk, runBudgetAlerts, summarise, BUDGET_TARGET_LABELS, type Budget, type BudgetDataset, type BudgetEvaluation } from "@/lib/budgets";
 
@@ -122,7 +123,10 @@ function BudgetDashboard() {
           <Card>
             <CardHeader><CardTitle className="text-base">Category utilization</CardTitle></CardHeader>
             <CardContent className="p-0">
-              <Table>
+              <div className="space-y-3 p-4 md:hidden">
+                {sorted.map((e) => <BudgetCard key={e.budget.id} e={e} />)}
+              </div>
+              <Table className="hidden md:table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Budget</TableHead><TableHead>Target</TableHead><TableHead>Period</TableHead>
@@ -160,6 +164,29 @@ function BudgetRow({ e }: { e: BudgetEvaluation }) {
       </TableCell>
       <TableCell><BudgetStatusBadge status={e.status} /></TableCell>
     </TableRow>
+  );
+}
+
+function BudgetCard({ e }: { e: BudgetEvaluation }) {
+  return (
+    <MobileRecordCard
+      title={<Link to="/budgets/$id" params={{ id: e.budget.id }} className="hover:text-brand">{e.budget.name}</Link>}
+      trailing={`${e.utilization.toFixed(0)}%`}
+      subtitle={`${BUDGET_TARGET_LABELS[e.budget.target_type]} · ${budgetPeriodLabel(e.budget)}`}
+      footer={
+        <>
+          <BudgetStatusBadge status={e.status} />
+          <div className="flex w-32 items-center gap-2">
+            <BudgetUtilizationBar utilization={e.utilization} status={e.status} />
+          </div>
+        </>
+      }
+      details={[
+        { label: "Budget", value: formatTk(e.budget.amount) },
+        { label: "Used", value: formatTk(e.used) },
+        { label: "Remaining", value: <span className={e.remaining < 0 ? "text-destructive" : ""}>{formatTk(e.remaining)}</span> },
+      ]}
+    />
   );
 }
 

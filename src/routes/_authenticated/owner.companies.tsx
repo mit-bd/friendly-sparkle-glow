@@ -8,6 +8,7 @@ import { NoAccess } from "@/components/NoAccess";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import {
   Table,
   TableBody,
@@ -86,7 +87,23 @@ function CompaniesPage() {
       ) : (
         <Card>
           <CardContent className="p-0">
-            <Table>
+            <div className="space-y-3 p-4 md:hidden">
+              {rows.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">No companies found.</p>
+              ) : (
+                rows.map((c) => (
+                  <MobileRecordCard key={c.id}
+                    title={<Link to="/owner/companies/$id" params={{ id: c.id }} className="flex items-center gap-2 hover:underline"><Building2 className="h-4 w-4 text-muted-foreground" />{c.name}{c.is_primary && <Badge variant="outline" className="ml-1 text-[10px]">Primary</Badge>}</Link>}
+                    subtitle={c.email || "—"}
+                    footer={<><Badge variant="outline" className={`border-transparent ${STATUS_TONE[c.status]}`}>{COMPANY_STATUS_LABELS[c.status]}</Badge><span className="text-xs text-muted-foreground">{PLAN_LABELS[c.plan]}</span></>}
+                    details={[
+                      { label: "Plan", value: PLAN_LABELS[c.plan] },
+                      { label: "Created", value: new Date(c.created_at).toLocaleDateString() },
+                    ]} />
+                ))
+              )}
+            </div>
+            <Table className="hidden md:table">
               <TableHeader>
                 <TableRow>
                   <TableHead>Company</TableHead>
