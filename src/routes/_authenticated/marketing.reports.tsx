@@ -289,7 +289,7 @@ function MarketingReportSwitch({ report }: { report: Generated }) {
 
   if (type === "summary") {
     return (
-      <table className="report-table w-full border-collapse">
+      <div className="report-scroll"><table className="report-table w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-border">
             <th className={th}>Platform</th>
@@ -316,13 +316,13 @@ function MarketingReportSwitch({ report }: { report: Generated }) {
             <td className={num + " font-semibold"}>100.0%</td>
           </tr>
         </tfoot>
-      </table>
+      </table></div>
     );
   }
 
   if (type === "platform") {
     return (
-      <table className="report-table w-full border-collapse">
+      <div className="report-scroll"><table className="report-table w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-border">
             <th className={th}>Platform</th>
@@ -350,13 +350,13 @@ function MarketingReportSwitch({ report }: { report: Generated }) {
             <td className={num + " font-semibold"}>100.0%</td>
           </tr>
         </tfoot>
-      </table>
+      </table></div>
     );
   }
 
   if (type === "campaign") {
     return (
-      <table className="report-table w-full border-collapse">
+      <div className="report-scroll"><table className="report-table w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-border">
             <th className={th}>Campaign</th>
@@ -384,12 +384,12 @@ function MarketingReportSwitch({ report }: { report: Generated }) {
             <td className={num + " font-semibold"}>100.0%</td>
           </tr>
         </tfoot>
-      </table>
+      </table></div>
     );
   }
 
   return (
-    <table className="report-table w-full border-collapse">
+    <div className="report-scroll"><table className="report-table w-full border-collapse">
       <thead>
         <tr className="border-b-2 border-border">
           <th className={th}>Currency</th>
@@ -419,6 +419,6 @@ function MarketingReportSwitch({ report }: { report: Generated }) {
           <td className={num + " font-semibold"}>100.0%</td>
         </tr>
       </tfoot>
-    </table>
+    </table></div>
   );
 }

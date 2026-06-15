@@ -331,7 +331,7 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
     const totPaid = outstanding.reduce((a, r) => a + Number(r.fc_paid_amount || 0), 0);
     const totRemain = outstanding.reduce((a, r) => a + remainingOf(r), 0);
     return (
-      <table className="report-table w-full border-collapse">
+      <div className="report-scroll"><table className="report-table w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-border">
             <th className={th}>Fixed Cost</th>
@@ -365,14 +365,14 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
             <td className={td} />
           </tr>
         </tfoot>
-      </table>
+      </table></div>
     );
   }
 
   if (type === "payments") {
     const totPay = payments.reduce((a, p) => a + Number(p.amount || 0), 0);
     return (
-      <table className="report-table w-full border-collapse">
+      <div className="report-scroll"><table className="report-table w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-border">
             <th className={th}>Date</th>
@@ -399,13 +399,13 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
             <td className={num + " font-semibold"}>{formatCurrency(totPay)}</td>
           </tr>
         </tfoot>
-      </table>
+      </table></div>
     );
   }
 
   if (type === "summary") {
     return (
-      <table className="report-table w-full border-collapse">
+      <div className="report-scroll"><table className="report-table w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-border">
             <th className={th}>Fixed Cost</th>
@@ -432,13 +432,13 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
             <td className={num + " font-semibold"}>100.0%</td>
           </tr>
         </tfoot>
-      </table>
+      </table></div>
     );
   }
 
   if (type === "monthly") {
     return (
-      <table className="report-table w-full border-collapse">
+      <div className="report-scroll"><table className="report-table w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-border">
             <th className={th}>Month</th>
@@ -459,13 +459,13 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
             <td className={num + " font-semibold"}>{formatCurrency(grand)}</td>
           </tr>
         </tfoot>
-      </table>
+      </table></div>
     );
   }
 
   const approvalGrand = sumAmount(all);
   return (
-    <table className="report-table w-full border-collapse">
+    <div className="report-scroll"><table className="report-table w-full border-collapse">
       <thead>
         <tr className="border-b-2 border-border">
           <th className={th}>Fixed Cost</th>
@@ -495,6 +495,6 @@ function FixedCostReportSwitch({ report }: { report: Generated }) {
           <td className={td} colSpan={2} />
         </tr>
       </tfoot>
-    </table>
+    </table></div>
   );
 }
