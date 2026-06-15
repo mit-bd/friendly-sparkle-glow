@@ -5,7 +5,6 @@ import {
   Landmark,
   FileBarChart,
   Menu,
-  Bell,
   type LucideIcon,
 } from "lucide-react";
 import { Link, useRouterState } from "@/lib/router";
