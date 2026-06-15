@@ -334,6 +334,13 @@
   display: none;
 }
 
+/* Report tables that have no mobile card variant: keep them readable on phones
+   by allowing horizontal scroll within their own bounds (no page overflow). */
+.report-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media print {
   .brand-rule,
   .bg-brand-gradient,
