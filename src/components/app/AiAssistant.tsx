@@ -118,10 +118,6 @@ export function AiAssistant() {
     setParsed(null);
   }
 
-  async function confirmСreateGuard() {
-    /* placeholder to avoid accidental name clashes */
-  }
-
   async function confirmCreate() {
     if (!parsed || !user) return;
     const amount = Number(parsed.amount);
