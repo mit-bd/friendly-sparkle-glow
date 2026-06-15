@@ -153,7 +153,47 @@ function PendingReturnsPage() {
         </CollapsibleContent>
       </Collapsible>
 
-      <Card>
+      <FilterChips>
+        <FilterChip active={statusFilter === ALL} onClick={() => { setStatusFilter(ALL); setPage(0); }}>All pending</FilterChip>
+        {QUEUE_STATUSES.map((s) => (
+          <FilterChip key={s} active={statusFilter === s} onClick={() => { setStatusFilter(s); setPage(0); }}>{EXPENSE_STATUS[s].label}</FilterChip>
+        ))}
+      </FilterChips>
+
+      <div className="space-y-3 md:hidden">
+        {loading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <Card key={i}><CardContent className="space-y-3 p-4"><Skeleton className="h-5 w-32" /><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-24" /></CardContent></Card>
+          ))
+        ) : rows.length === 0 ? (
+          <Card><CardContent className="flex flex-col items-center justify-center py-14 text-center">
+            <span className="flex h-12 w-12 items-center justify-center rounded-md bg-brand-gradient-soft text-brand-to"><Clock className="h-6 w-6" /></span>
+            <p className="mt-4 font-medium text-foreground">Nothing awaiting approval</p>
+            <p className="mt-1 text-sm text-muted-foreground">{search || statusFilter !== ALL || reasonFilter !== ALL ? "Try adjusting your search or filters." : "Submitted returns will appear here for review."}</p>
+          </CardContent></Card>
+        ) : (
+          rows.map((r) => {
+            const who = r.submitted_by ?? r.created_by;
+            return (
+              <MobileRecordCard key={r.id}
+                title={r.return_number}
+                trailing={formatTk(r.net_loss_amount)}
+                subtitle={r.product_name || "—"}
+                footer={<><StatusBadge status={r.status} /><LossApprovalPanel kind="return" record={{ id: r.id, number: r.return_number, status: r.status }} onDone={load} /></>}
+                onClick={() => navigate({ to: "/returns/$id", params: { id: r.id } })}
+                swipeActions={[{ label: "Review", icon: Eye, tone: "brand", onClick: () => navigate({ to: "/returns/$id", params: { id: r.id } }) }]}
+                details={[
+                  { label: "Date", value: formatDate(r.return_date) },
+                  { label: "Reason", value: r.reason_id ? reasonMap.get(r.reason_id) ?? "—" : "—" },
+                  { label: "Submitted by", value: who ? names[who] ?? "—" : "—" },
+                  { label: "Submitted", value: formatDateTime(r.submitted_at ?? r.created_at) },
+                ]} />
+            );
+          })
+        )}
+      </div>
+
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
