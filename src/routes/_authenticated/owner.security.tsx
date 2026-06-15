@@ -98,7 +98,19 @@ function OwnerSecurityPage() {
           <TabsContent value="logins" className="mt-6">
             <Card>
               <CardContent className="p-0">
-                <Table>
+                <div className="space-y-3 p-4 md:hidden">
+                  {logins.length === 0 ? (
+                    <p className="py-8 text-center text-sm text-muted-foreground">No login activity recorded yet.</p>
+                  ) : (
+                    logins.map((l) => (
+                      <MobileRecordCard key={l.id}
+                        title={l.email || "—"}
+                        subtitle={l.ip_address || "—"}
+                        footer={<>{l.success ? (<span className="flex items-center gap-1.5 text-sm text-chart-2"><CheckCircle2 className="h-4 w-4" /> Success</span>) : (<span className="flex items-center gap-1.5 text-sm text-destructive"><CircleSlash className="h-4 w-4" /> Failed</span>)}<span className="text-xs text-muted-foreground">{new Date(l.created_at).toLocaleString()}</span></>} />
+                    ))
+                  )}
+                </div>
+                <Table className="hidden md:table">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Result</TableHead>
@@ -137,7 +149,23 @@ function OwnerSecurityPage() {
           <TabsContent value="events" className="mt-6">
             <Card>
               <CardContent className="p-0">
-                <Table>
+                <div className="space-y-3 p-4 md:hidden">
+                  {events.length === 0 ? (
+                    <div className="py-10 text-center text-sm text-muted-foreground"><ShieldAlert className="mx-auto mb-2 h-5 w-5 text-muted-foreground/60" />No security events. All clear.</div>
+                  ) : (
+                    events.map((e) => (
+                      <MobileRecordCard key={e.id}
+                        title={<span className="capitalize">{e.type.replace(/_/g, " ")}</span>}
+                        subtitle={e.email || "—"}
+                        footer={<><Badge variant="outline" className={`border-transparent capitalize ${SEVERITY_TONE[e.severity] ?? SEVERITY_TONE.info}`}>{e.severity}</Badge><span className="text-xs text-muted-foreground">{new Date(e.created_at).toLocaleString()}</span></>}
+                        details={[
+                          { label: "IP address", value: e.ip_address || "—" },
+                          { label: "When", value: new Date(e.created_at).toLocaleString() },
+                        ]} />
+                    ))
+                  )}
+                </div>
+                <Table className="hidden md:table">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Severity</TableHead>
