@@ -107,15 +107,40 @@ function ReturnsOverview() {
             </div>)}
           {approved.length > 0 && (
             <Card><CardHeader><CardTitle className="text-base">Return reason breakdown</CardTitle></CardHeader><CardContent className="p-0">
+              <div className="space-y-3 p-4 md:hidden">{reasonSummary.rows.map((r) => (
+                <MobileRecordCard key={r.id ?? "none"}
+                  title={r.id ? (<Link to="/returns/reason/$id" params={{ id: r.id }} search={{ from: range.from, to: range.to }} className="hover:text-brand-to hover:underline">{r.name}</Link>) : r.name}
+                  trailing={formatTk(r.netLoss)}
+                  subtitle={`${r.count} return${r.count === 1 ? "" : "s"}`}
+                  details={[
+                    { label: "Loss", value: formatTk(r.loss) },
+                    { label: "Recoverable", value: formatTk(r.recoverable) },
+                    { label: "Net loss", value: formatTk(r.netLoss) },
+                  ]} />))}</div>
+              <div className="hidden overflow-x-auto md:block">
               <Table><TableHeader><TableRow><TableHead>Reason</TableHead><TableHead className="text-right">Count</TableHead><TableHead className="text-right">Loss</TableHead><TableHead className="text-right">Recoverable</TableHead><TableHead className="text-right">Net loss</TableHead><TableHead className="w-10" /></TableRow></TableHeader>
                 <TableBody>{reasonSummary.rows.map((r) => (<TableRow key={r.id ?? "none"} className="group">
                   <TableCell className="font-medium">{r.id ? (<Link to="/returns/reason/$id" params={{ id: r.id }} search={{ from: range.from, to: range.to }} className="hover:text-brand-to hover:underline">{r.name}</Link>) : r.name}</TableCell>
                   <TableCell className="text-right tabular-nums">{r.count}</TableCell><TableCell className="text-right tabular-nums">{formatTk(r.loss)}</TableCell><TableCell className="text-right tabular-nums">{formatTk(r.recoverable)}</TableCell><TableCell className="text-right font-medium tabular-nums">{formatTk(r.netLoss)}</TableCell>
-                  <TableCell>{r.id && (<ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />)}</TableCell></TableRow>))}</TableBody></Table></CardContent></Card>)}
+                  <TableCell>{r.id && (<ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />)}</TableCell></TableRow>))}</TableBody></Table></div></CardContent></Card>)}
           <Card><CardHeader><CardTitle className="text-base">All returns</CardTitle></CardHeader><CardContent className="p-0">
             {list.length === 0 ? (<div className="p-6"><EmptyState icon={Undo2} title="No returns yet" description="Create your first return record." /></div>) : (
+              <>
+              <div className="space-y-3 p-4 md:hidden">{list.map((r) => (
+                <MobileRecordCard key={r.id}
+                  leading={<Checkbox className="mt-0.5" checked={bulk.selection.isSelected(r.id)} onCheckedChange={() => bulk.selection.toggle(r.id)} aria-label={`Select ${r.return_number}`} />}
+                  title={<Link to="/returns/$id" params={{ id: r.id }} className="hover:text-brand-to hover:underline">{r.return_number}</Link>}
+                  trailing={formatTk(r.net_loss_amount)}
+                  subtitle={r.product_name || "—"}
+                  footer={<><StatusBadge status={r.status} /><span className="text-xs text-muted-foreground">{formatDate(r.return_date)}</span></>}
+                  details={[
+                    { label: "Reason", value: r.reason_id ? reasonMap.get(r.reason_id) ?? "—" : "—" },
+                    { label: "Category", value: r.category_id ? catMap.get(r.category_id) ?? "—" : "—" },
+                    { label: "Created by", value: r.created_by ? names[r.created_by] ?? "—" : "—" },
+                  ]} />))}</div>
+              <div className="hidden overflow-x-auto md:block">
               <Table><TableHeader><TableRow><TableHead className="w-10"><Checkbox checked={pageAllSelected} onCheckedChange={() => pageAllSelected ? bulk.selection.removeMany(list) : bulk.selection.addMany(list)} aria-label="Select all returns" /></TableHead><TableHead>Return No.</TableHead><TableHead>Date</TableHead><TableHead>Product</TableHead><TableHead className="text-right">Net loss</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
-                <TableBody>{list.map((r) => (<TableRow key={r.id}><TableCell><Checkbox checked={bulk.selection.isSelected(r.id)} onCheckedChange={() => bulk.selection.toggle(r.id)} aria-label={`Select ${r.return_number}`} /></TableCell><TableCell className="font-medium"><Link to="/returns/$id" params={{ id: r.id }} className="hover:text-brand-to hover:underline">{r.return_number}</Link></TableCell><TableCell className="whitespace-nowrap">{formatDate(r.return_date)}</TableCell><TableCell className="max-w-[200px] truncate">{r.product_name || "—"}</TableCell><TableCell className="text-right tabular-nums">{formatTk(r.net_loss_amount)}</TableCell><TableCell><StatusBadge status={r.status} /></TableCell></TableRow>))}</TableBody></Table>)}</CardContent></Card>
+                <TableBody>{list.map((r) => (<TableRow key={r.id}><TableCell><Checkbox checked={bulk.selection.isSelected(r.id)} onCheckedChange={() => bulk.selection.toggle(r.id)} aria-label={`Select ${r.return_number}`} /></TableCell><TableCell className="font-medium"><Link to="/returns/$id" params={{ id: r.id }} className="hover:text-brand-to hover:underline">{r.return_number}</Link></TableCell><TableCell className="whitespace-nowrap">{formatDate(r.return_date)}</TableCell><TableCell className="max-w-[200px] truncate">{r.product_name || "—"}</TableCell><TableCell className="text-right tabular-nums">{formatTk(r.net_loss_amount)}</TableCell><TableCell><StatusBadge status={r.status} /></TableCell></TableRow>))}</TableBody></Table></div></>)}</CardContent></Card>
         </>)}
       <BulkActionBar count={bulk.selection.count} canExport={canExport} busy={bulk.busy} onClear={bulk.selection.clear} onPrint={() => runBulk("selected", "print")} onPdf={() => runBulk("selected", "pdf")} onCsv={() => runBulk("selected", "csv")} />
       {bulk.printNode}
