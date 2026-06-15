@@ -89,13 +89,9 @@ export function DictationButton({
     // Capture the caret so dictation is appended at the cursor, not the start.
     const v = valueRef.current;
     const sel = selectionRef.current;
-    const start = sel ? Math.min(sel.start, v.length) : v.length;
-    const end = sel ? Math.min(sel.end, v.length) : v.length;
-    baseRef.current = { before: v.slice(0, start), after: v.slice(end) };
-    startListening();
-  }
-
-  function startListening() {
+    const caretStart = sel ? Math.min(sel.start, v.length) : v.length;
+    const caretEnd = sel ? Math.min(sel.end, v.length) : v.length;
+    baseRef.current = { before: v.slice(0, caretStart), after: v.slice(caretEnd) };
     start();
   }
 
