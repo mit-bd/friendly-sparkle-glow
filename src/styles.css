@@ -334,6 +334,13 @@
   display: none;
 }
 
+/* Report tables that have no mobile card variant: keep them readable on phones
+   by allowing horizontal scroll within their own bounds (no page overflow). */
+.report-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media print {
   .brand-rule,
   .bg-brand-gradient,
@@ -344,6 +351,19 @@
 
   .no-print {
     display: none !important;
+  }
+
+  /* Reports: always print the desktop table, never the mobile card view,
+     regardless of the device width the print was triggered from. */
+  .report-mobile-cards {
+    display: none !important;
+  }
+  .report-desktop-table {
+    display: block !important;
+  }
+  /* Never clip scroll-wrapped report tables when printing. */
+  .report-scroll {
+    overflow: visible !important;
   }
 
   /* Content that should appear ONLY when printing (e.g. a dedicated print
