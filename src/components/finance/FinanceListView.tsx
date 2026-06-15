@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { NoAccess } from "@/components/NoAccess";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SettlementBadge } from "@/components/finance/SettlementBadge";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { EmptyState } from "@/components/analytics/EmptyState";
 import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
 import { AttachmentUploader, type AttachmentValue } from "@/components/AttachmentUploader";
@@ -193,7 +194,24 @@ export function FinanceListView({ kind }: { kind: FinanceKind }) {
           ) : filtered.length === 0 ? (
             <EmptyState icon={Wallet} title={`No ${title.toLowerCase()} found`} description="Adjust filters or add a new record." />
           ) : (
-            <div className="overflow-x-auto">
+            <>
+            <div className="space-y-3 md:hidden">
+              {filtered.map((r) => (
+                <MobileRecordCard
+                  key={r.id}
+                  title={<Link to={detailTo} params={{ id: r.id }} className="hover:text-brand-to hover:underline">{r.number}</Link>}
+                  trailing={formatTk(r.amount)}
+                  subtitle={r.party_name}
+                  footer={<><SettlementBadge kind={kind} status={r.status} /><StatusBadge status={asExpenseStatus(r.approval_status)} /></>}
+                  details={[
+                    { label: "Type", value: partyTypeLabel(kind, r.party_type) },
+                    { label: "Due amount", value: formatTk(r.due_amount) },
+                    { label: "Due date", value: formatDate(r.due_date) },
+                  ]}
+                />
+              ))}
+            </div>
+            <div className="hidden overflow-x-auto md:block">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -223,6 +241,7 @@ export function FinanceListView({ kind }: { kind: FinanceKind }) {
                 </TableBody>
               </Table>
             </div>
+            </>
           )}
         </CardContent>
       </Card>
