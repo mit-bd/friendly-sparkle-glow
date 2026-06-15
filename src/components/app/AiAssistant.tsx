@@ -6,7 +6,6 @@ import {
   Loader2,
   Wand2,
   MessageSquare,
-  ArrowRight,
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
