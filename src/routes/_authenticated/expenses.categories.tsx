@@ -1,6 +1,6 @@
 import { createFileRoute } from "@/lib/router";
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Plus, Pencil, Tags, FolderTree, Trash2, AlertTriangle } from "lucide-react";
+import { Loader2, Plus, Pencil, Tags, FolderTree, Trash2, AlertTriangle, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
