@@ -47,6 +47,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_classification_feedback: {
+        Row: {
+          chosen_category_id: string | null
+          chosen_subcategory_id: string | null
+          created_at: string
+          created_by: string | null
+          description_text: string
+          id: string
+          normalized_text: string
+          suggested_category_id: string | null
+          suggested_subcategory_id: string | null
+          was_override: boolean
+        }
+        Insert: {
+          chosen_category_id?: string | null
+          chosen_subcategory_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description_text: string
+          id?: string
+          normalized_text: string
+          suggested_category_id?: string | null
+          suggested_subcategory_id?: string | null
+          was_override?: boolean
+        }
+        Update: {
+          chosen_category_id?: string | null
+          chosen_subcategory_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description_text?: string
+          id?: string
+          normalized_text?: string
+          suggested_category_id?: string | null
+          suggested_subcategory_id?: string | null
+          was_override?: boolean
+        }
+        Relationships: []
+      }
       budget_alerts: {
         Row: {
           budget_id: string
@@ -757,6 +796,7 @@ export type Database = {
           deleted_by: string | null
           id: string
           is_active: boolean
+          is_ai_generated: boolean
           name: string
           restored_at: string | null
           restored_by: string | null
@@ -772,6 +812,7 @@ export type Database = {
           deleted_by?: string | null
           id?: string
           is_active?: boolean
+          is_ai_generated?: boolean
           name: string
           restored_at?: string | null
           restored_by?: string | null
@@ -787,6 +828,7 @@ export type Database = {
           deleted_by?: string | null
           id?: string
           is_active?: boolean
+          is_ai_generated?: boolean
           name?: string
           restored_at?: string | null
           restored_by?: string | null

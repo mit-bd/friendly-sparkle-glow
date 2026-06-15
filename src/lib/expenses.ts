@@ -82,6 +82,9 @@ export interface ExpenseSubcategory {
   name: string;
   is_active: boolean;
   sort_order: number;
+  is_ai_generated?: boolean;
+  created_by?: string | null;
+  created_at?: string | null;
   deleted_at?: string | null;
   deleted_by?: string | null;
 }
@@ -170,7 +173,7 @@ export async function fetchCategories(includeInactive = false) {
 export async function fetchSubcategories(includeInactive = false) {
   let query = supabase
     .from("expense_subcategories")
-    .select("id, category_id, name, is_active, sort_order")
+    .select("id, category_id, name, is_active, sort_order, is_ai_generated, created_by, created_at")
     .order("sort_order")
     .order("name");
   if (!includeInactive) query = query.eq("is_active", true);

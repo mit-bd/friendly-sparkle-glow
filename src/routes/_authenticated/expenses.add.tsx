@@ -13,6 +13,15 @@ import { ExpenseFields, type ExpenseFormValues } from "@/components/expenses/Exp
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { logExpenseEvent } from "@/lib/approvals";
+import { logActivity } from "@/lib/audit";
+import {
+  fetchClassificationHistory,
+  recordClassificationFeedback,
+  createAiSubcategory,
+  type ClassificationFeedback,
+  type Suggestion,
+} from "@/lib/ai-classify";
+import { AiClassificationPanel } from "@/components/expenses/AiClassificationPanel";
 import {
   fetchCategories,
   fetchSubcategories,
@@ -39,6 +48,11 @@ function AddExpensePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [attachment, setAttachment] = useState<AttachmentValue | null>(null);
+  const [history, setHistory] = useState<ClassificationFeedback[]>([]);
+  /** Pending AI-proposed new subcategory (created on save). */
+  const [pendingNewSub, setPendingNewSub] = useState<{ categoryId: string; name: string } | null>(null);
+  /** The suggestion the user last accepted, kept for audit + learning. */
+  const [acceptedSuggestion, setAcceptedSuggestion] = useState<Suggestion | null>(null);
 
   const [form, setForm] = useState<ExpenseFormValues>({
     expense_date: todayISO(),
@@ -51,10 +65,11 @@ function AddExpensePage() {
   });
 
   useEffect(() => {
-    Promise.all([fetchCategories(), fetchSubcategories()])
-      .then(([c, s]) => {
+    Promise.all([fetchCategories(), fetchSubcategories(), fetchClassificationHistory()])
+      .then(([c, s, h]) => {
         setCategories(c);
         setSubs(s);
+        setHistory(h);
       })
       .catch((e) => toast.error(e instanceof Error ? e.message : "Failed to load form data."))
       .finally(() => setLoading(false));
@@ -70,13 +85,31 @@ function AddExpensePage() {
   }
 
   function patch(p: Partial<ExpenseFormValues>) {
+    // Any manual change to category/subcategory clears a pending AI-proposed sub.
+    if (p.category_id !== undefined || p.subcategory_id !== undefined) {
+      setPendingNewSub(null);
+    }
     setForm((f) => ({ ...f, ...p }));
+  }
+
+  function applySuggestion(s: Suggestion) {
+    setForm((f) => ({
+      ...f,
+      category_id: s.categoryId ?? f.category_id,
+      subcategory_id: s.subcategoryId ?? "",
+    }));
+    setAcceptedSuggestion(s);
+    if (!s.subcategoryId && s.proposeSubcategoryName && s.categoryId) {
+      setPendingNewSub({ categoryId: s.categoryId, name: s.proposeSubcategoryName });
+    } else {
+      setPendingNewSub(null);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!user) return;
-    if (!form.category_id || !form.subcategory_id) {
+    if (!form.category_id || (!form.subcategory_id && !pendingNewSub)) {
       toast.error("Please select a category and subcategory.");
       return;
     }
@@ -87,6 +120,31 @@ function AddExpensePage() {
     }
 
     setSaving(true);
+
+    // Resolve subcategory: create the AI-proposed one when needed.
+    let subcategoryId = form.subcategory_id;
+    let createdSub: { id: string; name: string } | null = null;
+    if (!subcategoryId && pendingNewSub) {
+      createdSub = await createAiSubcategory({
+        categoryId: pendingNewSub.categoryId,
+        name: pendingNewSub.name,
+        createdBy: user.id,
+      });
+      if (!createdSub) {
+        setSaving(false);
+        toast.error("Could not create the suggested subcategory. Please pick one manually.");
+        return;
+      }
+      subcategoryId = createdSub.id;
+      await logActivity({
+        action: "create",
+        entityType: "subcategory",
+        entityId: createdSub.id,
+        entityLabel: createdSub.name,
+        metadata: { ai_generated: true, category_id: pendingNewSub.categoryId },
+      });
+    }
+
     // Submissions move straight into the approval queue: Submitted → Pending Approval.
     const finalStatus = form.status === "submitted" ? "pending_approval" : form.status;
     const { data, error } = await supabase
@@ -95,7 +153,7 @@ function AddExpensePage() {
         expense_number: "", // replaced by DB trigger with EXP-YYYY-000001
         expense_date: form.expense_date,
         category_id: form.category_id,
-        subcategory_id: form.subcategory_id,
+        subcategory_id: subcategoryId,
         amount,
         description: form.description.trim() || null,
         notes: form.notes.trim() || null,
@@ -109,6 +167,38 @@ function AddExpensePage() {
       setSaving(false);
       toast.error(error?.message ?? "Failed to create expense.");
       return;
+    }
+
+    // Learning layer + audit: record whether the AI suggestion was accepted or overridden.
+    if (acceptedSuggestion || form.description.trim()) {
+      const overridden =
+        !!acceptedSuggestion &&
+        (acceptedSuggestion.categoryId !== form.category_id ||
+          (acceptedSuggestion.subcategoryId
+            ? acceptedSuggestion.subcategoryId !== subcategoryId
+            : false));
+      await recordClassificationFeedback({
+        description: form.description,
+        suggestedCategoryId: acceptedSuggestion?.categoryId ?? null,
+        suggestedSubcategoryId: acceptedSuggestion?.subcategoryId ?? null,
+        chosenCategoryId: form.category_id,
+        chosenSubcategoryId: subcategoryId,
+        createdBy: user.id,
+      });
+      if (acceptedSuggestion) {
+        await logActivity({
+          action: "update",
+          entityType: "expense",
+          entityId: data.id,
+          entityLabel: data.expense_number,
+          metadata: {
+            ai_event: overridden ? "suggestion_overridden" : "suggestion_accepted",
+            suggested_category_id: acceptedSuggestion.categoryId,
+            chosen_category_id: form.category_id,
+            confidence: acceptedSuggestion.confidence,
+          },
+        });
+      }
     }
 
     // Record the opening entries in the permanent approval history.
@@ -179,6 +269,17 @@ function AddExpensePage() {
                   onChange={patch}
                   categories={categories}
                   subcategories={subs}
+                  afterDescription={
+                    <AiClassificationPanel
+                      description={form.description}
+                      categories={categories}
+                      subcategories={subs}
+                      history={history}
+                      currentCategoryId={form.category_id}
+                      currentSubcategoryId={form.subcategory_id}
+                      onApply={applySuggestion}
+                    />
+                  }
                 />
               </CardContent>
             </Card>

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@/lib/router";
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Plus, Pencil, Tags, FolderTree, Trash2, AlertTriangle } from "lucide-react";
+import { Loader2, Plus, Pencil, Tags, FolderTree, Trash2, AlertTriangle, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -229,6 +229,15 @@ function CategoriesPage() {
                               <span className={sub.is_active ? "text-foreground" : "text-muted-foreground line-through"}>
                                 {sub.name}
                               </span>
+                              {sub.is_ai_generated && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-transparent bg-chart-1/15 font-normal text-chart-1"
+                                >
+                                  <Sparkles className="mr-1 h-3 w-3" />
+                                  AI Generated
+                                </Badge>
+                              )}
                             </span>
                             <div className="flex items-center gap-2">
                               <Switch
