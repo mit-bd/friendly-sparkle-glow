@@ -49,7 +49,7 @@ export function AppTopbar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 bg-background/80 px-4 shadow-soft backdrop-blur-xl sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 bg-background/80 px-3 pt-safe shadow-soft backdrop-blur-xl sm:px-6">
       <SidebarTrigger className="-ml-1" />
       <div className="md:hidden">
         <CompanyLogo size="sm" />
