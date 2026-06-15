@@ -31,6 +31,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/StatusBadge";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { BulkActionBar } from "@/components/bulk/BulkActionBar";
 import { BulkScopeMenu } from "@/components/bulk/BulkScopeMenu";
 import { useBulkExport } from "@/hooks/use-bulk-export";
