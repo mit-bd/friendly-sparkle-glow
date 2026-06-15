@@ -196,12 +196,46 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     letter-spacing: -0.015em;
   }
+}
+
+/* --- Mobile-first layout utilities ------------------------------------- */
+
+/* Respect device safe-area insets (notches, home indicator, status bar). */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+@utility px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Bottom navigation height + safe area, used to pad scroll content so the
+   fixed bottom bar never covers the last row of content. */
+@utility pb-bottomnav {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+
+/* Horizontal snap carousels without a visible scrollbar (native feel). */
+@utility hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /*

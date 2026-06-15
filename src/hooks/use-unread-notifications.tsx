@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -11,6 +11,9 @@ import { fetchUnreadCount } from "@/lib/notifications";
 export function useUnreadNotifications() {
   const { user } = useAuth();
   const [count, setCount] = useState(0);
+  // Unique per hook instance so multiple consumers (topbar + bottom nav) don't
+  // collide on the same realtime channel name (which throws after subscribe()).
+  const channelIdRef = useRef(Math.random().toString(36).slice(2));
 
   const refresh = useCallback(async () => {
     try {
@@ -27,7 +30,7 @@ export function useUnreadNotifications() {
     }
     refresh();
     const channel = supabase
-      .channel(`notifications-${user.id}`)
+      .channel(`notifications-${user.id}-${channelIdRef.current}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
