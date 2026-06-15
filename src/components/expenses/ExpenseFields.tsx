@@ -36,6 +36,8 @@ interface ExpenseFieldsProps {
   disabled?: boolean;
   /** Optional content rendered directly beneath the primary description field (e.g. AI suggestions). */
   afterDescription?: React.ReactNode;
+  /** Optional control rendered on the description label row (e.g. a voice mic button). */
+  descriptionVoice?: React.ReactNode;
 }
 
 export function ExpenseFields({
@@ -46,6 +48,7 @@ export function ExpenseFields({
   extraStatuses = [],
   disabled,
   afterDescription,
+  descriptionVoice,
 }: ExpenseFieldsProps) {
   const availableSubs = subcategories.filter((s) => s.category_id === value.category_id);
   const statusOptions = [...new Set([...SUBMITTABLE_STATUSES, ...extraStatuses])];
@@ -53,7 +56,10 @@ export function ExpenseFields({
   return (
     <div className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="exp-description">Expense description</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="exp-description">Expense description</Label>
+          {descriptionVoice}
+        </div>
         <Textarea
           id="exp-description"
           rows={2}
