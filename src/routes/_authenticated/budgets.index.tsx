@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BudgetStatusBadge, BudgetUtilizationBar } from "@/components/budgets/BudgetStatusBadge";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { useAuth } from "@/lib/auth-context";
 import { budgetInsights, budgetPeriodLabel, evaluateAll, fetchBudgetDataset, fetchBudgets, formatTk, runBudgetAlerts, summarise, BUDGET_TARGET_LABELS, type Budget, type BudgetDataset, type BudgetEvaluation } from "@/lib/budgets";
 
