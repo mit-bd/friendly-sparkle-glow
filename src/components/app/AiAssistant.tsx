@@ -232,7 +232,7 @@ export function AiAssistant() {
       {!open && (
         <Button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-brand-gradient text-brand-foreground shadow-lg hover:opacity-90"
+          className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-40 h-14 w-14 rounded-full bg-brand-gradient text-brand-foreground shadow-lg hover:opacity-90 md:bottom-6 md:right-6 md:z-50"
           aria-label="Open AI assistant"
         >
           <Sparkles className="h-6 w-6" />
@@ -240,7 +240,7 @@ export function AiAssistant() {
       )}
 
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 flex h-[min(640px,calc(100vh-3rem))] w-[min(420px,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+        <div className="fixed inset-x-2 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-50 flex h-[min(640px,calc(100vh-9rem))] w-auto flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl sm:inset-x-auto sm:right-6 md:bottom-6 md:h-[min(640px,calc(100vh-3rem))] md:w-[min(420px,calc(100vw-2rem))]">
           {/* Header */}
           <div className="flex items-center justify-between bg-brand-gradient px-4 py-3 text-brand-foreground">
             <div className="flex items-center gap-2">
