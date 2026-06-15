@@ -489,7 +489,3 @@ export function AiAssistant() {
     </>
   );
 }
-
-/* keep tree-shaker friendly imports referenced */
-void ArrowRight;
-void confirmСreateGuard;
