@@ -13,6 +13,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarFooter,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -22,6 +23,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { CompanyLogo } from "./CompanyLogo";
+import { ThemeToggle } from "./ThemeToggle";
 import { NAV_ITEMS, OWNER_NAV_ITEMS } from "@/lib/modules";
 import { useAuth } from "@/lib/auth-context";
 
@@ -122,6 +124,12 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border px-3 py-3 md:hidden">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-sidebar-foreground/70">Appearance</span>
+          <ThemeToggle />
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
