@@ -528,6 +528,7 @@ function AuditPage() {
                 ))}
               </TableBody>
             </Table>
+            </>
           )}
         </CardContent>
       </Card>
