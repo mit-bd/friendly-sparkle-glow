@@ -5,10 +5,6 @@ import {
   Landmark,
   FileBarChart,
   Menu,
-  Plus,
-  Megaphone,
-  Undo2,
-  PackageX,
   type LucideIcon,
 } from "lucide-react";
 import { Link, useRouterState } from "@/lib/router";
@@ -33,15 +29,10 @@ interface PrimaryItem {
   match: string;
 }
 
-/**
- * Bottom-bar primary destinations (thumb zone). Two sit left of the center
- * action, two sit right — banking-app style with an elevated FAB in the middle.
- */
-const LEFT: PrimaryItem[] = [
+/** Bottom-bar primary destinations (thumb zone). */
+const PRIMARY: PrimaryItem[] = [
   { label: "Dashboard", to: "/", icon: LayoutDashboard, module: "dashboard", match: "/" },
   { label: "Expenses", to: "/expenses", icon: Receipt, module: "expenses", match: "/expenses" },
-];
-const RIGHT: PrimaryItem[] = [
   { label: "Finance", to: "/finance", icon: Landmark, module: "finance", match: "/finance" },
   {
     label: "Reports",
@@ -50,20 +41,6 @@ const RIGHT: PrimaryItem[] = [
     module: "reports",
     match: "/reports",
   },
-];
-
-/** Center action button quick links (the elevated "+" FAB). */
-interface QuickItem {
-  label: string;
-  to: string;
-  icon: LucideIcon;
-  module: ModuleKey;
-}
-const QUICK_ACTIONS: QuickItem[] = [
-  { label: "Add Expense", to: "/expenses/add", icon: Receipt, module: "expenses" },
-  { label: "Marketing Cost", to: "/marketing/add", icon: Megaphone, module: "marketing" },
-  { label: "Add Return", to: "/returns/add", icon: Undo2, module: "returns" },
-  { label: "Add Damage", to: "/damages/add", icon: PackageX, module: "damages" },
 ];
 
 const PRIMARY_TOS = ["/", "/expenses", "/finance", "/reports/summary"];
@@ -75,15 +52,12 @@ export function BottomNav() {
   const { canAccessModule, isOwner } = useAuth();
   const { count: unread } = useUnreadNotifications();
   const [moreOpen, setMoreOpen] = useState(false);
-  const [quickOpen, setQuickOpen] = useState(false);
 
   const isActive = (match: string) =>
     match === "/" ? pathname === "/" : pathname === match || pathname.startsWith(match + "/");
 
-  const left = LEFT.filter((i) => canAccessModule(i.module));
-  const right = RIGHT.filter((i) => canAccessModule(i.module));
+  const primary = PRIMARY.filter((i) => canAccessModule(i.module));
   const more = MORE_ITEMS.filter((i) => canAccessModule(i.module));
-  const quick = QUICK_ACTIONS.filter((i) => canAccessModule(i.module));
 
   // Is any "More" destination the active route? Highlight the More tab if so.
   const moreActive =
@@ -96,44 +70,26 @@ export function BottomNav() {
       active ? "text-brand" : "text-muted-foreground active:bg-accent",
     );
 
-  const renderTab = (item: PrimaryItem) => {
-    const active = isActive(item.match);
-    return (
-      <Link key={item.to} to={item.to} className={tabClass(active)}>
-        <span
-          className={cn(
-            "flex h-7 w-12 items-center justify-center rounded-full transition-colors",
-            active && "bg-brand-gradient-soft",
-          )}
-        >
-          <item.icon className="h-5 w-5" />
-        </span>
-        <span className="leading-none">{item.label}</span>
-      </Link>
-    );
-  };
-
   return (
     <>
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-xl pb-safe md:hidden no-print">
         <div className="mx-auto flex h-16 max-w-lg items-stretch gap-1 px-2">
-          {left.map(renderTab)}
-
-          {quick.length > 0 && (
-            <div className="flex flex-1 items-start justify-center">
-              <button
-                type="button"
-                onClick={() => setQuickOpen(true)}
-                aria-label="Quick add"
-                className="-mt-5 flex h-14 w-14 flex-col items-center justify-center rounded-full bg-brand-gradient text-brand-foreground shadow-brand ring-4 ring-background transition-transform active:scale-95"
-              >
-                <Plus className="h-6 w-6" />
-              </button>
-            </div>
-          )}
-
-          {right.map(renderTab)}
-
+          {primary.map((item) => {
+            const active = isActive(item.match);
+            return (
+              <Link key={item.to} to={item.to} className={tabClass(active)}>
+                <span
+                  className={cn(
+                    "flex h-7 w-12 items-center justify-center rounded-full transition-colors",
+                    active && "bg-brand-gradient-soft",
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                </span>
+                <span className="leading-none">{item.label}</span>
+              </Link>
+            );
+          })}
           <button type="button" onClick={() => setMoreOpen(true)} className={tabClass(moreActive)}>
             <span
               className={cn(
@@ -147,30 +103,6 @@ export function BottomNav() {
           </button>
         </div>
       </nav>
-
-      {/* Center action quick-add sheet */}
-      <Sheet open={quickOpen} onOpenChange={setQuickOpen}>
-        <SheetContent side="bottom" className="rounded-t-2xl pb-safe">
-          <SheetHeader className="text-left">
-            <SheetTitle>Quick Add</SheetTitle>
-          </SheetHeader>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            {quick.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setQuickOpen(false)}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors active:bg-accent"
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-gradient text-brand-foreground shadow-sm">
-                  <item.icon className="h-5 w-5" />
-                </span>
-                <span className="text-sm font-medium leading-tight">{item.label}</span>
-              </Link>
-            ))}
-          </div>
-        </SheetContent>
-      </Sheet>
 
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl pb-safe">
