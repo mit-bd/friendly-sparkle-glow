@@ -6,6 +6,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGri
 import { PageHeader } from "@/components/PageHeader";
 import { NoAccess } from "@/components/NoAccess";
 import { StatusBadge } from "@/components/StatusBadge";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { EmptyState } from "@/components/analytics/EmptyState";
 import { DateRangeFilter } from "@/components/analytics/DateRangeFilter";
 import { Button } from "@/components/ui/button";
