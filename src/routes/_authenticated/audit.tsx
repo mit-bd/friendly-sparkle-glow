@@ -39,6 +39,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { BulkActionBar } from "@/components/bulk/BulkActionBar";
 import { useBulkExport } from "@/hooks/use-bulk-export";
 import type { BulkExportConfig, BulkScope } from "@/lib/bulk-export";
