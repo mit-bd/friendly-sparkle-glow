@@ -104,15 +104,35 @@ function DamagesOverview() {
             </div>)}
           {approved.length > 0 && (
             <Card><CardHeader><CardTitle className="text-base">Damage type detail</CardTitle></CardHeader><CardContent className="p-0">
+              <div className="space-y-3 p-4 md:hidden">{typeSummary.rows.map((r) => (
+                <MobileRecordCard key={r.id ?? "none"}
+                  title={r.id ? (<Link to="/damages/type/$id" params={{ id: r.id }} search={{ from: range.from, to: range.to }} className="hover:text-brand-to hover:underline">{r.name}</Link>) : r.name}
+                  trailing={formatTk(r.value)}
+                  subtitle={`${r.count} record${r.count === 1 ? "" : "s"} · ${r.percentage.toFixed(1)}% of total`} />))}</div>
+              <div className="hidden overflow-x-auto md:block">
               <Table><TableHeader><TableRow><TableHead>Type</TableHead><TableHead className="text-right">Count</TableHead><TableHead className="text-right">Damage value</TableHead><TableHead className="text-right">% of total</TableHead><TableHead className="w-10" /></TableRow></TableHeader>
                 <TableBody>{typeSummary.rows.map((r) => (<TableRow key={r.id ?? "none"} className="group">
                   <TableCell className="font-medium">{r.id ? (<Link to="/damages/type/$id" params={{ id: r.id }} search={{ from: range.from, to: range.to }} className="hover:text-brand-to hover:underline">{r.name}</Link>) : r.name}</TableCell>
                   <TableCell className="text-right tabular-nums">{r.count}</TableCell><TableCell className="text-right font-medium tabular-nums">{formatTk(r.value)}</TableCell><TableCell className="text-right tabular-nums text-muted-foreground">{r.percentage.toFixed(1)}%</TableCell>
-                  <TableCell>{r.id && (<ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />)}</TableCell></TableRow>))}</TableBody></Table></CardContent></Card>)}
+                  <TableCell>{r.id && (<ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />)}</TableCell></TableRow>))}</TableBody></Table></div></CardContent></Card>)}
           <Card><CardHeader><CardTitle className="text-base">All damages</CardTitle></CardHeader><CardContent className="p-0">
             {list.length === 0 ? (<div className="p-6"><EmptyState icon={PackageX} title="No damages yet" description="Create your first damage record." /></div>) : (
+              <>
+              <div className="space-y-3 p-4 md:hidden">{list.map((r) => (
+                <MobileRecordCard key={r.id}
+                  leading={<Checkbox className="mt-0.5" checked={bulk.selection.isSelected(r.id)} onCheckedChange={() => bulk.selection.toggle(r.id)} aria-label={`Select ${r.damage_number}`} />}
+                  title={<Link to="/damages/$id" params={{ id: r.id }} className="hover:text-brand-to hover:underline">{r.damage_number}</Link>}
+                  trailing={formatTk(r.damage_value)}
+                  subtitle={r.product_name || "—"}
+                  footer={<><StatusBadge status={r.status} /><span className="text-xs text-muted-foreground">{formatDate(r.damage_date)}</span></>}
+                  details={[
+                    { label: "Type", value: r.type_id ? typeMap.get(r.type_id) ?? "—" : "—" },
+                    { label: "Quantity", value: String(r.quantity) },
+                    { label: "Created by", value: r.created_by ? names[r.created_by] ?? "—" : "—" },
+                  ]} />))}</div>
+              <div className="hidden overflow-x-auto md:block">
               <Table><TableHeader><TableRow><TableHead className="w-10"><Checkbox checked={pageAllSelected} onCheckedChange={() => pageAllSelected ? bulk.selection.removeMany(list) : bulk.selection.addMany(list)} aria-label="Select all damages" /></TableHead><TableHead>Damage No.</TableHead><TableHead>Date</TableHead><TableHead>Product</TableHead><TableHead className="text-right">Value</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
-                <TableBody>{list.map((r) => (<TableRow key={r.id}><TableCell><Checkbox checked={bulk.selection.isSelected(r.id)} onCheckedChange={() => bulk.selection.toggle(r.id)} aria-label={`Select ${r.damage_number}`} /></TableCell><TableCell className="font-medium"><Link to="/damages/$id" params={{ id: r.id }} className="hover:text-brand-to hover:underline">{r.damage_number}</Link></TableCell><TableCell className="whitespace-nowrap">{formatDate(r.damage_date)}</TableCell><TableCell className="max-w-[200px] truncate">{r.product_name || "—"}</TableCell><TableCell className="text-right tabular-nums">{formatTk(r.damage_value)}</TableCell><TableCell><StatusBadge status={r.status} /></TableCell></TableRow>))}</TableBody></Table>)}</CardContent></Card>
+                <TableBody>{list.map((r) => (<TableRow key={r.id}><TableCell><Checkbox checked={bulk.selection.isSelected(r.id)} onCheckedChange={() => bulk.selection.toggle(r.id)} aria-label={`Select ${r.damage_number}`} /></TableCell><TableCell className="font-medium"><Link to="/damages/$id" params={{ id: r.id }} className="hover:text-brand-to hover:underline">{r.damage_number}</Link></TableCell><TableCell className="whitespace-nowrap">{formatDate(r.damage_date)}</TableCell><TableCell className="max-w-[200px] truncate">{r.product_name || "—"}</TableCell><TableCell className="text-right tabular-nums">{formatTk(r.damage_value)}</TableCell><TableCell><StatusBadge status={r.status} /></TableCell></TableRow>))}</TableBody></Table></div></>)}</CardContent></Card>
         </>)}
       <BulkActionBar count={bulk.selection.count} canExport={canExport} busy={bulk.busy} onClear={bulk.selection.clear} onPrint={() => runBulk("selected", "print")} onPdf={() => runBulk("selected", "pdf")} onCsv={() => runBulk("selected", "csv")} />
       {bulk.printNode}
