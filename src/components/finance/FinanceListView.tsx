@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "@/lib/router";
+import { Link, useNavigate } from "@/lib/router";
 import { Plus, Search, Loader2, Wallet, AlertTriangle, CalendarClock, FileBarChart, Filter } from "lucide-react";
 import { toast } from "sonner";
 
@@ -41,6 +41,7 @@ function normalize(kind: FinanceKind, rows: (Receivable | Payable)[]): Row[] {
 
 export function FinanceListView({ kind }: { kind: FinanceKind }) {
   const { canAccessModule, can, isAdmin, user, profile } = useAuth();
+  const navigate = useNavigate();
   const title = kind === "receivable" ? "Receivables" : "Payables";
   const canCreate = isAdmin || can("finance", "edit");
 
