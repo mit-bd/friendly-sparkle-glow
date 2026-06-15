@@ -14,7 +14,7 @@ import { useSpeechRecognition, VOICE_LANGS, type VoiceLang } from "@/lib/voice";
 
 interface DictationButtonProps {
   /** The textarea/input being dictated into. */
-  targetRef: React.RefObject<HTMLTextAreaElement>;
+  targetRef: React.RefObject<HTMLTextAreaElement | null>;
   /** Last known caret selection of the target (tracked by the parent). */
   selectionRef: React.MutableRefObject<{ start: number; end: number } | null>;
   /** Current field value. */
