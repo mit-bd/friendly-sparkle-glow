@@ -98,6 +98,7 @@ export function ExpenseFields({
           onKeyUp={trackCaret}
           onClick={trackCaret}
           onBlur={trackCaret}
+          className="min-h-24 sm:min-h-0"
           placeholder="e.g. Facebook Ads June Campaign, Carton Purchase, Office Internet Bill"
         />
         {afterDescription}
