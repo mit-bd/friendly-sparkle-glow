@@ -39,6 +39,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { MobileRecordCard } from "@/components/app/MobileRecordCard";
 import { BulkActionBar } from "@/components/bulk/BulkActionBar";
 import { useBulkExport } from "@/hooks/use-bulk-export";
 import type { BulkExportConfig, BulkScope } from "@/lib/bulk-export";
@@ -448,7 +449,31 @@ function AuditPage() {
               </p>
             </div>
           ) : (
-            <Table>
+            <>
+            <div className="space-y-3 p-4 md:hidden print:hidden">
+              {rows.map((l) => (
+                <MobileRecordCard
+                  key={l.id}
+                  leading={<Checkbox className="mt-0.5" checked={bulk.selection.isSelected(l.id)} onCheckedChange={() => bulk.selection.toggle(l.id)} aria-label="Select log entry" />}
+                  title={actorName(l.actor_id)}
+                  subtitle={l.entity_label ?? "—"}
+                  footer={
+                    <>
+                      <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium", ACTIVITY_TONE[l.action] ?? "bg-muted text-muted-foreground")}>
+                        {ACTIVITY_ACTION_LABELS[l.action] ?? l.action}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{formatDateTime(l.created_at)}</span>
+                    </>
+                  }
+                  details={[
+                    { label: "Type", value: ACTIVITY_ENTITY_LABELS[l.entity_type] ?? l.entity_type },
+                    { label: "Record", value: l.entity_label ?? "—" },
+                    { label: "Date & Time", value: formatDateTime(l.created_at) },
+                  ]}
+                />
+              ))}
+            </div>
+            <Table className="hidden md:table print:table">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10 print:hidden">
@@ -503,6 +528,7 @@ function AuditPage() {
                 ))}
               </TableBody>
             </Table>
+            </>
           )}
         </CardContent>
       </Card>
