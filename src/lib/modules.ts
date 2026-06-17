@@ -14,7 +14,6 @@ import {
   LineChart,
   Landmark,
   Wallet,
-  Crown,
   Building2,
   UserCheck,
   ShieldAlert,
