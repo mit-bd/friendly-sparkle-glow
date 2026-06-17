@@ -18,6 +18,8 @@ import {
   Building2,
   UserCheck,
   ShieldAlert,
+  Activity,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 
@@ -207,12 +209,15 @@ export interface OwnerNavItem {
 }
 
 export const OWNER_NAV_ITEMS: OwnerNavItem[] = [
-  { label: "Owner Dashboard", to: "/owner", icon: Crown },
-  { label: "Registration Requests", to: "/owner/registrations", icon: UserCheck },
+  { label: "Dashboard", to: "/owner", icon: LayoutDashboard },
   { label: "Companies", to: "/owner/companies", icon: Building2 },
-  { label: "All Users", to: "/owner/users", icon: Users },
-  { label: "Owner Audit Center", to: "/owner/audit", icon: History },
+  { label: "Registration Requests", to: "/owner/registrations", icon: UserCheck },
+  { label: "Users Overview", to: "/owner/users", icon: Users },
+  { label: "Audit Center", to: "/owner/audit", icon: History },
   { label: "Security Center", to: "/owner/security", icon: ShieldAlert },
+  { label: "System Health", to: "/system", icon: Activity },
+  { label: "Platform Analytics", to: "/owner/analytics", icon: BarChart3 },
+  { label: "Settings", to: "/owner/settings", icon: Settings },
 ];
 
 export const MODULE_LABELS: Record<ModuleKey, string> = {

@@ -134,19 +134,20 @@ const HEALTH_META: Record<Health, { label: string; badge: string; icon: LucideIc
 };
 
 function SystemHealthPage() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isOwner } = useAuth();
+  const allowed = isAdmin || isOwner;
 
   const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["system-health"],
     queryFn: runChecks,
-    enabled: isAdmin,
+    enabled: allowed,
     staleTime: 20_000,
   });
 
-  if (!isAdmin) {
+  if (!allowed) {
     return (
       <div className="space-y-6">
-        <PageHeader title="System Health" description="Admin-only system status." />
+        <PageHeader title="System Health" description="Platform status (admins & owner)." />
         <NoAccess />
       </div>
     );
