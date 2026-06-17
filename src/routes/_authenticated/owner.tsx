@@ -11,7 +11,6 @@ import {
   Activity,
   CheckCircle,
   Ban,
-  HardDrive,
 } from "lucide-react";
 import {
   PieChart,
