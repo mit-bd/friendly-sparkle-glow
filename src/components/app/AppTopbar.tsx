@@ -22,7 +22,7 @@ import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
 import { useEffect, useState } from "react";
 
 export function AppTopbar() {
-  const { profile, user, primaryRole, signOut } = useAuth();
+  const { profile, user, primaryRole, signOut, isOwner } = useAuth();
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { count: unread } = useUnreadNotifications();
@@ -56,18 +56,21 @@ export function AppTopbar() {
       </div>
       <div className="flex-1" />
 
-      <GlobalSearch />
+      {/* Search & notifications are company-workflow tools — hidden for the Platform Owner. */}
+      {!isOwner && <GlobalSearch />}
 
-      <Button variant="ghost" size="icon" asChild aria-label="Notifications" className="relative">
-        <Link to="/notifications">
-          <Bell className="h-5 w-5" />
-          {unread > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-gradient px-1 text-[10px] font-semibold leading-none text-brand-foreground ring-2 ring-background">
-              {unread > 99 ? "99+" : unread}
-            </span>
-          )}
-        </Link>
-      </Button>
+      {!isOwner && (
+        <Button variant="ghost" size="icon" asChild aria-label="Notifications" className="relative">
+          <Link to="/notifications">
+            <Bell className="h-5 w-5" />
+            {unread > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-gradient px-1 text-[10px] font-semibold leading-none text-brand-foreground ring-2 ring-background">
+                {unread > 99 ? "99+" : unread}
+              </span>
+            )}
+          </Link>
+        </Button>
+      )}
       {/* Theme toggle stays on desktop; mobile header keeps only logo, search, notifications, profile */}
       <div className="hidden md:block">
         <ThemeToggle />
