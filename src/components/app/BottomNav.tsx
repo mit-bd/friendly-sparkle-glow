@@ -55,7 +55,7 @@ const OWNER_PRIMARY = [
   { label: "Companies", to: "/owner/companies", icon: Building2, match: "/owner/companies" },
   { label: "Requests", to: "/owner/registrations", icon: UserCheck, match: "/owner/registrations" },
 ] as const;
-const OWNER_PRIMARY_TOS = OWNER_PRIMARY.map((i) => i.to);
+const OWNER_PRIMARY_TOS: string[] = OWNER_PRIMARY.map((i) => i.to);
 
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -65,6 +65,12 @@ export function BottomNav() {
 
   const isActive = (match: string) =>
     match === "/" ? pathname === "/" : pathname === match || pathname.startsWith(match + "/");
+
+  const tabClass = (active: boolean) =>
+    cn(
+      "flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[10px] font-medium transition-colors",
+      active ? "text-brand" : "text-muted-foreground active:bg-accent",
+    );
 
   const primary = PRIMARY.filter((i) => canAccessModule(i.module));
   const more = MORE_ITEMS.filter((i) => canAccessModule(i.module));
@@ -139,12 +145,6 @@ export function BottomNav() {
       </>
     );
   }
-
-  const tabClass = (active: boolean) =>
-    cn(
-      "flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[10px] font-medium transition-colors",
-      active ? "text-brand" : "text-muted-foreground active:bg-accent",
-    );
 
   return (
     <>
