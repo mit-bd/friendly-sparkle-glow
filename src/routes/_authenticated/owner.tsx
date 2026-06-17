@@ -9,6 +9,8 @@ import {
   CheckCircle2,
   CircleSlash,
   Activity,
+  CheckCircle,
+  Ban,
 } from "lucide-react";
 import {
   PieChart,
@@ -147,10 +149,17 @@ function OwnerDashboard() {
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Total Companies" value={stats.companiesTotal} icon={Building2} hint={`${stats.companiesActive} active · ${stats.companiesSuspended} suspended`} />
+            <StatCard label="Total Companies" value={stats.companiesTotal} icon={Building2} hint="All registered workspaces" />
+            <StatCard label="Active Companies" value={stats.companiesActive} icon={CheckCircle} hint="Operating normally" />
+            <StatCard label="Suspended Companies" value={stats.companiesSuspended} icon={Ban} hint="Restricted access" />
+            <StatCard label="Pending Registrations" value={stats.pendingRequests} icon={UserCheck} hint="Awaiting Owner approval" />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard label="Total Users" value={stats.usersTotal} icon={Users} hint={`${stats.usersActive} active · ${stats.usersSuspended} restricted`} />
-            <StatCard label="Pending Requests" value={stats.pendingRequests} icon={UserCheck} hint="Awaiting Owner approval" />
-            <StatCard label="Security Events" value={events.length} icon={ShieldAlert} hint="Recent monitoring" />
+            <StatCard label="Active Users" value={stats.usersActive} icon={CheckCircle2} hint="Across all companies" />
+            <StatCard label="Security Alerts" value={events.length} icon={ShieldAlert} hint="Recent monitoring" />
+            <StatCard label="Login Activity" value={logins.length} icon={Activity} hint="Recent sign-in events" />
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -273,10 +282,11 @@ function OwnerDashboard() {
                 <Activity className="h-4 w-4" /> System health
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-3">
+            <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <HealthPill label="Database" ok />
               <HealthPill label="Authentication" ok />
               <HealthPill label="Edge functions" ok />
+              <HealthPill label="Storage" ok />
             </CardContent>
           </Card>
         </>

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@/lib/router";
+import { createFileRoute, Navigate } from "@/lib/router";
 import { useMemo, useState } from "react";
 import { Search, X, Receipt } from "lucide-react";
 
@@ -39,6 +39,14 @@ export const Route = createFileRoute("/_authenticated/")({
 });
 
 function Dashboard() {
+  const { isOwner } = useAuth();
+  // The Platform Owner does not operate inside company workflows — send them to
+  // the Owner governance dashboard instead of the company financial dashboard.
+  if (isOwner) return <Navigate to="/owner" replace />;
+  return <CompanyDashboard />;
+}
+
+function CompanyDashboard() {
   const { profile, primaryRole } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] || "there";
 

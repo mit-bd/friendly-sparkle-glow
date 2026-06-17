@@ -38,6 +38,8 @@ import { Route as OwnerCompanyDetailRoute } from "@/routes/_authenticated/owner.
 import { Route as OwnerUsersRoute } from "@/routes/_authenticated/owner.users";
 import { Route as OwnerAuditRoute } from "@/routes/_authenticated/owner.audit";
 import { Route as OwnerSecurityRoute } from "@/routes/_authenticated/owner.security";
+import { Route as OwnerAnalyticsRoute } from "@/routes/_authenticated/owner.analytics";
+import { Route as OwnerSettingsRoute } from "@/routes/_authenticated/owner.settings";
 
 /* budgets */
 import { Route as BudgetsLayout } from "@/routes/_authenticated/budgets";
@@ -304,6 +306,8 @@ export function App() {
                 <Route path="owner/users" element={<OwnerUsersRoute.Component />} />
                 <Route path="owner/audit" element={<OwnerAuditRoute.Component />} />
                 <Route path="owner/security" element={<OwnerSecurityRoute.Component />} />
+                <Route path="owner/analytics" element={<OwnerAnalyticsRoute.Component />} />
+                <Route path="owner/settings" element={<OwnerSettingsRoute.Component />} />
 
                 {/* Budgets */}
                 <Route path="budgets" element={<BudgetsLayout.Component />}>

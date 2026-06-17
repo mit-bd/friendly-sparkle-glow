@@ -137,7 +137,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const can = useCallback(
     (module: ModuleKey, action: PermissionAction) => {
-      if (isOwner || isAdmin) return true;
+      // The Platform Owner is NOT a company user — they govern the platform and
+      // must never have access to company business modules or transactions.
+      if (isOwner) return false;
+      if (isAdmin) return true;
       const row = permissions[module];
       if (!row) return false;
       return action === "view"
@@ -160,12 +163,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // approve, or export). This lets roles such as "accountant" — who can create
   // but not view-all — still open the module while RLS scopes their data.
   const canAccessModule = useCallback(
-    (module: ModuleKey) =>
-      isOwner ||
-      isAdmin ||
-      (["view", "edit", "approve", "export"] as PermissionAction[]).some((a) =>
+    (module: ModuleKey) => {
+      // Platform Owner sees only the Owner governance menu — no business modules.
+      if (isOwner) return false;
+      if (isAdmin) return true;
+      return (["view", "edit", "approve", "export"] as PermissionAction[]).some((a) =>
         can(module, a),
-      ),
+      );
+    },
     [can, isAdmin, isOwner],
   );
 

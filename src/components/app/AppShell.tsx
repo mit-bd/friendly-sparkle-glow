@@ -6,11 +6,13 @@ import { AppTopbar } from "./AppTopbar";
 import { NotificationListener } from "./NotificationListener";
 import { AiAssistant } from "./AiAssistant";
 import { BottomNav } from "./BottomNav";
+import { useAuth } from "@/lib/auth-context";
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { isOwner } = useAuth();
   return (
     <SidebarProvider>
-      <NotificationListener />
+      {!isOwner && <NotificationListener />}
       <AppSidebar />
       <SidebarInset className="min-w-0">
         <AppTopbar />
@@ -24,7 +26,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </footer>
       </SidebarInset>
       <BottomNav />
-      <AiAssistant />
+      {/* The AI smart-entry assistant is a company-workflow tool — not for the Platform Owner. */}
+      {!isOwner && <AiAssistant />}
     </SidebarProvider>
   );
 }

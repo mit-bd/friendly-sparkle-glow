@@ -5,6 +5,8 @@ import {
   Landmark,
   FileBarChart,
   Menu,
+  Building2,
+  UserCheck,
   type LucideIcon,
 } from "lucide-react";
 import { Link, useRouterState } from "@/lib/router";
@@ -47,6 +49,14 @@ const PRIMARY_TOS = ["/", "/expenses", "/finance", "/reports/summary"];
 /** Everything else lives behind the "More" drawer. */
 const MORE_ITEMS = NAV_ITEMS.filter((i) => !PRIMARY_TOS.includes(i.to));
 
+/** Owner bottom-bar primary destinations (governance only). */
+const OWNER_PRIMARY = [
+  { label: "Dashboard", to: "/owner", icon: LayoutDashboard, match: "/owner" },
+  { label: "Companies", to: "/owner/companies", icon: Building2, match: "/owner/companies" },
+  { label: "Requests", to: "/owner/registrations", icon: UserCheck, match: "/owner/registrations" },
+] as const;
+const OWNER_PRIMARY_TOS: string[] = OWNER_PRIMARY.map((i) => i.to);
+
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { canAccessModule, isOwner } = useAuth();
@@ -56,19 +66,85 @@ export function BottomNav() {
   const isActive = (match: string) =>
     match === "/" ? pathname === "/" : pathname === match || pathname.startsWith(match + "/");
 
-  const primary = PRIMARY.filter((i) => canAccessModule(i.module));
-  const more = MORE_ITEMS.filter((i) => canAccessModule(i.module));
-
-  // Is any "More" destination the active route? Highlight the More tab if so.
-  const moreActive =
-    more.some((i) => isActive(i.to)) ||
-    (isOwner && OWNER_NAV_ITEMS.some((i) => isActive(i.to)));
-
   const tabClass = (active: boolean) =>
     cn(
       "flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[10px] font-medium transition-colors",
       active ? "text-brand" : "text-muted-foreground active:bg-accent",
     );
+
+  const primary = PRIMARY.filter((i) => canAccessModule(i.module));
+  const more = MORE_ITEMS.filter((i) => canAccessModule(i.module));
+
+  // Owner secondary destinations for the "More" drawer (excludes primary tabs).
+  const ownerMore = OWNER_NAV_ITEMS.filter((i) => !OWNER_PRIMARY_TOS.includes(i.to));
+
+  // Is any "More" destination the active route? Highlight the More tab if so.
+  const moreActive =
+    more.some((i) => isActive(i.to)) ||
+    (isOwner && ownerMore.some((i) => isActive(i.to)));
+
+  // --- Owner gets a governance-only bottom bar (no business tabs). ---
+  if (isOwner) {
+    return (
+      <>
+        <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-xl pb-safe md:hidden no-print">
+          <div className="mx-auto flex h-16 max-w-lg items-stretch gap-1 px-2">
+            {OWNER_PRIMARY.map((item) => {
+              const active = isActive(item.match);
+              return (
+                <Link key={item.to} to={item.to} className={tabClass(active)}>
+                  <span
+                    className={cn(
+                      "flex h-7 w-12 items-center justify-center rounded-full transition-colors",
+                      active && "bg-brand-gradient-soft",
+                    )}
+                  >
+                    <item.icon className="h-5 w-5" />
+                  </span>
+                  <span className="leading-none">{item.label}</span>
+                </Link>
+              );
+            })}
+            <button type="button" onClick={() => setMoreOpen(true)} className={tabClass(moreActive)}>
+              <span
+                className={cn(
+                  "flex h-7 w-12 items-center justify-center rounded-full transition-colors",
+                  moreActive && "bg-brand-gradient-soft",
+                )}
+              >
+                <Menu className="h-5 w-5" />
+              </span>
+              <span className="leading-none">More</span>
+            </button>
+          </div>
+        </nav>
+
+        <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
+          <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl pb-safe">
+            <SheetHeader className="text-left">
+              <SheetTitle>Platform Owner</SheetTitle>
+            </SheetHeader>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              {ownerMore.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMoreOpen(false)}
+                  className={cn(
+                    "flex flex-col items-center gap-1.5 rounded-xl border border-border bg-card p-3 text-center transition-colors active:bg-accent",
+                    isActive(item.to) && "border-brand/40 bg-brand-gradient-soft",
+                  )}
+                >
+                  <item.icon className="h-5 w-5 text-brand" />
+                  <span className="text-[11px] font-medium leading-tight">{item.label}</span>
+                </Link>
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </>
+    );
+  }
 
   return (
     <>
